@@ -22,7 +22,7 @@
     "@types/chai": "^4.2.18",
     "@types/chai-as-promised": "^7.1.4",
     "@types/mocha": "^8.2.2",
-    "@types/node": "^15.0.2",
+    "@types/node": "^15.12.4",
     "@types/sinon": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^4.23.0",
     "@typescript-eslint/parser": "^4.23.0",
