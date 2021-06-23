@@ -6,7 +6,7 @@
 
 ## Introduction
 
-Salesforce Functions lets you use the Customer 360 Platform for building event-driven, elastically scalable apps and experiences. Salesforce Functions is designed to boost developer productivity by reducing your infrastructure responsibilities and enabling you to build and integrate Functions-as-a-Service (FaaS) apps using the languages and tools of your choice.
+Salesforce Functions lets you use the Salesforce Platform for building event-driven, elastically scalable apps and experiences. Salesforce Functions is designed to boost developer productivity by reducing your infrastructure responsibilities and enabling you to build and integrate Functions-as-a-Service (FaaS) apps using the languages and tools of your choice.
 
 **Functions Recipes** is a library of examples to help you getting started with Salesforce Functions and get used to their main features.
 
