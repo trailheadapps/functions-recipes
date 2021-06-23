@@ -1,0 +1,8 @@
+[_]
+schema-version = "0.2"
+
+[com.salesforce]
+schema-version = "0.1"
+id = "environmentjs"
+description = "Returns the derivate password hash using pbkdf2 getting the salt from the Environment"
+type = "function"

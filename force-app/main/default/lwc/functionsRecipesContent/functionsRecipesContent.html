@@ -1,0 +1,81 @@
+<template>
+  <div class="slds-grid slds-wrap">
+    <div class="slds-size_1-of-1">
+      <div class="slds-grid slds-wrap">
+        <div class="slds-size_1-of-1 slds-m-bottom_medium">
+          <c-functions-recipes-page-header
+            title={functionTitle}
+            sub-title={functionSubTitle}
+          ></c-functions-recipes-page-header>
+        </div>
+        <div class="slds-size_1-of-1">
+          <div class="slds-card slds-p-around_medium">
+            <div class="slds-grid slds-wrap">
+              <div class="slds-size_1-of-1 slds-p-bottom_medium">
+                <div class="slds-text-heading_medium slds-p-bottom_small">
+                  Function Details
+                </div>
+                <div class="slds-text-body_regular">{functionDescription}</div>
+              </div>
+              <div class="slds-size_1-of-1">
+                <div class="slds-text-heading_medium slds-p-bottom_small">
+                  Code
+                </div>
+                <div class="slds-grid slds-wrap">
+                  <div class="slds-size_1-of-1">
+                    <div class="slds-grid slds-wrap slds-grid_align-spread">
+                      <div class="slds-size_2-of-12">
+                        <lightning-combobox
+                          name="language"
+                          label="Language"
+                          value={selectedLanguage}
+                          placeholder="Select Language"
+                          options={languages}
+                          onchange={handleChange}
+                        ></lightning-combobox>
+                      </div>
+                      <div class="slds-size_2-of-12 slds-align-bottom">
+                        <lightning-button
+                          class="slds-float_right"
+                          label="View Source"
+                          name="view source"
+                          icon-name="utility:new_window"
+                          onclick={viewSource}
+                        ></lightning-button>
+                      </div>
+                    </div>
+                    <div class="slds-size_1-of-1 slds-m-top_small">
+                      <lightning-tabset variant="scoped">
+                        <template
+                          for:each={fileset}
+                          for:item="file"
+                          for:index="i"
+                        >
+                          <lightning-tab key={file.i} label={file.name}>
+                            <div class="slds-size_1-of-1">
+                              <c-code-block
+                                code-block-content={file.body}
+                                language={selectedLanguage}
+                                class="slds-m-top_small"
+                              ></c-code-block>
+                            </div>
+                          </lightning-tab>
+                        </template>
+                      </lightning-tabset>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <template if:true={showRunFunctionModal}>
+    <c-functions-recipes-run-modal
+      function-inputs={functionInputs}
+      function-name={functionName}
+    ></c-functions-recipes-run-modal>
+  </template>
+</template>

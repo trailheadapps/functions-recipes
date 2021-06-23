@@ -1,0 +1,25 @@
+{
+  "name": "environment-js-function",
+  "private": true,
+  "version": "1.0.0",
+  "author": "salesforce.com",
+  "description": "Returns the derivate password hash using pbkdf2 getting the salt from the Environment",
+  "license": "CC0-1.0",
+  "main": "index.js",
+  "repository": {
+    "type": "git"
+  },
+  "engines": {
+    "node": "^14.0"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .js --config .eslintrc",
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "eslint": "^6.8.0",
+    "mocha": "^8.4.0",
+    "sinon": "^10.0.0"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "orgName": "Functions Recipes",
+  "edition": "Developer",
+  "features": ["Functions", "EnableSetPasswordInApi"],
+  "settings": {
+    "lightningExperienceSettings": {
+      "enableS1DesktopEnabled": true
+    },
+    "mobileSettings": {
+      "enableS1EncryptedStoragePref2": false
+    }
+  }
+}

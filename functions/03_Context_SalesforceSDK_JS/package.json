@@ -1,0 +1,25 @@
+{
+  "name": "salesforcesdk-js-function",
+  "private": true,
+  "version": "1.0.0",
+  "author": "salesforce.com",
+  "description": "This function takes a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.",
+  "license": "CC0-1.0",
+  "main": "index.js",
+  "repository": {
+    "type": "git"
+  },
+  "engines": {
+    "node": "^14.0"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .js --config .eslintrc",
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "eslint": "^6.8.0",
+    "mocha": "^8.4.0",
+    "sinon": "^10.0.0"
+  }
+}

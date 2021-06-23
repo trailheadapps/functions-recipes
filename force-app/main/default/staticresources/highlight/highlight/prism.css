@@ -1,0 +1,339 @@
+/* Custom prism.js stylesheet */
+/* stylelint-disable selector-pseudo-element-no-unknown */
+
+
+pre[class*="language-"],
+code[class*="language-"] {
+    font-size: 14px;
+    text-shadow: none;
+    direction: ltr;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    line-height: 20px;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+pre[class*="language-"]::selection,
+code[class*="language-"]::selection,
+pre[class*="language-"]::mozselection,
+code[class*="language-"]::mozselection {
+    text-shadow: none;
+}
+
+.dx-theme-dark code[class*="language-"] {
+    color: rgb(255, 255, 255);
+}
+
+.dx-theme-light code[class*="language-"] {
+    color: #0b0b0b;
+}
+
+.dx-theme-dark code[class*="language-"]::mozselection {
+    background: rgb(255, 255, 255);
+}
+
+.dx-theme-light code[class*="language-"]::mozselection {
+    background: #f3f3f3;
+}
+
+.dx-variant-card pre[class*="language-"] {
+    padding: 1em;
+    border-radius: 0.3em 0.3em 0.3em 0.3em;
+    overflow: auto;
+    word-wrap: normal;
+    white-space: pre;
+}
+
+.dx-variant-card :not(pre) > code[class*="language-"] {
+    padding: 0.1em 0.3em;
+    border-radius: 0.3em;
+}
+
+.dx-variant-block pre[class*="language-"] {
+    padding: 1em;
+    border-radius: 0.3em;
+    overflow: auto;
+    word-wrap: normal;
+    white-space: pre;
+    width: 94%;
+}
+
+.dx-variant-block :not(pre) > code[class*="language-"] {
+    padding: 0.1em 0.3em;
+    border-radius: 0.3em;
+}
+
+.dx-theme-dark pre[class*="language-"] {
+    color: rgb(255, 255, 255);
+    background: #001639;
+}
+
+.dx-theme-dark :not(pre) > code[class*="language-"] {
+    color: rgb(255, 255, 255);
+    background: #001639;
+}
+
+.dx-theme-light pre[class*="language-"] {
+    color: #0b0b0b;
+    background: #f3f3f3;
+}
+
+.dx-theme-light :not(pre) > code[class*="language-"] {
+    color: #0b0b0b;
+    background: #f3f3f3;
+}
+
+/*********************************************************
+* Tokens
+*/
+
+.dx-theme-dark .token.punctuation {
+    color: rgba(216, 230, 254, 1);
+}
+
+.dx-theme-dark .token.property {
+    color: rgba(26, 185, 255, 1);
+}
+
+.dx-theme-dark .token.keyword {
+    color: rgba(194, 158, 241, 1);
+}
+
+.dx-theme-dark .token.comment {
+    color: rgba(170, 203, 255, 1);
+}
+
+.dx-theme-dark .token.selector {
+    color: rgba(1, 195, 179, 1);
+}
+
+.dx-theme-dark .token.operator {
+    color: rgba(254, 114, 152, 1);
+}
+
+.dx-theme-dark .token.function {
+    color: rgba(252, 192, 3, 1);
+}
+
+.dx-theme-dark .token.variable {
+    color: rgba(254, 147, 57, 1);
+}
+
+.dx-theme-dark .token.prolog {
+    color: #93a1a1;
+}
+
+.dx-theme-dark .token.doctype {
+    color: rgba(170, 203, 255, 1);
+}
+
+.dx-theme-dark .token.cdata {
+    color: #93a1a1;
+}
+
+.dx-theme-dark .token.tag {
+    color: rgba(26, 185, 255, 1);
+}
+
+.dx-theme-dark .token.attr-name {
+    color: rgba(1, 195, 179, 1);
+}
+
+.dx-theme-dark .token.attr-value {
+    color: rgba(194, 158, 241, 1);
+}
+
+.dx-theme-dark .token.entity {
+    color: #fff;
+    background: rgba(0, 22, 57, 1);
+}
+
+.dx-theme-dark .token.url {
+    color: #fff;
+    background: rgba(0, 22, 57, 1);
+}
+
+.dx-theme-dark .token.regex,
+.dx-theme-dark .token.deleted,
+.dx-theme-dark .token.constant,
+.dx-theme-dark .token.number,
+.dx-theme-dark .token.builtin,
+.dx-theme-dark .token.important .dx-theme-dark .token.boolean,
+.dx-theme-dark .token.symbol,
+.dx-theme-dark .token.inserted,
+.dx-theme-dark .token.char,
+.dx-theme-dark .token.string {
+    color: #fff;
+}
+
+.dx-theme-dark .language-css .token.string {
+    color: #fff;
+    background: rgba(0, 22, 57, 1);
+}
+
+.dx-theme-dark .style .token.string {
+    color: #fff;
+    background: rgba(0, 22, 57, 1);
+}
+/*********************************************************
+* Line highlighting
+*/
+pre[data-line] {
+    position: relative;
+}
+
+pre[class*="language-"] > code[class*="language-"] {
+    position: relative;
+    display: block;
+    z-index: 1;
+}
+
+.line-highlight {
+    position: absolute;
+    left: 0;
+    right: 0;
+    padding: inherit 0;
+    margin-top: 1em;
+    background: #1e2d50;
+    box-shadow: inset 5px 0 0 #0176d3;
+    z-index: 0;
+    pointer-events: none;
+    line-height: inherit;
+    white-space: pre;
+}
+
+.line-numbers .line-highlight::before,
+.line-numbers .line-highlight::after {
+    content: none;
+}
+
+.line-numbers-rows > span::before {
+    content: counter(linenumber);
+    color: #747474;
+    display: block;
+    padding-right: 0.4em;
+    text-align: right;
+}
+pre[id].linkable-line-numbers span.line-numbers-rows {
+    pointer-events: all;
+}
+
+pre[id].linkable-line-numbers span.line-numbers-rows > span::before {
+    cursor: pointer;
+}
+
+pre[id].linkable-line-numbers span.line-numbers-rows > span:hover::before {
+    background-color: rgba(128, 128, 128, 0.2);
+}
+
+pre[class*="language-"].line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+    position: relative;
+    white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    font-size: 100%;
+    left: -3.8em;
+    width: 3em; /* works for line-numbers below 1000 lines */
+    letter-spacing: -1px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.line-numbers-rows > span {
+    display: block;
+    counter-increment: linenumber;
+}
+
+.dx-variant-block.code-toolbar {
+    display: flex;
+}
+
+/* for card variant */
+div.code-toolbar.dx-variant-card {
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+
+
+div.code-toolbar.dx-variant-block > .toolbar {
+    transition: opacity 0.3s ease-in-out;
+    opacity: 0; /* card for base set to 0 */
+}
+
+.dx-theme-dark.dx-variant-card > .toolbar {
+    background-color: #1e2d50;
+	margin-bottom: -14px;
+	border-radius: 4px 4px 0 0;
+}
+
+.dx-theme-light.dx-variant-card > .toolbar {
+    background-color: #e5e5e5;
+	margin-bottom: -14px;
+	border-radius: 4px 4px 0 0;
+}
+
+.dx-variant-block .toolbar-item {
+    padding-left: 4px;
+}
+
+.dx-variant-card .toolbar-item:first-child {
+    flex-basis: 95%;
+}
+
+
+.dx-variant-card.dx-theme-dark .dx-code-block-heading {
+    color: white !important;
+	font-weight:bold;
+	font-size:14px;
+}
+
+.dx-variant-card.dx-theme-light .dx-code-block-heading {
+    color: #1e2d50;
+	font-weight:bold;
+	font-size:14px;
+
+}
+
+/* Separate line b/c rules are thrown out if selector is invalid.
+   IE11 and old Edge versions don't support :focus-within. */
+
+div.code-toolbar > .toolbar .toolbar-item {
+    display: inline-block;
+}
+
+div.code-toolbar > .toolbar a {
+    cursor: pointer;
+}
+
+div.code-toolbar > .toolbar a,
+div.code-toolbar > .toolbar button,
+div.code-toolbar > .toolbar a:hover,
+div.code-toolbar > .toolbar a:focus,
+div.code-toolbar > .toolbar button:hover,
+div.code-toolbar > .toolbar button:focus,
+div.code-toolbar > .toolbar span:hover,
+div.code-toolbar > .toolbar span:focus {
+    color: inherit;
+    text-decoration: none;
+}

@@ -1,0 +1,22 @@
+<template>
+  <div class="slds-grid slds-wrap expand-container">
+    <div class="slds-size_1-of-1 expand-container">
+      <template if:true={definition}>
+        <div class="slds-grid slds-wrap expand-container">
+          <div class="functions-nav expand-container">
+            <c-functions-recipes-navigation
+              definition={definition}
+              selected-item={selectedFunction.name}
+              onnavselect={handleNavSelect}
+            ></c-functions-recipes-navigation>
+          </div>
+          <div class="functions-content slds-p-around_medium slds-scrollable_y">
+            <c-functions-recipes-content
+              selected-function={selectedFunction}
+            ></c-functions-recipes-content>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</template>

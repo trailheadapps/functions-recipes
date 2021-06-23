@@ -1,0 +1,47 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/functions/01_Intro_ProcessLargeData_JS"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 10
+  - package-ecosystem: npm
+    directory: "/functions/02_InvocationEvent_JS"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 10
+  - package-ecosystem: npm
+    directory: "/functions/03_Context_DataApiQuery_JS"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 10
+  - package-ecosystem: npm
+    directory: "/functions/03_Context_OrgInfo_TypeScript"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 10
+  - package-ecosystem: npm
+    directory: "/functions/03_Context_SalesforceSDK_JS"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 10
+  - package-ecosystem: npm
+    directory: "/functions/03_Context_UnitOfWork_JS"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 10
+  - package-ecosystem: npm
+    directory: "/functions/04_Logger_JS"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 10
+  - package-ecosystem: npm
+    directory: "/functions/05_Environment_JS"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 10
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 10

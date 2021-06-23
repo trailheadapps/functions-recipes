@@ -1,0 +1,76 @@
+<template>
+  <lightning-card title={functionTitle} icon-name="standard:location">
+    <div class="slds-var-m-around_medium">
+      <template if:true={loading}>
+        <div class="spinnerContainer">
+          <lightning-spinner
+            alternative-text="Loading"
+            size="medium"
+          ></lightning-spinner>
+        </div>
+      </template>
+      <template if:false={loading}>
+        <template if:false={functionDeployed}>
+          <c-error-panel
+            friendly-message="Function has not been deployed"
+          ></c-error-panel>
+        </template>
+        <template if:true={functionDeployed}>
+          <div class="description">
+            Process large data volumes in a function. Take the users current
+            location and sort through a large data set to calculate the distance
+            and return the results.
+            <p>
+              <a class="slds-text-link" href={sourceURL} target="source"
+                >View Source</a
+              >
+            </p>
+          </div>
+          <lightning-layout>
+            <lightning-layout-item padding="around-small">
+              <lightning-combobox
+                name="function"
+                label="Select a Function"
+                value={functionName}
+                placeholder="Select a Function"
+                options={functionOptions}
+                onchange={handleChangeFunction}
+              >
+              </lightning-combobox>
+            </lightning-layout-item>
+          </lightning-layout>
+          <lightning-layout>
+            <lightning-layout-item padding="around-small">
+              <lightning-combobox
+                name="results"
+                label="Number of Results"
+                value={length}
+                placeholder="Select Number of results"
+                options={lengthOptions}
+                onchange={handleChangeLength}
+              >
+              </lightning-combobox>
+            </lightning-layout-item>
+          </lightning-layout>
+          <lightning-layout>
+            <lightning-layout-item padding="around-small">
+              <lightning-button
+                name="Invoke Function"
+                label="Invoke Function"
+                onclick={invokeFunction}
+              ></lightning-button>
+            </lightning-layout-item>
+          </lightning-layout>
+        </template>
+        <template if:true={mapLoaded}>
+          <lightning-map
+            center={userLocation}
+            map-markers={mapMarkers}
+            list-view="visible"
+          >
+          </lightning-map>
+        </template>
+      </template>
+    </div>
+  </lightning-card>
+</template>

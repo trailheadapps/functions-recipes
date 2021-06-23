@@ -1,0 +1,54 @@
+# Unique name for this workflow
+name: CI on PR
+
+# Definition when the workflow should run
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+    branches-ignore:
+      - prerelease/spring[2-9][0-9]
+      - prerelease/summer[2-9][0-9]
+      - prerelease/winter[2-9][0-9]
+
+# Jobs to be executed
+jobs:
+  format-lint-lwc-tests:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the source code
+      - name: "Checkout source code"
+        uses: actions/checkout@v2
+
+      # Cache node_modules to speed up the process
+      - name: "Restore node_modules cache"
+        id: cache-npm
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: npm6-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            npm6-${{ env.cache-name }}-
+            npm6-
+
+      # Install npm dependencies for Prettier and Jest
+      - name: "Install npm dependencies"
+        if: steps.cache-npm.outputs.cache-hit != 'true'
+        run: npm ci && npm run ci:postinstall
+
+      # Prettier formatting
+      - name: "Code formatting verification with Prettier"
+        run: npm run prettier:verify
+
+      # Lint LWC
+      - name: "Lint Lightning Web Components"
+        run: npm run lint
+
+      # LWC unit tests
+      - name: "Unit test Lightning Web Components"
+        run: npm run test:unit:coverage
+
+      # Upload code coverage data
+      - name: "Upload code coverage for LWC to Codecov.io"
+        uses: codecov/codecov-action@v1
+        with:
+          flags: LWC

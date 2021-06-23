@@ -1,0 +1,8 @@
+<aura:component
+  implements="lightning:appHomeTemplate"
+  description="App Template for Functions Recipes"
+>
+  <ltng:require styles="{!$Resource.NoHeader}" />
+  <aura:attribute name="content" type="Aura.Component[]" />
+  <div>{!v.content}</div>
+</aura:component>
