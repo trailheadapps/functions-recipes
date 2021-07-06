@@ -7,7 +7,6 @@ export default class CodeBlock extends LightningElement {
   @api
   set language(value) {
     this._language = value.toLowerCase();
-    console.log("changing language", this._language);
     this.highlightCodeSegment();
   }
   get language() {
@@ -17,7 +16,6 @@ export default class CodeBlock extends LightningElement {
   @api
   set codeBlockContent(value) {
     this._codeBlockContent = value;
-    console.log(value);
     if (this.prismInitialized === true) {
       this.highlightCodeSegment();
     }
@@ -62,7 +60,6 @@ export default class CodeBlock extends LightningElement {
       if (codeBlockEl.innerHTML !== "") {
         // eslint-disable-next-line
         codeBlockEl.innerHTML = "";
-        console.log(this._language);
         codeBlockEl.classList.remove("language-javascript");
       }
       codeBlockEl.classList.add("line-numbers");
