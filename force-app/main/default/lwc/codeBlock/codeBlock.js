@@ -7,6 +7,7 @@ export default class CodeBlock extends LightningElement {
   @api
   set language(value) {
     this._language = value.toLowerCase();
+    this.highlightCodeSegment();
   }
   get language() {
     return this._language;
@@ -59,12 +60,18 @@ export default class CodeBlock extends LightningElement {
       if (codeBlockEl.innerHTML !== "") {
         // eslint-disable-next-line
         codeBlockEl.innerHTML = "";
+        codeBlockEl.classList.remove("language-javascript");
       }
       codeBlockEl.classList.add("line-numbers");
       const codeEl = document.createElement("code");
-      codeEl.classList.add(`language-${this.language}`);
+      codeEl.classList.add(`language-${this._language}`);
+      if (this._language === "java") {
+        this._codeBlockContent = this._codeBlockContent
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
       // eslint-disable-next-line
-      codeEl.innerHTML = this.codeBlockContent;
+      codeEl.innerHTML = this._codeBlockContent;
       codeBlockEl.appendChild(codeEl);
       this.prism.highlightAllUnder(codeBlockEl);
     }

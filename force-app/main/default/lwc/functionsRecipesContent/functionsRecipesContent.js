@@ -34,10 +34,10 @@ export default class FunctionsRecipesContent extends NavigationMixin(
 
   handleChange(event) {
     const value = event.currentTarget.value;
+    this.selectedLanguage = value;
     this.selectedIndex = this._selectedFunction.functions.findIndex(
       (item) => item.language === value
     );
-    this.selectedLanguage = value;
   }
 
   viewSource() {
