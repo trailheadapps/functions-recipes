@@ -136,11 +136,11 @@ import org.slf4j.LoggerFactory;
  * This function takes a large JSON payload, calculates the distance between a supplied cordinate
  * and the data, sort's it, and returns the nearest x results.
  */
-public class ProcessLargeDataFunction implements SalesforceFunction\<FunctionInput, FunctionOutput\> {
+public class ProcessLargeDataFunction implements SalesforceFunction<FunctionInput, FunctionOutput> {
   private static final Logger LOGGER = LoggerFactory.getLogger(ProcessLargeDataFunction.class);
 
   @Override
-  public FunctionOutput apply(InvocationEvent\<FunctionInput\> event, Context context)
+  public FunctionOutput apply(InvocationEvent<FunctionInput> event, Context context)
       throws Exception {
     // Read Input Parameters
     // - Point of Origin
