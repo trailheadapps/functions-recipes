@@ -30,14 +30,16 @@ export default class FunctionsRecipesContent extends NavigationMixin(
     });
     this.languages = items;
     this.selectedLanguage = this.languages[0].value;
+    console.log("normalizing...");
   }
 
   handleChange(event) {
     const value = event.currentTarget.value;
+    this.selectedLanguage = value;
+    console.log("selected", this.selectedLanguage);
     this.selectedIndex = this._selectedFunction.functions.findIndex(
       (item) => item.language === value
     );
-    this.selectedLanguage = value;
   }
 
   viewSource() {
