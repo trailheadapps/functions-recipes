@@ -68,8 +68,13 @@ export default class CodeBlock extends LightningElement {
       codeBlockEl.classList.add("line-numbers");
       const codeEl = document.createElement("code");
       codeEl.classList.add(`language-${this._language}`);
+      if (this._language === "java") {
+        this._codeBlockContent = this._codeBlockContent
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
       // eslint-disable-next-line
-      codeEl.innerHTML = this.codeBlockContent;
+      codeEl.innerHTML = this._codeBlockContent;
       codeBlockEl.appendChild(codeEl);
       this.prism.highlightAllUnder(codeBlockEl);
     }
