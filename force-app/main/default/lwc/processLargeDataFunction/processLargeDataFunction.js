@@ -10,8 +10,7 @@ export default class ProcessLargeDataFunction extends LightningElement {
   loading = true;
   sourceMap = {
     JavaScript:
-      "https://github.com/trailheadapps/functions-recipes/blob/main/functions/01_Intro_ProcessLargeData_JS/index.js",
-    Java: "https://github.com/trailheadapps/functions-recipes/blob/main/functions/01_Intro_ProcessLargeData_Java/src/main/java/com/salesforce/functions/recipes/ProcessLargeDataFunction.java"
+      "https://github.com/trailheadapps/functions-recipes/blob/main/functions/01_Intro_ProcessLargeData_JS/index.js"
   };
   functionDeployed;
   userLocation;
@@ -163,10 +162,6 @@ export default class ProcessLargeDataFunction extends LightningElement {
       {
         label: "JavaScript",
         value: "functions_recipes.processlargedatajs"
-      },
-      {
-        label: "Java",
-        value: "functions_recipes.processlargedatajava"
       }
     ];
   }
