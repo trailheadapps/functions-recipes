@@ -96,19 +96,12 @@ From there you'll be able to explore the source code and invoke the deployed fun
 
 Each individual function can be started and invoked locally using the Salesforce CLI, you can refer to each individual **README** for instructions on how to start and invoke each function locally.
 
+### Java Functions
+
 1. Introduction to Functions
    - [ProcessLargeData (Java)](functions/01_Intro_ProcessLargeData_Java)
-   - [ProcessLargeData (Node.js)](functions/01_Intro_ProcessLargeData_JS)
-1. `InvocationEvent`
-   - [InvocationEvent (Node.js)](functions/02_InvocationEvent_JS)
 1. `Context`
-   - [DataApiQuery (Node.js)](functions/03_Context_DataApiQuery_JS)
-   - [OrgInfo (Node.js / TypeScript)](functions/03_Context_OrgInfo_TypeScript)
    - [SalesforceSDK (Java)](functions/03_Context_SalesforceSDK_Java)
-   - [SalesforceSDK (Node.js)](functions/03_Context_SalesforceSDK_JS)
    - [UnitOfWork (Java)](functions/03_Context_UnitOfWork_Java)
-   - [UnitOfWork (Node.js)](functions/03_Context_UnitOfWork_JS)
-1. Logging
-   - [Logger (Node.js)](functions/04_Logger_JS)
-1. Environment Variables
-   - [Environment (Node.js)](functions/05_Environment_JS)
+
+Note: Node.js functions can be found in the [`main`](https://github.com/trailheadapps/functions-recipes) branch.

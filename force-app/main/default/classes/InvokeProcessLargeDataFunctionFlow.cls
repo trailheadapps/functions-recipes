@@ -4,7 +4,7 @@ public with sharing class InvokeProcessLargeDataFunctionFlow {
     Input payload = input.get(0);
     // Get a Reference of the ProcessLargeData Function
     functions.Function fn = functions.Function.get(
-      'functions_recipes.processlargedatajs'
+      'functions_recipes.processlargedatajava'
     );
     // Invoke the ProcessLargeData Function
     functions.FunctionInvocation invocation = fn.invoke(

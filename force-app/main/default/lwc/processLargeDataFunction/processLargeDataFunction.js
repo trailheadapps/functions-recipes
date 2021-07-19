@@ -4,14 +4,12 @@ import validateDeployment from "@salesforce/apex/FunctionUtilities.validateDeplo
 import invoke from "@salesforce/apex/InvokeProcessLargeDataFunction.invoke";
 
 export default class ProcessLargeDataFunction extends LightningElement {
-  functionLabel = "JavaScript";
-  functionName = "functions_recipes.processlargedatajs";
+  functionLabel = "Java";
+  functionName = "functions_recipes.processlargedatajava";
   length = 5;
   loading = true;
   sourceMap = {
-    JavaScript:
-      "https://github.com/trailheadapps/functions-recipes/blob/main/functions/01_Intro_ProcessLargeData_JS/index.js",
-    Java: "https://github.com/trailheadapps/functions-recipes/blob/main/functions/01_Intro_ProcessLargeData_Java/src/main/java/com/salesforce/functions/recipes/ProcessLargeDataFunction.java"
+    Java: "https://github.com/trailheadapps/functions-recipes/blob/java-functions/functions/01_Intro_ProcessLargeData_Java/src/main/java/com/salesforce/functions/recipes/ProcessLargeDataFunction.java"
   };
   functionDeployed;
   userLocation;
@@ -160,10 +158,6 @@ export default class ProcessLargeDataFunction extends LightningElement {
 
   get functionOptions() {
     return [
-      {
-        label: "JavaScript",
-        value: "functions_recipes.processlargedatajs"
-      },
       {
         label: "Java",
         value: "functions_recipes.processlargedatajava"

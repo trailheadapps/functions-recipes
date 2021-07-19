@@ -1,8 +1,0 @@
-[_]
-schema-version = "0.2"
-
-[com.salesforce]
-schema-version = "0.1"
-id = "orginfots"
-description = "Returns the Salesforce Org information attached to the context."
-type = "function"
