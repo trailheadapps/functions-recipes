@@ -8,6 +8,7 @@ export default class FunctionsRecipesContent extends NavigationMixin(
   set selectedFunction(value) {
     this._selectedFunction = value;
     this.normalizeLanguages();
+    this.selectedIndex = 0;
   }
   get selectedFunction() {
     return this._selectedFunction;
