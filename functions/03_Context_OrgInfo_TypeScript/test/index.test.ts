@@ -10,8 +10,8 @@ import { OrgInfo } from "../dist";
  */
 describe("Unit Tests", () => {
   let sandbox: SinonSandbox;
-  let mockContext: any;
-  let mockLogger: any;
+  let mockContext;
+  let mockLogger;
 
   beforeEach(() => {
     sandbox = createSandbox();
@@ -24,7 +24,7 @@ describe("Unit Tests", () => {
         user: {
           id: "",
           username: "test@salesforce.com",
-          onBehalfUserId: ""
+          onBehalfOfUserId: ""
         },
         dataApi: { query: () => undefined }
       },
