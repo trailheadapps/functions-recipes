@@ -1,3 +1,5 @@
+import { InvocationEvent, Context, Logger, Org } from "sf-fx-sdk-nodejs";
+
 /**
  * Returns the Salesforce Org information attached to the context.
  *
@@ -11,10 +13,10 @@
  *                 to a given execution of a function.
  */
 export default async function execute(
-  event: any,
-  context: any,
-  logger: any
-): Promise<any> {
+  event: InvocationEvent<any>,
+  context: Context,
+  logger: Logger
+): Promise<OrgInfo> {
   logger.info(
     `Invoking orginfots Function with payload ${JSON.stringify(
       event.data || {}
@@ -39,7 +41,7 @@ export class OrgInfo {
   id: string;
   user: any;
 
-  constructor(org: any) {
+  constructor(org: Org) {
     this.apiVersion = org.apiVersion;
     this.baseUrl = org.baseUrl;
     this.domainUrl = org.domainUrl;
