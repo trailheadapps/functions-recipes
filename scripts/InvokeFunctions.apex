@@ -1,0 +1,1 @@
+GenericFunctionInvoker.invoke('OrgInfo', 'test');

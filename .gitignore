@@ -28,6 +28,10 @@ node_modules/
 # Eslint cache
 .eslintcache
 
+# Private information
+.env
+certificates/
+
 # MacOS system files
 .DS_Store
 
