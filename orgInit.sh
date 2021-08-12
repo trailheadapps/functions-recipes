@@ -1,5 +1,5 @@
 # Get env variables
-source .env
+# source .env
 # SFDX Hub Auth
 #  sfdx auth:jwt:grant --username=$HUBUSER --jwtkeyfile=certificates/server.key --clientid=$CONSUMER_KEY
 # Create scratch org
