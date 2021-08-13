@@ -12,8 +12,8 @@ sfdx force:user:permset:assign -n FunctionsRecipes
 #  sfdx login:functions:jwt --username testuser@mycompany.org --keyfile file.key --clientid 123456
 # sfdx login:functions:jwt --username=$HUBUSER --keyfile=certificates/server.key --clientid=$CONSUMER_KEY
 # Create compute environment
-sfdx env:create:compute --connected-org=functions_recipes --setalias=fn_recipes
+sfdx env:create:compute --connected-org functions_recipes --setalias fn_recipes
 # Deploy function(s)
-sfdx project:deploy:functions --connected-org=functions_recipes
+sfdx project:deploy:functions --connected-org functions_recipes
 # Open the org
 sfdx force:org:open -p "/lightning/n/Functions"
