@@ -19,6 +19,9 @@ import com.salesforce.functions.jvm.sdk.data.UnitOfWork;
 import com.salesforce.functions.jvm.sdk.data.builder.UnitOfWorkBuilder;
 import com.salesforce.functions.jvm.sdk.data.error.DataApiError;
 import com.salesforce.functions.jvm.sdk.data.error.DataApiException;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,10 +31,13 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 public class FunctionTest {
+  private Clock clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"));
 
   @Test
   public void testSuccess() throws Exception {
     UnitOfWorkFunction function = new UnitOfWorkFunction();
+    function.setClock(clock);
+
     FunctionInput functionInput = createValidInput();
     FunctionOutput functionOutput =
         function.apply(createEventMock(functionInput), createValidContextMock(functionInput));
@@ -39,6 +45,7 @@ public class FunctionTest {
     assertEquals("0019A00000J28zaQAB", functionOutput.getAccountId());
     assertEquals("0039A00000DkhvnQAB", functionOutput.getContactId());
     assertEquals("5009A000002GYCrQAO", functionOutput.getCaseId());
+    assertThat(functionOutput.getTaskIds(), contains("00T5600000FwnFHEAZ", "00T5600000FwnFIEAZ"));
   }
 
   @Test
@@ -93,10 +100,14 @@ public class FunctionTest {
               ReferenceId accountRefId = mock(ReferenceId.class);
               ReferenceId contactRefId = mock(ReferenceId.class);
               ReferenceId serviceCaseRefId = mock(ReferenceId.class);
+              ReferenceId reminderTaskRefId = mock(ReferenceId.class);
+              ReferenceId followupTaskRefId = mock(ReferenceId.class);
 
               Record accountRecord = mock(Record.class);
               Record contactRecord = mock(Record.class);
               Record serviceCaseRecord = mock(Record.class);
+              Record reminderTaskRecord = mock(Record.class);
+              Record followupTaskRecord = mock(Record.class);
 
               when(mockOrg
                       .getDataApi()
@@ -125,10 +136,40 @@ public class FunctionTest {
                       .build())
                   .thenReturn(serviceCaseRecord);
 
+              long twoDaysFromNow = clock.millis() + 2 * 24 * 60 * 60 * 1000;
+
+              when(mockOrg
+                      .getDataApi()
+                      .newRecordBuilder("Task")
+                      .withField("Subject", "Call")
+                      .withField("WhatId", serviceCaseRefId)
+                      .withField("WhoId", contactRefId)
+                      .withField("Description", "Please call customer to verify service location")
+                      .withField("Priority", "High")
+                      .withField("isReminderSet", true)
+                      .withField("ActivityDate", twoDaysFromNow)
+                      .build())
+                  .thenReturn(reminderTaskRecord);
+              when(mockOrg
+                      .getDataApi()
+                      .newRecordBuilder("Task")
+                      .withField("Subject", "Email")
+                      .withField("WhatId", serviceCaseRefId)
+                      .withField("WhoId", contactRefId)
+                      .withField(
+                          "Description",
+                          "Please follow up with customer after verifying service location")
+                      .build())
+                  .thenReturn(followupTaskRecord);
+
               when(unitOfWorkBuilder.registerCreate(accountRecord)).thenReturn(accountRefId);
               when(unitOfWorkBuilder.registerCreate(contactRecord)).thenReturn(contactRefId);
               when(unitOfWorkBuilder.registerCreate(serviceCaseRecord))
                   .thenReturn(serviceCaseRefId);
+              when(unitOfWorkBuilder.registerCreate(reminderTaskRecord))
+                  .thenReturn(reminderTaskRefId);
+              when(unitOfWorkBuilder.registerCreate(followupTaskRecord))
+                  .thenReturn(followupTaskRefId);
               when(unitOfWorkBuilder.build()).thenReturn(unitOfWork);
 
               when(mockOrg.getDataApi().commitUnitOfWork(unitOfWork))
@@ -146,10 +187,20 @@ public class FunctionTest {
                             mock(RecordModificationResult.class);
                         when(serviceCaseResult.getId()).thenReturn("5009A000002GYCrQAO");
 
+                        RecordModificationResult reminderTaskResult =
+                            mock(RecordModificationResult.class);
+                        when(reminderTaskResult.getId()).thenReturn("00T5600000FwnFHEAZ");
+
+                        RecordModificationResult followupTaskResult =
+                            mock(RecordModificationResult.class);
+                        when(followupTaskResult.getId()).thenReturn("00T5600000FwnFIEAZ");
+
                         Map<ReferenceId, RecordModificationResult> result = new HashMap<>();
                         result.put(accountRefId, accountResult);
                         result.put(contactRefId, contactResult);
                         result.put(serviceCaseRefId, serviceCaseResult);
+                        result.put(reminderTaskRefId, reminderTaskResult);
+                        result.put(followupTaskRefId, followupTaskResult);
                         return result;
                       });
 
@@ -181,10 +232,14 @@ public class FunctionTest {
               ReferenceId accountRefId = mock(ReferenceId.class);
               ReferenceId contactRefId = mock(ReferenceId.class);
               ReferenceId serviceCaseRefId = mock(ReferenceId.class);
+              ReferenceId reminderTaskRefId = mock(ReferenceId.class);
+              ReferenceId followupTaskRefId = mock(ReferenceId.class);
 
               Record accountRecord = mock(Record.class);
               Record contactRecord = mock(Record.class);
               Record serviceCaseRecord = mock(Record.class);
+              Record reminderTaskRecord = mock(Record.class);
+              Record followupTaskRecord = mock(Record.class);
 
               when(mockOrg
                       .getDataApi()
@@ -213,11 +268,41 @@ public class FunctionTest {
                       .build())
                   .thenReturn(serviceCaseRecord);
 
+              long twoDaysFromNow = System.currentTimeMillis() + 2 * 24 * 60 * 60 * 1000;
+              when(mockOrg
+                      .getDataApi()
+                      .newRecordBuilder("Task")
+                      .withField("Subject", "Call")
+                      .withField("WhatId", serviceCaseRefId)
+                      .withField("WhoId", contactRefId)
+                      .withField("Description", "Please call customer to verify service location")
+                      .withField("Priority", "High")
+                      .withField("isReminderSet", true)
+                      .withField("ActivityDate", twoDaysFromNow)
+                      .build())
+                  .thenReturn(reminderTaskRecord);
+              when(mockOrg
+                      .getDataApi()
+                      .newRecordBuilder("Task")
+                      .withField("Subject", "Email")
+                      .withField("WhatId", serviceCaseRefId)
+                      .withField("WhoId", contactRefId)
+                      .withField(
+                          "Description",
+                          "Please follow up with customer after verifying service location")
+                      .build())
+                  .thenReturn(followupTaskRecord);
+
               when(unitOfWorkBuilder.registerCreate(accountRecord)).thenReturn(accountRefId);
               when(unitOfWorkBuilder.registerCreate(contactRecord)).thenReturn(contactRefId);
               when(unitOfWorkBuilder.registerCreate(serviceCaseRecord))
                   .thenReturn(serviceCaseRefId);
+              when(unitOfWorkBuilder.registerCreate(reminderTaskRecord))
+                  .thenReturn(reminderTaskRefId);
+              when(unitOfWorkBuilder.registerCreate(followupTaskRecord))
+                  .thenReturn(followupTaskRefId);
               when(unitOfWorkBuilder.build()).thenReturn(unitOfWork);
+              ;
 
               // Create a custom DataApiError for input validation
               List<DataApiError> errors = new ArrayList<>();
@@ -272,10 +357,14 @@ public class FunctionTest {
               ReferenceId accountRefId = mock(ReferenceId.class);
               ReferenceId contactRefId = mock(ReferenceId.class);
               ReferenceId serviceCaseRefId = mock(ReferenceId.class);
+              ReferenceId reminderTaskRefId = mock(ReferenceId.class);
+              ReferenceId followupTaskRefId = mock(ReferenceId.class);
 
               Record accountRecord = mock(Record.class);
               Record contactRecord = mock(Record.class);
               Record serviceCaseRecord = mock(Record.class);
+              Record reminderTaskRecord = mock(Record.class);
+              Record followupTaskRecord = mock(Record.class);
 
               when(mockOrg
                       .getDataApi()
@@ -304,10 +393,40 @@ public class FunctionTest {
                       .build())
                   .thenReturn(serviceCaseRecord);
 
+              long twoDaysFromNow = System.currentTimeMillis() + 2 * 24 * 60 * 60 * 1000;
+              when(mockOrg
+                      .getDataApi()
+                      .newRecordBuilder("Task")
+                      .withField("Subject", "Call")
+                      .withField("WhatId", serviceCaseRefId)
+                      .withField("WhoId", contactRefId)
+                      .withField("Description", "Please call customer to verify service location")
+                      .withField("Priority", "High")
+                      .withField("isReminderSet", true)
+                      .withField("ActivityDate", twoDaysFromNow)
+                      .build())
+                  .thenReturn(reminderTaskRecord);
+              when(mockOrg
+                      .getDataApi()
+                      .newRecordBuilder("Task")
+                      .withField("Subject", "Email")
+                      .withField("WhatId", serviceCaseRefId)
+                      .withField("WhoId", contactRefId)
+                      .withField(
+                          "Description",
+                          "Please follow up with customer after verifying service location")
+                      .build())
+                  .thenReturn(followupTaskRecord);
+
               when(unitOfWorkBuilder.registerCreate(accountRecord)).thenReturn(accountRefId);
               when(unitOfWorkBuilder.registerCreate(contactRecord)).thenReturn(contactRefId);
               when(unitOfWorkBuilder.registerCreate(serviceCaseRecord))
                   .thenReturn(serviceCaseRefId);
+              when(unitOfWorkBuilder.registerCreate(reminderTaskRecord))
+                  .thenReturn(reminderTaskRefId);
+              when(unitOfWorkBuilder.registerCreate(followupTaskRecord))
+                  .thenReturn(followupTaskRefId);
+              when(unitOfWorkBuilder.build()).thenReturn(unitOfWork);
               when(unitOfWorkBuilder.build()).thenReturn(unitOfWork);
 
               when(mockOrg.getDataApi().commitUnitOfWork(unitOfWork))

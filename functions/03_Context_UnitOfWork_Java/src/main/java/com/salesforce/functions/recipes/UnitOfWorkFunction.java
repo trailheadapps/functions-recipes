@@ -8,6 +8,9 @@ import com.salesforce.functions.jvm.sdk.data.Record;
 import com.salesforce.functions.jvm.sdk.data.RecordModificationResult;
 import com.salesforce.functions.jvm.sdk.data.ReferenceId;
 import com.salesforce.functions.jvm.sdk.data.builder.UnitOfWorkBuilder;
+import java.time.Clock;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +22,7 @@ import org.slf4j.LoggerFactory;
  */
 public class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, FunctionOutput> {
   private static final Logger LOGGER = LoggerFactory.getLogger(UnitOfWorkFunction.class);
+  private Clock clock = Clock.systemUTC();
 
   @Override
   public FunctionOutput apply(InvocationEvent<FunctionInput> event, Context context)
@@ -63,10 +67,47 @@ public class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, Fun
             .build();
     ReferenceId serviceCaseRefId = unitOfWork.registerCreate(serviceCase);
 
-    // The transaction will be commited and all the three objects are going to be created. The
-    // resulting map contains the Id's of the created objects
+    // Calculate two days from now to set a reminder date
+    long twoDaysFromNow = clock.millis() + 2 * 24 * 60 * 60 * 1000;
+
+    // Here we will create two Tasks related to the case
+    // Call reminder task
+    Record reminderTask =
+        dataApi
+            .newRecordBuilder("Task")
+            .withField("Subject", "Call")
+            .withField("WhatId", serviceCaseRefId)
+            .withField("WhoId", contactRefId)
+            .withField("Description", "Please call customer to verify service location")
+            .withField("Priority", "High")
+            .withField("isReminderSet", true)
+            .withField("ActivityDate", twoDaysFromNow)
+            .build();
+
+    // Email follow up task
+    Record followupTask =
+        dataApi
+            .newRecordBuilder("Task")
+            .withField("Subject", "Email")
+            .withField("WhatId", serviceCaseRefId)
+            .withField("WhoId", contactRefId)
+            .withField(
+                "Description", "Please follow up with customer after verifying service location")
+            .build();
+
+    // Register the tasks to be created
+    ReferenceId reminderTaskRefId = unitOfWork.registerCreate(reminderTask);
+    ReferenceId followupTaskRefId = unitOfWork.registerCreate(followupTask);
+
+    // The transaction will be committed and all the objects are going to be created.
+    // The resulting map contains the Id's of the created objects
     Map<ReferenceId, RecordModificationResult> result =
         dataApi.commitUnitOfWork(unitOfWork.build());
+
+    // Create a List with the multiple Task Reference Ids
+    List<String> taskIds = new ArrayList<>();
+    taskIds.add(result.get(reminderTaskRefId).getId());
+    taskIds.add(result.get(followupTaskRefId).getId());
 
     LOGGER.info("Function successfully commited UoW with {} affected records!", result.size());
 
@@ -74,6 +115,16 @@ public class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, Fun
     return new FunctionOutput(
         result.get(accountRefId).getId(),
         result.get(contactRefId).getId(),
-        result.get(serviceCaseRefId).getId());
+        result.get(serviceCaseRefId).getId(),
+        taskIds);
+  }
+
+  /**
+   * Sets the clock used to calculate the reminder date. Useful for testing.
+   *
+   * @param clock
+   */
+  public void setClock(Clock clock) {
+    this.clock = clock;
   }
 }
