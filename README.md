@@ -10,11 +10,6 @@ Salesforce Functions lets you use the Salesforce Platform for building event-dri
 
 **Functions Recipes** is a library of examples to help you getting started with Salesforce Functions and get used to their main features.
 
-> **Note**
-> This feature is a Beta Service. Customers may opt to try such Beta Service in its sole discretion. Any use of the Beta Service is subject to the applicable Beta Services Terms provided at [Agreements and Terms](https://www.salesforce.com/company/legal/agreements/).
->
-> If you want to be part of the Invite Beta Service, please [nominate yourself](http://sfdc.co/functions-beta).
-
 To learn more about Salesforce Functions please visit the [documentation center](https://developer.salesforce.com/docs/platform/functions/guide/index.html).
 
 ## Getting Started
@@ -62,6 +57,12 @@ sfdx force:source:push -f
 sfdx force:user:permset:assign -n FunctionsRecipes
 ```
 
+6. Assign the **Functions** permission set to the default user:
+
+```sh
+sfdx force:user:permset:assign -n Functions
+```
+
 ## Salesforce Functions Deployment
 
 For more information about how to deploy Functions to a Compute Environment and connect it to an org, please refer to to the [documentation](https://developer.salesforce.com/docs/platform/functions/guide/deploy#getting-a-list-of-deployed-functions)
@@ -100,16 +101,17 @@ Each individual function can be started and invoked locally using the Salesforce
 
 1. Introduction to Functions
    - [ProcessLargeData (Node.js)](functions/01_Intro_ProcessLargeData_JS)
+   - [ProcessLargeData (Java)](functions/01_Intro_ProcessLargeData_Java)
 1. `InvocationEvent`
    - [InvocationEvent (Node.js)](functions/02_InvocationEvent_JS)
 1. `Context`
    - [DataApiQuery (Node.js)](functions/03_Context_DataApiQuery_JS)
    - [OrgInfo (Node.js / TypeScript)](functions/03_Context_OrgInfo_TypeScript)
    - [SalesforceSDK (Node.js)](functions/03_Context_SalesforceSDK_JS)
+   - [SalesforceSDK (Java)](functions/03_Context_SalesforceSDK_Java)
    - [UnitOfWork (Node.js)](functions/03_Context_UnitOfWork_JS)
+   - [UnitOfWork (Java)](functions/03_Context_UnitOfWork_Java)
 1. Logging
    - [Logger (Node.js)](functions/04_Logger_JS)
 1. Environment Variables
    - [Environment (Node.js)](functions/05_Environment_JS)
-
-Note: Java functions can be found in the [`java-functions`](https://github.com/trailheadapps/functions-recipes/tree/java-functions) branch.

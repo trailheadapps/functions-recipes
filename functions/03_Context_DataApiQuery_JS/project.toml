@@ -4,5 +4,5 @@ schema-version = "0.2"
 [com.salesforce]
 schema-version = "0.1"
 id = "dataapiqueryjs"
-description = "A Salesforce Function"
+description = "Returns accounts and its contacts by keyword"
 type = "function"

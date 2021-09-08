@@ -1,0 +1,7 @@
+{
+  "name": "MyAccount",
+  "accountNumber": "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+  "industry": "Technology",
+  "type": "Prospect",
+  "website": "www.salesforce.com"
+}
