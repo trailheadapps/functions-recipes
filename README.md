@@ -97,7 +97,7 @@ From there you'll be able to explore the source code and invoke the deployed fun
 
 Each individual function can be started and invoked locally using the Salesforce CLI, you can refer to each individual **README** for instructions on how to start and invoke each function locally.
 
-### Node.js Functions
+### Available Recipes
 
 1. Introduction to Functions
    - [ProcessLargeData (Node.js)](functions/01_Intro_ProcessLargeData_JS)
