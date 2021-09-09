@@ -1,17 +1,18 @@
 @isTest
 private class GenericFunctionInvokerTest {
-    /*@isTest
+    @isTest
     static void returnsResponseOnSuccessfulInvocation() {
         // GIVEN
-        Test.setMock(functions.FunctionInvokeMock.class, new FunctionsInvokeMockInner());
+        FunctionsInvokeMockInner mock = new FunctionsInvokeMockInner();
+        Test.setMock(functions.FunctionInvokeMock.class, mock);
 
         // WHEN
         Test.startTest();
-        String response = GenericFunctionInvoker.invoke('myFunc', '{ recordId : "111"}');
+        String response = GenericFunctionInvoker.invoke('functions_recipes.01_Intro_ProcessLargeData_JS', '{ recordId : "111"}');
         Test.stopTest();
 
         // THEN
-        System.assertEquals(FunctionsInvokeMockInner.response, response);
+        System.assertEquals(mock.response, response);
     }
 
     @isTest
@@ -24,19 +25,19 @@ private class GenericFunctionInvokerTest {
         // WHEN
         try {
             Test.startTest();
-            GenericFunctionInvoker.invoke('myFunc', '{ recordId : "111"}');
+            GenericFunctionInvoker.invoke('functions_recipes.01_Intro_ProcessLargeData_JS', '{ recordId : "111"}');
             Test.stopTest();
             System.assert(false, 'Exception expected');
         } catch (Exception e) {
             // THEN
             System.assert(e instanceof CalloutException, 'Expected CalloutException');
-            System.assertEquals(FunctionsInvokeMockInner.error, e.getMessage());
+            System.assertEquals(mock.error, e.getMessage());
         }
     }
 
     public class FunctionsInvokeMockInner implements functions.FunctionInvokeMock {
-        public static String response = 'Success!';
-        public static String error = 'Function returned an error!';
+        public String response = 'Success!';
+        public String error = 'Function returned an error!';
         public Boolean throwError = false;
         private String invocationId = '000000000000000';
 
@@ -50,5 +51,5 @@ private class GenericFunctionInvokerTest {
     
             return functions.MockFunctionInvocationFactory.createSuccessResponse(invocationId, response);
        }
-    }*/
+    }
 }
