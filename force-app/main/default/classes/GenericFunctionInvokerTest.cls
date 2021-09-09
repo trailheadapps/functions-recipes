@@ -8,7 +8,7 @@ private class GenericFunctionInvokerTest {
 
         // WHEN
         Test.startTest();
-        String response = GenericFunctionInvoker.invoke('functions_recipes.01_Intro_ProcessLargeData_JS', '{ recordId : "111"}');
+        String response = GenericFunctionInvoker.invoke('functions_recipes.processlargedatajs', '{ recordId : "111"}');
         Test.stopTest();
 
         // THEN
@@ -25,7 +25,7 @@ private class GenericFunctionInvokerTest {
         // WHEN
         try {
             Test.startTest();
-            GenericFunctionInvoker.invoke('functions_recipes.01_Intro_ProcessLargeData_JS', '{ recordId : "111"}');
+            GenericFunctionInvoker.invoke('functions_recipes.processlargedatajs', '{ recordId : "111"}');
             Test.stopTest();
             System.assert(false, 'Exception expected');
         } catch (Exception e) {
