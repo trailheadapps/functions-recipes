@@ -20,7 +20,7 @@
     "prettier": "prettier --write \"**/*.{cls,cmp,component,css,html,js,ts,json,md,page,trigger,xml,yaml,yml}\"",
     "prettier:verify": "prettier --list-different \"**/*.{cls,cmp,component,css,html,js,ts,json,md,page,trigger,xml,yaml,yml}\"",
     "postinstall": "lerna exec -- npm install && lerna link && husky install",
-    "precommit": "node scripts/generateFunctionDetails.js && lint-staged",
+    "precommit": "lint-staged && node scripts/generateFunctionDetails.js",
     "ci:postinstall": "lerna exec -- npm ci && lerna link"
   },
   "devDependencies": {
