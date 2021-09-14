@@ -1,71 +1,73 @@
-
 window.functionData = (function () {
   return {
     getData: function () {
-      return [{
-        name: "01_Intro_ProcessLargeData",
-        label: "Process Large Data Volumes",
-        subtitle: "Process Large Data Volumes",
-        description: "This function takes a large JSON payload, calculates the distance between a supplied cordinate and the data, sort's it, and returns the nearest x results.",
-        functions: [{
-          name: "01_Intro_ProcessLargeData_JS",
-          label: "Process Large Data - JavaScript",
-          language: "JavaScript",
-          files: [{
-            name: "index.js",
-            label: "Index",
-            path: "/",
-            body: `"use strict"
+      return [
+        {
+          name: "01_Intro_ProcessLargeData",
+          label: "Process Large Data Volumes",
+          subtitle: "Process Large Data Volumes",
+          description:
+            "This function takes a large JSON payload, calculates the distance between a supplied cordinate and the data, sorts it, and returns the nearest x results.",
+          functions: [
+            {
+              name: "01_Intro_ProcessLargeData_JS",
+              label: "Process Large Data - JavaScript",
+              language: "JavaScript",
+              files: [
+                {
+                  name: "index.js",
+                  label: "Index",
+                  path: "/",
+                  body: `"use strict";
+
 const sampleData = require("./data/sample-data.json");
+
 /**
-* This function takes a large JSON payload, calculates the distance between a supplied cordinate and the data, sorts it, and returns the nearest x results.
-* The exported method is the entry point for your code when the function is invoked.
-*
-* Following parameters are pre-configured and provided to your function on execution:
-* @param event: represents the data associated with the occurrence of an event, and
-*                 supporting metadata about the source of that occurrence.
-* @param context: represents the connection to Functions and your Salesforce org.
-* @param logger: logging handler used to capture application logs and trace specifically
-*                 to a given execution of a function.
-*/
-module.exports = async function(event, context, logger) {
+ * This function takes a large JSON payload, calculates the distance between a supplied cordinate and the data, sorts it, and returns the nearest x results.
+ *
+ * The exported method is the entry point for your code when the function is invoked.
+ *
+ * Following parameters are pre-configured and provided to your function on execution:
+ * @param event: represents the data associated with the occurrence of an event, and
+ *                 supporting metadata about the source of that occurrence.
+ * @param context: represents the connection to Functions and your Salesforce org.
+ * @param logger: logging handler used to capture application logs and trace specifically
+ *                 to a given execution of a function.
+ */
+module.exports = async function (event, context, logger) {
   const data = event.data || {};
   logger.info(
-    "Invoking processlargedatajs Function with payload \${JSON.stringify(data)}"
+    \`Invoking processlargedatajs Function with payload \${JSON.stringify(data)}\`
   );
 
   // validate the payload params
   if (!data.latitude || !data.longitude) {
-    throw new Error(
-      "Please provide latitude and longitude");
-
+    throw new Error(\`Please provide latitude and longitude\`);
   }
 
   // Sets 5 if length is not provided, also accepts length = 0
-  const length = data.length ? ? 5;
+  const length = data.length ?? 5;
 
   // Iterate through the schools in the file and calculate the distance using the distance function below
   const schools = sampleData.schools
-      .map((school) => {
-          return Object.assign({}, school, {
-              distance: distance(
-                  data.latitude,
-                  data.longitude,
-                  school.latitude,
-                  school.longitude
-              )
-          });
-      })
-      // Sort schools by distance distance from the provided location
-      .sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+    .map((school) => {
+      return Object.assign({}, school, {
+        distance: distance(
+          data.latitude,
+          data.longitude,
+          school.latitude,
+          school.longitude
+        )
+      });
+    })
+    // Sort schools by distance distance from the provided location
+    .sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
 
   // Assign the nearest x schools to the results constant based on the length property provided in the payload
   const results = schools.slice(0, length);
 
   // return the results
-  return {
-      schools: results
-  };
+  return { schools: results };
 };
 
 /**
@@ -78,47 +80,52 @@ module.exports = async function(event, context, logger) {
  */
 function distance(latitudeSt, longitudeSt, latitudeSch, longitudeSch) {
   if (latitudeSt == latitudeSch && longitudeSt == longitudeSch) {
-      return 0;
+    return 0;
   } else {
-      const radLatitudeSf = (Math.PI * latitudeSt) / 180;
-      const radLatitudeSch = (Math.PI * latitudeSch) / 180;
-      const theta = longitudeSt - longitudeSch;
-      const radTheta = (Math.PI * theta) / 180;
+    const radLatitudeSf = (Math.PI * latitudeSt) / 180;
+    const radLatitudeSch = (Math.PI * latitudeSch) / 180;
+    const theta = longitudeSt - longitudeSch;
+    const radTheta = (Math.PI * theta) / 180;
     let dist =
-          Math.sin(radLatitudeSf) * Math.sin(radLatitudeSch) +
-          Math.cos(radLatitudeSf) * Math.cos(radLatitudeSch) * Math.cos(radTheta);
-      if (dist > 1) {
-          dist = 1;
-      }
-      dist = Math.acos(dist);
-      dist = (dist * 180) / Math.PI;
-      dist = dist * 60 * 1.1515;
-      return dist;
+      Math.sin(radLatitudeSf) * Math.sin(radLatitudeSch) +
+      Math.cos(radLatitudeSf) * Math.cos(radLatitudeSch) * Math.cos(radTheta);
+    if (dist > 1) {
+      dist = 1;
+    }
+    dist = Math.acos(dist);
+    dist = (dist * 180) / Math.PI;
+    dist = dist * 60 * 1.1515;
+    return dist;
   }
-}`
-          }]
-        },{
-          name: "01_Intro_ProcessLargeData_Java",
-          label: "Process Large Data - Java",
-          language: "Java",
-          inputs: [{
-            type: "number",
-            label: "latitude"
-          },
-          {
-            type: "number",
-            label: "longitude"
-          },
-          {
-            type: "number",
-            label: "length"
-          }
-          ],
-          files: [{
-            name: "ProcessLargeDataFunction.java",
-            label: "Process Large Data Function",
-            path: "/",
-            body: `package com.salesforce.functions.recipes;
+}
+`
+                }
+              ]
+            },
+            {
+              name: "01_Intro_ProcessLargeData_Java",
+              label: "Process Large Data - Java",
+              language: "Java",
+              inputs: [
+                {
+                  type: "number",
+                  label: "latitude"
+                },
+                {
+                  type: "number",
+                  label: "longitude"
+                },
+                {
+                  type: "number",
+                  label: "length"
+                }
+              ],
+              files: [
+                {
+                  name: "ProcessLargeDataFunction.java",
+                  label: "Process Large Data Function",
+                  path: "/",
+                  body: `package com.salesforce.functions.recipes;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
@@ -203,12 +210,13 @@ public class ProcessLargeDataFunction implements SalesforceFunction<FunctionInpu
     }
   }
 }
-              `
-          }, {
-            name: "FunctionInput.java",
-            label: "Function Input",
-            path: "/",
-            body: `package com.salesforce.functions.recipes;
+`
+                },
+                {
+                  name: "FunctionInput.java",
+                  label: "Function Input",
+                  path: "/",
+                  body: `package com.salesforce.functions.recipes;
 
 public class FunctionInput {
   private double latitude;
@@ -234,13 +242,14 @@ public class FunctionInput {
   public int getLength() {
     return length;
   }
-}`
-          },
-          {
-            name: "FunctionOutput.java",
-            label: "Function Output",
-            path: "/",
-            body: `package com.salesforce.functions.recipes;
+}
+`
+                },
+                {
+                  name: "FunctionOutput.java",
+                  label: "Function Output",
+                  path: "/",
+                  body: `package com.salesforce.functions.recipes;
 
 import java.util.List;
 
@@ -254,13 +263,14 @@ public class FunctionOutput {
   public List<School> getSchools() {
     return schools;
   }
-}`
-          },
-          {
-            name: "JavaResponse.java",
-            label: "Java Response",
-            path: "/",
-            body: `package com.salesforce.functions.recipes;
+}
+`
+                },
+                {
+                  name: "JavaResponse.java",
+                  label: "Java Response",
+                  path: "/",
+                  body: `package com.salesforce.functions.recipes;
 
 import java.util.List;
 
@@ -275,13 +285,13 @@ public class JsonResponse {
     this.schools = schools;
   }
 }
-              `
-          },
-          {
-            name: "School.java",
-            label: "School",
-            path: "/",
-            body: `package com.salesforce.functions.recipes;
+`
+                },
+                {
+                  name: "School.java",
+                  label: "School",
+                  path: "/",
+                  body: `package com.salesforce.functions.recipes;
 
 public class School {
   private String name;
@@ -420,38 +430,42 @@ public class School {
     this.distance = distance;
   }
 }
-              `
-          }
+`
+                }
+              ]
+            }
           ]
-        }
-        ]
-      },
-      {
-        name: "02_InvocationEvent",
-        label: "Invocation Event",
-        subtitle: "Functions Recipes",
-        description: "Detects a payload type and returns information about it.",
-        functions: [{
-          name: "02_InvocationEvent_JS",
-          label: "Invocation Event - JavaScript",
-          language: "JavaScript",
-          inputs: [{
-            type: "number",
-            label: "latitude"
-          },
-          {
-            type: "number",
-            label: "longitude"
-          },
-          {
-            type: "number",
-            label: "length"
-          }
-          ],
-          files: [{
-            name: "index.js",
-            label: "Invocation Event",
-            body: `"use strict";
+        },
+        {
+          name: "02_InvocationEvent",
+          label: "Invocation Event",
+          subtitle: "Functions Recipes",
+          description:
+            "Detects a payload type and returns information about it.",
+          functions: [
+            {
+              name: "02_InvocationEvent_JS",
+              label: "Invocation Event - JavaScript",
+              language: "JavaScript",
+              inputs: [
+                {
+                  type: "number",
+                  label: "latitude"
+                },
+                {
+                  type: "number",
+                  label: "longitude"
+                },
+                {
+                  type: "number",
+                  label: "length"
+                }
+              ],
+              files: [
+                {
+                  name: "index.js",
+                  label: "Invocation Event",
+                  body: `"use strict";
 
 /**
  * Detects a payload type and returns information about it
@@ -468,7 +482,7 @@ public class School {
 module.exports = async function (event, context, logger) {
   const data = event.data || {};
   logger.info(
-    "Invoking invocationeventjs with payload \${JSON.stringify(data)}"
+    \`Invoking invocationeventjs with payload \${JSON.stringify(data)}\`
   );
 
   // Extract information from the event (https://cloudevents.io/)
@@ -488,57 +502,64 @@ module.exports = async function (event, context, logger) {
     results.payloadInfo.type = "object";
     results.payloadInfo.keys = Object.keys(data);
   } else {
-    throw new Error("Payload of type '\${typeof data}' not supported");
+    throw new Error(\`Payload of type '\${typeof data}' not supported\`);
   }
 
   logger.info(JSON.stringify(results));
   return results;
-};            
-              `
-          }],}],
-        }, {
+};
+`
+                }
+              ]
+            }
+          ]
+        },
+        {
           name: "03_Context_DataApiQuery",
           label: "Data API Query",
           subtitle: "Functions Recipes",
-          description: "The exported method is the entry point for your code when the function is invoked.",
-          functions: [{
-            name: "03_Context_DataApiQuery_JS",
-            label: "Context - Data API Query - JavaScript",
-            language: "JavaScript",
-            inputs: [{
-              type: "number",
-              label: "latitude"
-            },
+          description:
+            "The exported method is the entry point for your code when the function is invoked.",
+          functions: [
             {
-              type: "number",
-              label: "longitude"
-            },
-            {
-              type: "number",
-              label: "length"
-            }
-            ],
-            files: [{
-              name: "index.js",
-              label: "Invocation Event",
-              body: `/**
-* Describe Dataapiqueryjs here.
-*
-* The exported method is the entry point for your code when the function is invoked.
-*
-* Following parameters are pre-configured and provided to your function on execution:
-* @param event: represents the data associated with the occurrence of an event, and
-*                 supporting metadata about the source of that occurrence.
-* @param context: represents the connection to Functions and your Salesforce org.
-* @param logger: logging handler used to capture application logs and trace specifically
-*                 to a given execution of a function.
-*/
-
+              name: "03_Context_DataApiQuery_JS",
+              label: "Context - Data API Query - JavaScript",
+              language: "JavaScript",
+              inputs: [
+                {
+                  type: "number",
+                  label: "latitude"
+                },
+                {
+                  type: "number",
+                  label: "longitude"
+                },
+                {
+                  type: "number",
+                  label: "length"
+                }
+              ],
+              files: [
+                {
+                  name: "index.js",
+                  label: "Invocation Event",
+                  body: `/**
+ * Returns accounts and its contacts by keyword
+ *
+ * The exported method is the entry point for your code when the function is invoked.
+ *
+ * Following parameters are pre-configured and provided to your function on execution:
+ * @param event: represents the data associated with the occurrence of an event, and
+ *                 supporting metadata about the source of that occurrence.
+ * @param context: represents the connection to Functions and your Salesforce org.
+ * @param logger: logging handler used to capture application logs and trace specifically
+ *                 to a given execution of a function.
+ */
 module.exports = async function (event, context, logger) {
   logger.info(
-    "Invoking datapiqueryjs Function with payload \${JSON.stringify(
+    \`Invoking datapiqueryjs Function with payload \${JSON.stringify(
       event.data || {}
-    )}"
+    )}\`
   );
 
   const keyword = event.data.keyword;
@@ -547,61 +568,69 @@ module.exports = async function (event, context, logger) {
   }
 
   const results = await context.org.dataApi.query(
-    "SELECT Id, Name, (SELECT Name, Email FROM Contacts) FROM Account WHERE Name LIKE '%\${keyword}%'"
+    \`SELECT Id, Name, (SELECT Name, Email FROM Contacts) FROM Account WHERE Name LIKE '%\${keyword}%'\`
   );
   logger.info(JSON.stringify(results));
   return results;
 };
-             `
-            }],
-          }],
+`
+                }
+              ]
+            }
+          ]
         },
         {
           name: "03_Context_OrgInfo",
           label: "OrgInfo",
           subtitle: "Functions Recipes",
-          description: "Returns the Salesforce Org information attached to the context.",
-          functions: [{
-            name: "03_Context_OrgInfo_TypeScript",
-            label: "Context - OrgInfo - TypeScript",
-            language: "TypeScript",
-            inputs: [{
-              type: "number",
-              label: "latitude"
-            },
+          description:
+            "Returns the Salesforce Org information attached to the context.",
+          functions: [
             {
-              type: "number",
-              label: "longitude"
-            },
-            {
-              type: "number",
-              label: "length"
-            }
-            ],
-            files: [{
-              name: "index.ts",
-              label: "Index",
-              body: `/**
-* Returns the Salesforce Org information attached to the context.
-*
-* The exported method is the entry point for your code when the function is invoked.
-*
-* Following parameters are pre-configured and provided to your function on execution:
-* @param event: represents the data associated with the occurrence of an event, and
-*                 supporting metadata about the source of that occurrence.
-* @param context: represents the connection to Functions and your Salesforce org.
-* @param logger: logging handler used to capture application logs and trace specifically
-*                 to a given execution of a function.
-*/
+              name: "03_Context_OrgInfo_TypeScript",
+              label: "Context - OrgInfo - TypeScript",
+              language: "TypeScript",
+              inputs: [
+                {
+                  type: "number",
+                  label: "latitude"
+                },
+                {
+                  type: "number",
+                  label: "longitude"
+                },
+                {
+                  type: "number",
+                  label: "length"
+                }
+              ],
+              files: [
+                {
+                  name: "index.ts",
+                  label: "Index",
+                  body: `import { InvocationEvent, Context, Logger, Org } from "sf-fx-sdk-nodejs";
+
+/**
+ * Returns the Salesforce Org information attached to the context.
+ *
+ * The exported method is the entry point for your code when the function is invoked.
+ *
+ * Following parameters are pre-configured and provided to your function on execution:
+ * @param event: represents the data associated with the occurrence of an event, and
+ *                 supporting metadata about the source of that occurrence.
+ * @param context: represents the connection to Functions and your Salesforce org.
+ * @param logger: logging handler used to capture application logs and trace specifically
+ *                 to a given execution of a function.
+ */
 export default async function execute(
-  event: any,
-  context: any,
-  logger: any
-): Promise<any> {
+  event: InvocationEvent<any>,
+  context: Context,
+  logger: Logger
+): Promise<OrgInfo> {
   logger.info(
-    "Invoking orginfots Function with payload \${JSON.stringify(
+    \`Invoking orginfots Function with payload \${JSON.stringify(
       event.data || {}
-    )}"
+    )}\`
   );
 
   // Check if org is null or undefined
@@ -622,7 +651,7 @@ export class OrgInfo {
   id: string;
   user: any;
 
-  constructor(org: any) {
+  constructor(org: Org) {
     this.apiVersion = org.apiVersion;
     this.baseUrl = org.baseUrl;
     this.domainUrl = org.domainUrl;
@@ -630,36 +659,42 @@ export class OrgInfo {
     this.user = org.user;
   }
 }
-             `
-            }],
-        }]
-      },
+`
+                }
+              ]
+            }
+          ]
+        },
         {
           name: "03_Context_SalesforceSDK",
           label: "SalesforceSDK",
           subtitle: "Functions Recipes",
-          description: "This function takes a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.",
-          functions: [{
-            name: "03_Context_SalesforceSDK_JS",
-            label: "Context - SalesforceSDK - JavaScript",
-            language: "JavaScript",
-            inputs: [{
-              type: "number",
-              label: "latitude"
-            },
+          description:
+            "This function takes a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.",
+          functions: [
             {
-              type: "number",
-              label: "longitude"
-            },
-            {
-              type: "number",
-              label: "length"
-            }
-            ],
-            files: [{
-              name: "index.js",
-              label: "Salesforce SDK",
-              body: `"use strict";
+              name: "03_Context_SalesforceSDK_JS",
+              label: "Context - SalesforceSDK - JavaScript",
+              language: "JavaScript",
+              inputs: [
+                {
+                  type: "number",
+                  label: "latitude"
+                },
+                {
+                  type: "number",
+                  label: "longitude"
+                },
+                {
+                  type: "number",
+                  label: "length"
+                }
+              ],
+              files: [
+                {
+                  name: "index.js",
+                  label: "Salesforce SDK",
+                  body: `"use strict";
 
 /**
  * This function takes a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.
@@ -675,9 +710,9 @@ export class OrgInfo {
  */
 module.exports = async function (event, context, logger) {
   logger.info(
-    "Invoking salesforcesdkjs Function with payload \${JSON.stringify(
+    \`Invoking salesforcesdkjs Function with payload \${JSON.stringify(
       event.data || {}
-    )}"
+    )}\`
   );
 
   // Extract Properties from Payload
@@ -685,14 +720,14 @@ module.exports = async function (event, context, logger) {
 
   // Validate the payload params
   if (!name) {
-    throw new Error("Please provide account name");
+    throw new Error(\`Please provide account name\`);
   }
 
   // Define a record using the RecordForCreate type and providing the Developer Name
   const account = {
     type: "Account",
     fields: {
-      Name: "\${name}-\${Date.now()}",
+      Name: \`\${name}-\${Date.now()}\`,
       AccountNumber: accountNumber,
       Industry: industry,
       Type: type,
@@ -705,40 +740,43 @@ module.exports = async function (event, context, logger) {
     const { id: recordId } = await context.org.dataApi.create(account);
 
     // Query Accounts using the SalesforceSDK DataApi to verify that our new Account was created.
-    const soql = "SELECT Fields(STANDARD) FROM Account WHERE Id = '\${recordId}'";
+    const soql = \`SELECT Fields(STANDARD) FROM Account WHERE Id = '\${recordId}'\`;
     const queryResults = await context.org.dataApi.query(soql);
     return queryResults;
   } catch (err) {
     // Catch any DML errors and pass the throw an error with the message
-    const errorMessage = "Failed to insert record. Root Cause: \${err.message}";
+    const errorMessage = \`Failed to insert record. Root Cause: \${err.message}\`;
     logger.error(errorMessage);
     throw new Error(errorMessage);
   }
 };
-             `
-            }],
-          },
-          {
-            name: "03_Context_SalesforceSDK_Java",
-            label: "Context - SalesforceSDK - Java",
-            language: "Java",
-            inputs: [{
-              type: "number",
-              label: "latitude"
+`
+                }
+              ]
             },
             {
-              type: "number",
-              label: "longitude"
-            },
-            {
-              type: "number",
-              label: "length"
-            }
-            ],
-            files: [{
-              name: "SalesforceSDKFunction.java",
-              label: "Salesforce SDK",
-              body: `package com.salesforce.functions.recipes;
+              name: "03_Context_SalesforceSDK_Java",
+              label: "Context - SalesforceSDK - Java",
+              language: "Java",
+              inputs: [
+                {
+                  type: "number",
+                  label: "latitude"
+                },
+                {
+                  type: "number",
+                  label: "longitude"
+                },
+                {
+                  type: "number",
+                  label: "length"
+                }
+              ],
+              files: [
+                {
+                  name: "SalesforceSDKFunction.java",
+                  label: "Salesforce SDK",
+                  body: `package com.salesforce.functions.recipes;
 
 import com.salesforce.functions.jvm.sdk.Context;
 import com.salesforce.functions.jvm.sdk.InvocationEvent;
@@ -810,13 +848,13 @@ public class SalesforceSDKFunction implements SalesforceFunction<FunctionInput, 
 
     return new FunctionOutput(accounts);
   }
-}              
-             `
-            },
-            {
-              name: "Account.java",
-              label: "Salesforce SDK",
-              body: `package com.salesforce.functions.recipes;
+}
+`
+                },
+                {
+                  name: "Account.java",
+                  label: "Salesforce SDK",
+                  body: `package com.salesforce.functions.recipes;
 
 public class Account {
   private final String id;
@@ -835,12 +873,12 @@ public class Account {
     return name;
   }
 }
-             `
-            },
-            {
-              name: "FunctionInput.java",
-              label: "Salesforce SDK",
-              body: `package com.salesforce.functions.recipes;
+`
+                },
+                {
+                  name: "FunctionInput.java",
+                  label: "Salesforce SDK",
+                  body: `package com.salesforce.functions.recipes;
 
 public class FunctionInput {
   private String name;
@@ -880,12 +918,12 @@ public class FunctionInput {
     return this.website;
   }
 }
-             `
-            },
-            {
-              name: "FunctionOutput.java",
-              label: "Salesforce SDK",
-              body: `package com.salesforce.functions.recipes;
+`
+                },
+                {
+                  name: "FunctionOutput.java",
+                  label: "Salesforce SDK",
+                  body: `package com.salesforce.functions.recipes;
 
 import java.util.List;
 
@@ -899,37 +937,43 @@ public class FunctionOutput {
   public List<Account> getAccounts() {
     return accounts;
   }
-}                      
-             `
-            }],
-          }],
+}
+`
+                }
+              ]
+            }
+          ]
         },
         {
           name: "03_Context_UnitOfWork",
           label: "UnitOfWork",
           subtitle: "Functions Recipes",
-          description: "This function takes a payload containing Account, Contact, and Case details and uses the Unit of Work pattern to assign the corresponding values to to its Record while maintaining the relationships. It then commits the unit of work and returns the Record Id's for each object.",
-          functions: [{
-            name: "03_Context_UnitOfWork_JS",
-            label: "Context - UnitofWork - JavaScript",
-            language: "JavaScript",
-            inputs: [{
-              type: "number",
-              label: "latitude"
-            },
+          description:
+            "This function takes a payload containing Account, Contact, and Case details and uses the Unit of Work pattern to assign the corresponding values to to its Record while maintaining the relationships. It then commits the unit of work and returns the Record Id's for each object.",
+          functions: [
             {
-              type: "number",
-              label: "longitude"
-            },
-            {
-              type: "number",
-              label: "length"
-            }
-            ],
-            files: [{
-              name: "index.js",
-              label: "UnitOfWork",
-              body: `"use strict";
+              name: "03_Context_UnitOfWork_JS",
+              label: "Context - UnitofWork - JavaScript",
+              language: "JavaScript",
+              inputs: [
+                {
+                  type: "number",
+                  label: "latitude"
+                },
+                {
+                  type: "number",
+                  label: "longitude"
+                },
+                {
+                  type: "number",
+                  label: "length"
+                }
+              ],
+              files: [
+                {
+                  name: "index.js",
+                  label: "UnitOfWork",
+                  body: `"use strict";
 
 /**
  * This function takes a payload containing Account, Contact, and Case details and
@@ -948,9 +992,9 @@ public class FunctionOutput {
  */
 module.exports = async function (event, context, logger) {
   logger.info(
-    "Invoking unitofworkjs Function with payload \${JSON.stringify(
+    \`Invoking unitofworkjs Function with payload \${JSON.stringify(
       event.data || {}
-    )}"
+    )}\`
   );
 
   // Validate Input
@@ -1004,7 +1048,7 @@ module.exports = async function (event, context, logger) {
     };
     return result;
   } catch (err) {
-    const errorMessage = "Failed to insert record. Root Cause : \${err.message}";
+    const errorMessage = \`Failed to insert record. Root Cause : \${err.message}\`;
     logger.error(errorMessage);
     throw new Error(errorMessage);
   }
@@ -1016,32 +1060,35 @@ module.exports = async function (event, context, logger) {
  * @param {any} value
  */
 function validateField(field, value) {
-  if (!value) throw new Error("Please provide \${field}");
+  if (!value) throw new Error(\`Please provide \${field}\`);
 }
-             `
-            }],
-          },
-          {
-            name: "03_Context_UnitOfWork_Java",
-            label: "UnitOfWork - Java",
-            language: "Java",
-            inputs: [{
-              type: "number",
-              label: "latitude"
+`
+                }
+              ]
             },
             {
-              type: "number",
-              label: "longitude"
-            },
-            {
-              type: "number",
-              label: "length"
-            }
-            ],
-            files: [{
-              name: "UnitOfWorkFunction.java",
-              label: "UnitOfWork",
-              body: `package com.salesforce.functions.recipes;
+              name: "03_Context_UnitOfWork_Java",
+              label: "UnitOfWork - Java",
+              language: "Java",
+              inputs: [
+                {
+                  type: "number",
+                  label: "latitude"
+                },
+                {
+                  type: "number",
+                  label: "longitude"
+                },
+                {
+                  type: "number",
+                  label: "length"
+                }
+              ],
+              files: [
+                {
+                  name: "UnitOfWorkFunction.java",
+                  label: "UnitOfWork",
+                  body: `package com.salesforce.functions.recipes;
 
 import com.salesforce.functions.jvm.sdk.Context;
 import com.salesforce.functions.jvm.sdk.InvocationEvent;
@@ -1051,6 +1098,9 @@ import com.salesforce.functions.jvm.sdk.data.Record;
 import com.salesforce.functions.jvm.sdk.data.RecordModificationResult;
 import com.salesforce.functions.jvm.sdk.data.ReferenceId;
 import com.salesforce.functions.jvm.sdk.data.builder.UnitOfWorkBuilder;
+import java.time.Clock;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1062,6 +1112,7 @@ import org.slf4j.LoggerFactory;
  */
 public class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, FunctionOutput> {
   private static final Logger LOGGER = LoggerFactory.getLogger(UnitOfWorkFunction.class);
+  private Clock clock = Clock.systemUTC();
 
   @Override
   public FunctionOutput apply(InvocationEvent<FunctionInput> event, Context context)
@@ -1106,10 +1157,47 @@ public class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, Fun
             .build();
     ReferenceId serviceCaseRefId = unitOfWork.registerCreate(serviceCase);
 
-    // The transaction will be commited and all the three objects are going to be created. The
-    // resulting map contains the Id's of the created objects
+    // Calculate two days from now to set a reminder date
+    long twoDaysFromNow = clock.millis() + 2 * 24 * 60 * 60 * 1000;
+
+    // Here we will create two Tasks related to the case
+    // Call reminder task
+    Record reminderTask =
+        dataApi
+            .newRecordBuilder("Task")
+            .withField("Subject", "Call")
+            .withField("WhatId", serviceCaseRefId)
+            .withField("WhoId", contactRefId)
+            .withField("Description", "Please call customer to verify service location")
+            .withField("Priority", "High")
+            .withField("isReminderSet", true)
+            .withField("ActivityDate", twoDaysFromNow)
+            .build();
+
+    // Email follow up task
+    Record followupTask =
+        dataApi
+            .newRecordBuilder("Task")
+            .withField("Subject", "Email")
+            .withField("WhatId", serviceCaseRefId)
+            .withField("WhoId", contactRefId)
+            .withField(
+                "Description", "Please follow up with customer after verifying service location")
+            .build();
+
+    // Register the tasks to be created
+    ReferenceId reminderTaskRefId = unitOfWork.registerCreate(reminderTask);
+    ReferenceId followupTaskRefId = unitOfWork.registerCreate(followupTask);
+
+    // The transaction will be committed and all the objects are going to be created.
+    // The resulting map contains the Id's of the created objects
     Map<ReferenceId, RecordModificationResult> result =
         dataApi.commitUnitOfWork(unitOfWork.build());
+
+    // Create a List with the multiple Task Reference Ids
+    List<String> taskIds = new ArrayList<>();
+    taskIds.add(result.get(reminderTaskRefId).getId());
+    taskIds.add(result.get(followupTaskRefId).getId());
 
     LOGGER.info("Function successfully commited UoW with {} affected records!", result.size());
 
@@ -1117,15 +1205,25 @@ public class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, Fun
     return new FunctionOutput(
         result.get(accountRefId).getId(),
         result.get(contactRefId).getId(),
-        result.get(serviceCaseRefId).getId());
+        result.get(serviceCaseRefId).getId(),
+        taskIds);
   }
-}              
-             `
-            },
-            {
-              name: "FunctionInput.java",
-              label: "Salesforce SDK",
-              body: `package com.salesforce.functions.recipes;
+
+  /**
+   * Sets the clock used to calculate the reminder date. Useful for testing.
+   *
+   * @param clock
+   */
+  public void setClock(Clock clock) {
+    this.clock = clock;
+  }
+}
+`
+                },
+                {
+                  name: "FunctionInput.java",
+                  label: "Salesforce SDK",
+                  body: `package com.salesforce.functions.recipes;
 
 public class FunctionInput {
   private String accountName;
@@ -1165,22 +1263,26 @@ public class FunctionInput {
     return this.description;
   }
 }
-              `
-            },
-            {
-              name: "FunctionOutput.java",
-              label: "UnitOfWork",
-              body: `package com.salesforce.functions.recipes;
+`
+                },
+                {
+                  name: "FunctionOutput.java",
+                  label: "UnitOfWork",
+                  body: `package com.salesforce.functions.recipes;
+
+import java.util.List;
 
 public class FunctionOutput {
   private final String accountId;
   private final String contactId;
   private final String caseId;
+  private final List<String> taskIds;
 
-  public FunctionOutput(String accountId, String contactId, String caseId) {
+  public FunctionOutput(String accountId, String contactId, String caseId, List<String> taskIds) {
     this.accountId = accountId;
     this.contactId = contactId;
     this.caseId = caseId;
+    this.taskIds = taskIds;
   }
 
   public String getAccountId() {
@@ -1194,54 +1296,63 @@ public class FunctionOutput {
   public String getCaseId() {
     return this.caseId;
   }
-}
-             `
-            }],
-          }],
-        },
 
+  public List<String> getTaskIds() {
+    return this.taskIds;
+  }
+}
+`
+                }
+              ]
+            }
+          ]
+        },
         {
           name: "04_Logger",
           label: "Logger",
           subtitle: "Functions Recipes",
-          description: "Generates an amount of log messages every number of seconds.",
-          functions: [{
-            name: "04_Logger_JS",
-            label: "Logger - JavaScript",
-            language: "JavaScript",
-            inputs: [{
-              type: "number",
-              label: "latitude"
-            },
+          description:
+            "Generates an amount of log messages every number of seconds.",
+          functions: [
             {
-              type: "number",
-              label: "longitude"
-            },
-            {
-              type: "number",
-              label: "length"
-            }
-            ],
-            files: [{
-              name: "index.js",
-              label: "Logger",
-              body: `/**
-* Generates an amount of log messages every number of seconds
-*
-* The exported method is the entry point for your code when the function is invoked.
-*
-* Following parameters are pre-configured and provided to your function on execution:
-* @param event: represents the data associated with the occurrence of an event, and
-*                 supporting metadata about the source of that occurrence.
-* @param context: represents the connection to Functions and your Salesforce org.
-* @param logger: logging handler used to capture application logs and trace specifically
-*                 to a given execution of a function.
-*/
+              name: "04_Logger_JS",
+              label: "Logger - JavaScript",
+              language: "JavaScript",
+              inputs: [
+                {
+                  type: "number",
+                  label: "latitude"
+                },
+                {
+                  type: "number",
+                  label: "longitude"
+                },
+                {
+                  type: "number",
+                  label: "length"
+                }
+              ],
+              files: [
+                {
+                  name: "index.js",
+                  label: "Logger",
+                  body: `/**
+ * Generates an amount of log messages every number of seconds
+ *
+ * The exported method is the entry point for your code when the function is invoked.
+ *
+ * Following parameters are pre-configured and provided to your function on execution:
+ * @param event: represents the data associated with the occurrence of an event, and
+ *                 supporting metadata about the source of that occurrence.
+ * @param context: represents the connection to Functions and your Salesforce org.
+ * @param logger: logging handler used to capture application logs and trace specifically
+ *                 to a given execution of a function.
+ */
 module.exports = async function (event, context, logger) {
   logger.info(
-    "Invoking loggerjs Function with payload \${JSON.stringify(
+    \`Invoking loggerjs Function with payload \${JSON.stringify(
       event.data || {}
-    )}"
+    )}\`
   );
 
   const { amount = 5, timeout = 5 } = event.data;
@@ -1252,46 +1363,52 @@ module.exports = async function (event, context, logger) {
     count++;
 
     logger.info(
-      "\${count} \${
+      \`\${count} \${
         count == 1 ? "elephant" : "elephants"
-      } balancing over a spiderweb at \${new Date()}"
+      } balancing over a spiderweb at \${new Date()}\`
     );
   }, timeout * 1000);
 
   return {
-    status: "Logger Started: Generating \${amount} log messages every \${timeout} seconds"
+    status: \`Logger Started: Generating \${amount} log messages every \${timeout} seconds\`
   };
 };
-             `
-            }],
-          }],
+`
+                }
+              ]
+            }
+          ]
         },
         {
           name: "05_Environment_JS",
           label: "Environment",
           subtitle: "Functions Recipes",
-          description: "Returns the derivate password hash using pbkdf2 getting the salt from the Environment.",
-          functions: [{
-            name: "05_Environment_JS",
-            label: "Environment",
-            language: "JavaScript",
-            inputs: [{
-              type: "number",
-              label: "latitude"
-            },
+          description:
+            "Returns the derivate password hash using pbkdf2 getting the salt from the Environment.",
+          functions: [
             {
-              type: "number",
-              label: "longitude"
-            },
-            {
-              type: "number",
-              label: "length"
-            }
-            ],
-            files: [{
-              name: "index.js",
+              name: "05_Environment_JS",
               label: "Environment",
-              body: `"use strict";
+              language: "JavaScript",
+              inputs: [
+                {
+                  type: "number",
+                  label: "latitude"
+                },
+                {
+                  type: "number",
+                  label: "longitude"
+                },
+                {
+                  type: "number",
+                  label: "length"
+                }
+              ],
+              files: [
+                {
+                  name: "index.js",
+                  label: "Environment",
+                  body: `"use strict";
 
 const crypto = require("crypto");
 const { promisify } = require("util");
@@ -1313,9 +1430,9 @@ const pbkdf2 = promisify(crypto.pbkdf2);
  */
 module.exports = async function (event, context, logger) {
   logger.info(
-    "Invoking environmentjs Function with payload \${JSON.stringify(
+    \`Invoking environmentjs Function with payload \${JSON.stringify(
       event.data || {}
-    )}"
+    )}\`
   );
 
   const keyLength = event.data.keyLength || 32;
@@ -1337,11 +1454,13 @@ module.exports = async function (event, context, logger) {
   const results = await pbkdf2(password, salt, 10e3, keyLength, "sha512");
   return results.toString("hex");
 };
-              `
-            }],
-          }],
-        },
-        ];
-      }
+`
+                }
+              ]
+            }
+          ]
+        }
+      ];
+    }
   };
-  }());
+})();
