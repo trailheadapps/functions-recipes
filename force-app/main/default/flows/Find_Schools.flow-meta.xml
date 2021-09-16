@@ -31,7 +31,7 @@
         </inputParameters>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </actionCalls>
-    <apiVersion>52.0</apiVersion>
+    <apiVersion>53.0</apiVersion>
     <description>Find a School close to a Specified Location</description>
     <interviewLabel>Find Schools {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Find Schools</label>

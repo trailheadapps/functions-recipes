@@ -3,6 +3,14 @@
 **/lwc/**/*.json
 **/lwc/**/*.svg
 **/lwc/**/*.xml
+
+**/aura/**/*.css
+**/aura/**/*.html
+**/aura/**/*.json
+**/aura/**/*.svg
+**/aura/**/*.xml
+
 .sfdx
+.sf
 
 force-app/main/default/staticresources/
