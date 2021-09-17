@@ -11,7 +11,7 @@ sfdx force:org:create -s -f config/project-scratch-def.json -a functions_recipes
 # Create compute environment
 sfdx env:create:compute -o functions_recipes -a fn_recipes
 # Deploy function(s)
-sfdx project:deploy:functions -o functions_recipes
+sf deploy functions --connected-org  functions_recipes
 # Deploy code
 sfdx force:source:push -f 
 # Enable default user app access
