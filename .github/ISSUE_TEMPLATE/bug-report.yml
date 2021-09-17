@@ -30,6 +30,18 @@ body:
         - Production Org
     validations:
       required: true
+  - type: dropdown
+    id: functionLanguage
+    attributes:
+      label: Function Language
+      description: In what languages are the Functions that are causing the issue?
+      multiple: true
+      options:
+        - Java
+        - JavaScript
+        - TypeScript
+    validations:
+      required: false
   - type: textarea
     attributes:
       label: Steps To Reproduce
