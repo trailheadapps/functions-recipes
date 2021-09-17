@@ -3,6 +3,7 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <identifier>functionsRecipesContainerId</identifier>
                 <componentName>functionsRecipesContainer</componentName>
             </componentInstance>
         </itemInstances>

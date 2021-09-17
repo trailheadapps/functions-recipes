@@ -3,6 +3,7 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <identifier>functionInvocationContainerId</identifier>
                 <componentName>functionInvocationContainer</componentName>
             </componentInstance>
         </itemInstances>
