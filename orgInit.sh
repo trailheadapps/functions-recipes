@@ -9,7 +9,7 @@ sfdx force:org:create -s -f config/project-scratch-def.json -a functions_recipes
 # Auth to functions space (headless)
 # sfdx login:functions:jwt --username=$HUBUSER --keyfile=certificates/server.key --clientid=$CONSUMER_KEY
 # Create compute environment
-sfdx env:create:compute -o functions_recipes -a fn_recipes
+sf env create compute -o functions_recipes -a fn_recipes
 # Deploy function(s)
 sf deploy functions --connected-org functions_recipes
 # Deploy code
