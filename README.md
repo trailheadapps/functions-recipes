@@ -65,24 +65,24 @@ sfdx force:user:permset:assign -n Functions
 
 ## Salesforce Functions Deployment
 
-For more information about how to deploy Functions to a Compute Environment and connect it to an org, please refer to to the [documentation](https://developer.salesforce.com/docs/platform/functions/guide/deploy#getting-a-list-of-deployed-functions)
+For more information about how to deploy Functions to a Compute Environment and connect it to an org, please refer to to the [documentation](https://developer.salesforce.com/docs/platform/functions/guide/deploy)
 
 1. Login to your Salesforce Functions account:
 
 ```
-sfdx login:functions
+sf login functions
 ```
 
 2. Create a **Compute Environment** to deploy the functions and connected it to your org:
 
 ```sh
-sfdx env:create:compute --connected-org=functions_recipes --setalias=fn_recipes
+sf env create compute --connected-org=functions_recipes --setalias=recipes_env
 ```
 
 3. Deploy the functions
 
 ```sh
-sfdx project:deploy:functions --connected-org=functions_recipes
+sf deploy functions --connected-org=functions_recipes
 ```
 
 ## Functions Recipes App

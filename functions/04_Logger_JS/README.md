@@ -19,11 +19,11 @@ npm test
 3. Start your function locally
 
 ```
-sfdx run:function:start --verbose
+sf run function start --verbose
 ```
 
 4. Invoke your function locally
 
 ```
-sfdx run:function --url=http://localhost:8080 --payload='{ "amount":10, "timeout":15 }'
+sf run function --url=http://localhost:8080 --payload='{ "amount":10, "timeout":15 }'
 ```

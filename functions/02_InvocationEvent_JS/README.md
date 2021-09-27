@@ -19,13 +19,11 @@ npm test
 3. Start your function locally
 
 ```
-sfdx run:function:start --verbose
+sf run function start --verbose
 ```
 
-4. Invoke your function locally
-
-With JSON payload
+4. Invoke your function locally with a JSON payload
 
 ```
-sfdx run:function --url=http://localhost:8080 --payload='{"type":"json", "value": "Hello Functions"}'
+sf run function --url=http://localhost:8080 --payload='{"type":"json", "value": "Hello Functions"}'
 ```

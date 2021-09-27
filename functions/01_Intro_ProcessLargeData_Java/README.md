@@ -13,11 +13,11 @@ This function takes a large JSON payload, calculates the distance between a supp
 2. Start your function locally
 
 ```
-sfdx run:function:start --verbose
+sf run function start --verbose
 ```
 
 3. Invoke your function locally
 
 ```
-sfdx run:function --url=http://localhost:8080 --payload=@data/sample-payload
+sf run function --url=http://localhost:8080 --payload=@data/sample-payload
 ```
