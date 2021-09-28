@@ -8,10 +8,14 @@ window.functionData = (function () {
           subtitle: "Process Large Data Volumes",
           description:
             "This function takes a large JSON payload, calculates the distance between a supplied cordinate and the data, sorts it, and returns the nearest x results.",
+          inputs: [
+            {label: "Latitude", name: "latitude", type:"text"},{label: "Longitude", name: "longitude", type:"text"},{label: "Length", name:"length", type:"text"}
+          ],
           functions: [
             {
               name: "01_Intro_ProcessLargeData_JS",
               label: "Process Large Data - JavaScript",
+              deployment: "functions_recipes.processlargedatajs",
               language: "JavaScript",
               files: [
                 {
@@ -105,21 +109,8 @@ function distance(latitudeSt, longitudeSt, latitudeSch, longitudeSch) {
             {
               name: "01_Intro_ProcessLargeData_Java",
               label: "Process Large Data - Java",
+              deployment: "functions_recipes.processlargedatajava",
               language: "Java",
-              inputs: [
-                {
-                  type: "number",
-                  label: "latitude"
-                },
-                {
-                  type: "number",
-                  label: "longitude"
-                },
-                {
-                  type: "number",
-                  label: "length"
-                }
-              ],
               files: [
                 {
                   name: "ProcessLargeDataFunction.java",
@@ -442,25 +433,22 @@ public class School {
           subtitle: "Functions Recipes",
           description:
             "Detects a payload type and returns information about it.",
+          inputs: [
+            {
+              type: "text",
+              label: "type"
+            },
+            {
+              type: "text",
+              label: "key"
+            }
+          ],
           functions: [
             {
               name: "02_InvocationEvent_JS",
               label: "Invocation Event - JavaScript",
+              deployment: "functions_recipes.invocationeventjs",
               language: "JavaScript",
-              inputs: [
-                {
-                  type: "number",
-                  label: "latitude"
-                },
-                {
-                  type: "number",
-                  label: "longitude"
-                },
-                {
-                  type: "number",
-                  label: "length"
-                }
-              ],
               files: [
                 {
                   name: "index.js",

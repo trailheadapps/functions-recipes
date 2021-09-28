@@ -58,8 +58,7 @@ export default class FunctionsRecipesContent extends NavigationMixin(
   }
 
   viewDocs() {
-    const url =
-      "https://developer.salesforce.com/docs/platform/functions/guide/devdocs.html";
+    const url = "https://developer.salesforce.com/docs/platform/functions";
     this[NavigationMixin.Navigate](
       {
         type: "standard__webPage",

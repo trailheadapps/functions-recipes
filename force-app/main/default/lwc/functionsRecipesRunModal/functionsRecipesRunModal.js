@@ -10,7 +10,7 @@ export default class FunctionsRecipesRunModal extends LightningElement {
   invokeFunction() {
     this.loading = true;
     invoke({
-      functionName: `functions_recipes.${this.selectedFunction.functions[0].deployment}`,
+      functionName: this.selectedFunction.functions[0].deployment,
       payload: JSON.stringify(this.payload)
     })
       .then((result) => {
