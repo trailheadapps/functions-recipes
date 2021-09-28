@@ -45,6 +45,12 @@
           </template>
           <template if:false={loading}>
             <template if:false={result}>
+              <template if:true={error}>
+                <c-error-panel
+                  error={error}
+                  type="inlineMessage"
+                ></c-error-panel>
+              </template>
               <div
                 class="
                   slds-text-body_regular

@@ -6,6 +6,7 @@ export default class FunctionsRecipesRunModal extends LightningElement {
   payload = {};
   result;
   loading = false;
+  error;
 
   invokeFunction() {
     this.loading = true;

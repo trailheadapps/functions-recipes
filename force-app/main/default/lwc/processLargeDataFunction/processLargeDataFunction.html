@@ -22,16 +22,6 @@
           <div class="slds-grid slds-wrap">
             <div class="slds-size_1-of-1">
               <lightning-combobox
-                class="slds-p-bottom_small -"
-                name="function"
-                label="Select a Language"
-                value={functionName}
-                placeholder="Select a Language"
-                options={functionOptions}
-                onchange={handleChangeFunction}
-              >
-              </lightning-combobox>
-              <lightning-combobox
                 class="slds-p-bottom_small"
                 name="results"
                 label="Number of Results"
@@ -56,7 +46,7 @@
       </lightning-card>
     </div>
     <div class="slds-size_2-of-3">
-      <lightning-card title="Results">
+      <lightning-card title="LWC Example Results">
         <div class="results-body">
           <template if:true={functionRunning}>
             <div class="spinner-container">
@@ -69,7 +59,7 @@
           <template if:false={functionRunning}>
             <template if:false={mapLoaded}>
               <div class="slds-align_absolute-center">
-                <c-error-panel errors={message}></c-error-panel>
+                <c-error-panel error-message={errorMessage}></c-error-panel>
               </div>
             </template>
             <template if:true={mapLoaded}>
