@@ -3,8 +3,22 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <identifier>functionInvocationContainerId</identifier>
                 <componentName>functionInvocationContainer</componentName>
+                <identifier>functionInvocationContainerId</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>flowLayout</name>
+                    <value>twoColumn</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>flowName</name>
+                    <value>Find_Schools</value>
+                </componentInstanceProperties>
+                <componentName>flowruntime:interview</componentName>
+                <identifier>flowruntime_interview1</identifier>
             </componentInstance>
         </itemInstances>
         <name>content</name>
