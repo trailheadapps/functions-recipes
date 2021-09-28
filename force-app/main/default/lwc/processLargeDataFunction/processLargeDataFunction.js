@@ -1,22 +1,26 @@
 import { LightningElement } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
+import { NavigationMixin } from "lightning/navigation";
 import validateDeployment from "@salesforce/apex/FunctionUtilities.validateDeployment";
 import invoke from "@salesforce/apex/InvokeProcessLargeDataFunction.invoke";
 
-export default class ProcessLargeDataFunction extends LightningElement {
+export default class ProcessLargeDataFunction extends NavigationMixin(
+  LightningElement
+) {
   functionLabel = "JavaScript";
   functionName = "functions_recipes.processlargedatajs";
   length = 5;
   loading = true;
   sourceMap = {
     JavaScript:
-      "https://github.com/trailheadapps/functions-recipes/blob/main/functions/01_Intro_ProcessLargeData_JS/index.js",
-    Java: "https://github.com/trailheadapps/functions-recipes/blob/main/functions/01_Intro_ProcessLargeData_Java/src/main/java/com/salesforce/functions/recipes/ProcessLargeDataFunction.java"
+      "https://github.com/trailheadapps/functions-recipes/blob/main/functions/01_Intro_ProcessLargeData_JS/index.js"
   };
   functionDeployed;
   userLocation;
+  functionRunning;
   mapMarkers = [];
   nearbyLocations;
+  message = { message: "Invoke function to view results" };
   error;
 
   connectedCallback() {
@@ -37,7 +41,7 @@ export default class ProcessLargeDataFunction extends LightningElement {
 
   invokeFunction() {
     this.getGeolocation();
-    this.loading = true;
+    this.functionRunning = true;
   }
 
   getGeolocation() {
@@ -55,14 +59,15 @@ export default class ProcessLargeDataFunction extends LightningElement {
         },
         (error) => {
           // In the event of an error show a message and set a default latitude and longitude
-          this.showToast("Current Location", error.message, "info");
+          //this.showToast("Current Location", error.message, "info");
           this.userLocation = {
             location: {
-              Latitude: 37.789828572142724,
-              Longitude: -122.39724878744052
+              Latitude: 37.784798236043166,
+              Longitude: -122.40056125397507
             }
           };
           this.getNearbyLocations();
+          this.error = error;
         }
       );
     }
@@ -100,7 +105,7 @@ export default class ProcessLargeDataFunction extends LightningElement {
           };
           this.mapMarkers.push(marker);
         });
-        this.loading = false;
+        this.functionRunning = false;
       })
       .catch((error) => {
         this.showError(error);
@@ -138,7 +143,7 @@ export default class ProcessLargeDataFunction extends LightningElement {
   }
 
   get functionTitle() {
-    return `ProcessLargeData ${this.functionLabel}`;
+    return `Process Large Data Volumes`;
   }
 
   get mapLoaded() {
@@ -154,8 +159,18 @@ export default class ProcessLargeDataFunction extends LightningElement {
     ];
   }
 
-  get sourceURL() {
-    return this.sourceMap[this.functionLabel];
+  viewSource() {
+    const source = this.sourceMap[this.functionLabel];
+    // Navigate to a URL
+    this[NavigationMixin.Navigate](
+      {
+        type: "standard__webPage",
+        attributes: {
+          url: source
+        }
+      },
+      true
+    );
   }
 
   get functionOptions() {
@@ -163,10 +178,6 @@ export default class ProcessLargeDataFunction extends LightningElement {
       {
         label: "JavaScript",
         value: "functions_recipes.processlargedatajs"
-      },
-      {
-        label: "Java",
-        value: "functions_recipes.processlargedatajava"
       }
     ];
   }

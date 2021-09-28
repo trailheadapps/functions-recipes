@@ -7,6 +7,7 @@ export default class FunctionsRecipesContainer extends LightningElement {
   functionData;
   @track definition;
   libInitialized = false;
+  showHome = true;
 
   renderedCallback() {
     if (this.libInitialized) {
@@ -23,6 +24,22 @@ export default class FunctionsRecipesContainer extends LightningElement {
 
   handleNavSelect(event) {
     const name = event.detail;
-    this.selectedFunction = this.definition.find((item) => item.name === name);
+    if (name === "home") {
+      this.showHome = true;
+    } else {
+      this.selectedFunction = this.definition.find(
+        (item) => item.name === name
+      );
+      this.showHome = false;
+    }
+  }
+
+  get selectedItem() {
+    if (this.showHome === true) {
+      return "home";
+      // eslint-disable-next-line
+    } else {
+      return this.selectedFunction.name;
+    }
   }
 }

@@ -1,47 +1,38 @@
 <template>
-  <lightning-card title={functionTitle} icon-name="standard:location">
-    <div class="slds-var-m-around_medium">
-      <template if:true={loading}>
-        <div class="spinnerContainer">
-          <lightning-spinner
-            alternative-text="Loading"
-            size="medium"
-          ></lightning-spinner>
-        </div>
-      </template>
-      <template if:false={loading}>
-        <template if:false={functionDeployed}>
-          <c-error-panel
-            friendly-message="Function has not been deployed"
-          ></c-error-panel>
-        </template>
-        <template if:true={functionDeployed}>
+  <div class="slds-grid slds-wrap">
+    <div class="slds-size_1-of-3 slds-p-right_medium">
+      <lightning-card title={functionTitle} icon-name="standard:location">
+        <!--lightning-button label="View Source" name="view source" slot="actions" icon-name="utility:new_window"
+          onclick={viewSource}></lightning-button-->
+        <div class="slds-var-m-around_medium">
           <div class="description">
             Process large data volumes in a function. Take the users current
             location and sort through a large data set to calculate the distance
             and return the results.
-            <p>
-              <a class="slds-text-link" href={sourceURL} target="source"
-                >View Source</a
-              >
-            </p>
           </div>
-          <lightning-layout>
-            <lightning-layout-item padding="around-small">
+          <div
+            class="
+              slds-text-heading_small
+              slds-p-top_small
+              slds-p-bottom_x-small
+            "
+          >
+            Parameters
+          </div>
+          <div class="slds-grid slds-wrap">
+            <div class="slds-size_1-of-1">
               <lightning-combobox
+                class="slds-p-bottom_small -"
                 name="function"
-                label="Select a Function"
+                label="Select a Language"
                 value={functionName}
-                placeholder="Select a Function"
+                placeholder="Select a Language"
                 options={functionOptions}
                 onchange={handleChangeFunction}
               >
               </lightning-combobox>
-            </lightning-layout-item>
-          </lightning-layout>
-          <lightning-layout>
-            <lightning-layout-item padding="around-small">
               <lightning-combobox
+                class="slds-p-bottom_small"
                 name="results"
                 label="Number of Results"
                 value={length}
@@ -50,27 +41,50 @@
                 onchange={handleChangeLength}
               >
               </lightning-combobox>
-            </lightning-layout-item>
-          </lightning-layout>
-          <lightning-layout>
-            <lightning-layout-item padding="around-small">
-              <lightning-button
-                name="Invoke Function"
-                label="Invoke Function"
-                onclick={invokeFunction}
-              ></lightning-button>
-            </lightning-layout-item>
-          </lightning-layout>
-        </template>
-        <template if:true={mapLoaded}>
-          <lightning-map
-            center={userLocation}
-            map-markers={mapMarkers}
-            list-view="visible"
-          >
-          </lightning-map>
-        </template>
-      </template>
+              <div class="slds-align_absolute-center">
+                <lightning-button
+                  name="Invoke Function"
+                  label="Invoke Function"
+                  onclick={invokeFunction}
+                  variant="brand"
+                >
+                </lightning-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </lightning-card>
     </div>
-  </lightning-card>
+    <div class="slds-size_2-of-3">
+      <lightning-card title="Results">
+        <div class="results-body">
+          <template if:true={functionRunning}>
+            <div class="spinner-container">
+              <lightning-spinner
+                alternative-text="Loading"
+                size="medium"
+              ></lightning-spinner>
+            </div>
+          </template>
+          <template if:false={functionRunning}>
+            <template if:false={mapLoaded}>
+              <div class="slds-align_absolute-center">
+                <c-error-panel errors={message}></c-error-panel>
+              </div>
+            </template>
+            <template if:true={mapLoaded}>
+              <div class="slds-p-around_medium">
+                <lightning-map
+                  center={userLocation}
+                  map-markers={mapMarkers}
+                  list-view="visible"
+                >
+                </lightning-map>
+              </div>
+            </template>
+          </template>
+        </div>
+      </lightning-card>
+    </div>
+  </div>
 </template>

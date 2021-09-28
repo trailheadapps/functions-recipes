@@ -6,76 +6,154 @@
           <c-functions-recipes-page-header
             title={functionTitle}
             sub-title={functionSubTitle}
-          ></c-functions-recipes-page-header>
+          >
+          </c-functions-recipes-page-header>
         </div>
-        <div class="slds-size_1-of-1">
-          <div class="slds-card slds-p-around_medium">
-            <div class="slds-grid slds-wrap">
-              <div class="slds-size_1-of-1 slds-p-bottom_medium">
-                <div class="slds-text-heading_medium slds-p-bottom_small">
-                  Function Details
+        <template if:true={showHome}>
+          <div class="slds-size_1-of-1">
+            <div class="slds-card slds-p-around_medium">
+              <div class="slds-grid slds-wrap">
+                <div class="slds-size_1-of-1 slds-p-bottom_medium">
+                  <div class="slds-text-heading_medium slds-p-bottom_small">
+                    Get Started with Salesforce Functions
+                  </div>
+                  <div class="slds-text-body_regular slds-p-bottom_small">
+                    Salesforce Functions lets you use the Customer 360 Platform
+                    for building event-driven, elastically scalable apps and
+                    experiences. Salesforce Functions is designed to boost
+                    developer productivity by reducing your infrastructure
+                    responsibilities and enabling you to build and integrate
+                    Functions-as-a-Service (FaaS) apps using the languages and
+                    tools of your choice.
+                  </div>
+                  <div class="slds-text-body_regular">
+                    <p class="slds-p-bottom_small">
+                      <strong>Develop</strong> your Function, using the
+                      programming language of your choice (JavaScript or Java).
+                      Use your favorite development environment on your local
+                      workstation. Once you're ready to test, you can run your
+                      Function locally and validate using scratch or sandbox
+                      orgs.
+                    </p>
+                    <p class="slds-p-bottom_small">
+                      <strong>Deploy</strong> your developed Function to the
+                      Salesforce Functions infrastructure. Use Salesforce
+                      Functions compute environments to manage your Functions
+                      application lifecycle. Integrate Functions into your CI/CD
+                      system as needed.
+                    </p>
+                    <p class="slds-p-bottom_medium">
+                      <strong>Invoke</strong> your deployed Function in your
+                      sandbox or production orgs. Use Apex to securely offload
+                      heavy compute tasks to your Functions without worrying
+                      about Salesforce org limits. Through Apex, you can include
+                      Function invocation in your Salesforce application
+                      workflow via Flow, Lightning Web Components, or many other
+                      Salesforce features.
+                    </p>
+                  </div>
+                  <lightning-button
+                    label="Browse the Docs"
+                    icon-name="utility:chevronright"
+                    icon-position="right"
+                    onclick={viewDocs}
+                    name="docs"
+                    variant="brand"
+                  ></lightning-button>
                 </div>
-                <div class="slds-text-body_regular">{functionDescription}</div>
               </div>
-              <div class="slds-size_1-of-1">
-                <div class="slds-text-heading_medium slds-p-bottom_small">
-                  Code
+            </div>
+          </div>
+        </template>
+        <template if:false={showHome}>
+          <div class="slds-size_1-of-1">
+            <div class="slds-card slds-p-around_medium">
+              <div class="slds-grid slds-wrap">
+                <div class="slds-size_1-of-1 slds-p-bottom_medium">
+                  <div class="slds-text-heading_medium slds-p-bottom_small">
+                    Function Details
+                  </div>
+                  <div class="slds-text-body_regular">
+                    {functionDescription}
+                  </div>
                 </div>
-                <div class="slds-grid slds-wrap">
-                  <div class="slds-size_1-of-1">
-                    <div class="slds-grid slds-wrap slds-grid_align-spread">
-                      <div class="slds-size_2-of-12">
-                        <lightning-combobox
-                          name="language"
-                          label="Language"
-                          value={selectedLanguage}
-                          placeholder="Select Language"
-                          options={languages}
-                          onchange={handleChange}
-                        ></lightning-combobox>
-                      </div>
-                      <div class="slds-size_2-of-12 slds-align-bottom">
-                        <lightning-button
-                          class="slds-float_right"
-                          label="View Source"
-                          name="view source"
-                          icon-name="utility:new_window"
-                          onclick={viewSource}
-                        ></lightning-button>
-                      </div>
-                    </div>
-                    <div class="slds-size_1-of-1 slds-m-top_small">
-                      <lightning-tabset variant="scoped">
-                        <template
-                          for:each={fileset}
-                          for:item="file"
-                          for:index="i"
+                <div class="slds-size_1-of-1">
+                  <div class="slds-text-heading_medium slds-p-bottom_small">
+                    Code
+                  </div>
+                  <div class="slds-grid slds-wrap">
+                    <div class="slds-size_1-of-1">
+                      <div class="slds-grid slds-wrap slds-grid_align-spread">
+                        <div class="slds-size_2-of-12">
+                          <lightning-combobox
+                            name="language"
+                            label="Language"
+                            value={selectedLanguage}
+                            placeholder="Select Language"
+                            options={languages}
+                            onchange={handleChange}
+                          >
+                          </lightning-combobox>
+                        </div>
+                        <div
+                          class="
+                            slds-size_3-of-12
+                            slds-medium-size_4-of-12
+                            slds-small-size_6-of-12
+                            slds-align-bottom
+                          "
                         >
-                          <lightning-tab key={file.i} label={file.name}>
-                            <div class="slds-size_1-of-1">
-                              <c-code-block
-                                code-block-content={file.body}
-                                language={selectedLanguage}
-                                class="slds-m-top_small"
-                              ></c-code-block>
-                            </div>
-                          </lightning-tab>
-                        </template>
-                      </lightning-tabset>
+                          <lightning-button
+                            class="slds-float_right"
+                            label="Run Function"
+                            name="run function"
+                            variant="brand"
+                            icon-name="utility:play"
+                            onclick={openRunFunctionModal}
+                          ></lightning-button>
+                          <lightning-button
+                            class="slds-float_right slds-m-right_small"
+                            label="View Source"
+                            name="view source"
+                            icon-name="utility:new_window"
+                            onclick={viewSource}
+                          ></lightning-button>
+                        </div>
+                      </div>
+                      <div class="slds-size_1-of-1 slds-m-top_small">
+                        <lightning-tabset variant="scoped">
+                          <template
+                            for:each={fileset}
+                            for:item="file"
+                            for:index="i"
+                          >
+                            <lightning-tab key={file.i} label={file.name}>
+                              <div class="slds-size_1-of-1">
+                                <c-code-block
+                                  code-block-content={file.body}
+                                  language={selectedLanguage}
+                                  class="slds-m-top_small"
+                                ></c-code-block>
+                              </div>
+                            </lightning-tab>
+                          </template>
+                        </lightning-tabset>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </template>
       </div>
     </div>
   </div>
   <template if:true={showRunFunctionModal}>
     <c-functions-recipes-run-modal
-      function-inputs={functionInputs}
-      function-name={functionName}
-    ></c-functions-recipes-run-modal>
+      selected-function={_selectedFunction}
+      onclosemodal={closeRunFunctionModal}
+    >
+    </c-functions-recipes-run-modal>
   </template>
 </template>
