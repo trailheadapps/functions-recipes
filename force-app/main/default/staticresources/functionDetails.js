@@ -1280,7 +1280,7 @@ module.exports = async function (event, context, logger) {
 
   let count = 0;
   setInterval(() => {
-    if (+amount >= count) return;
+    if (+amount <= count) return;
     count++;
 
     logger.info(
