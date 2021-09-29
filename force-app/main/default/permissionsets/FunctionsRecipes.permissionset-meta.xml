@@ -12,7 +12,7 @@
         <apexClass>InvokeProcessLargeDataFunction</apexClass>
         <enabled>true</enabled>
     </classAccesses>
-    <description>Functions Recipes Permissions</description>
+    <description>Functions Recipes Application Permissions</description>
     <hasActivationRequired>false</hasActivationRequired>
     <label>Functions Recipes</label>
     <tabSettings>
