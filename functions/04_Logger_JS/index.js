@@ -17,11 +17,11 @@ module.exports = async function (event, context, logger) {
     )}`
   );
 
-  const { amount = 5, timeout = 5 } = event.data;
+  let { amount = 5, timeout = 5 } = event.data;
 
   let count = 0;
   setInterval(() => {
-    if (amount === count) return;
+    if (+amount <= count) return;
     count++;
 
     logger.info(
