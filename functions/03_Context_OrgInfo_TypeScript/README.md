@@ -1,6 +1,6 @@
 # orginfots Function
 
-It returns the Salesforce Org information attached to the context
+Returns the Salesforce Org information attached to the context.
 
 ## Local Development
 

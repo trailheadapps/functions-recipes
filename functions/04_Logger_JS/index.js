@@ -1,5 +1,5 @@
 /**
- * Generates an amount of log messages every number of seconds
+ * Generates an amount of log messages every number of seconds.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *

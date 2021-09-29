@@ -1,6 +1,6 @@
 # invocationeventjs Function
 
-Detects a payload type and returns information about it
+Receives a payload and returns information about it.
 
 ## Local Development
 

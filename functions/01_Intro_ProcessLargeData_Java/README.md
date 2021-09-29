@@ -1,6 +1,6 @@
 # processlargedatajava Function
 
-This function takes a large JSON payload, calculates the distance between a supplied cordinate and the data, sorts it, and returns the nearest x results.
+From a large JSON payload calculates the distance between a supplied point of origin cordinate and the data, sorts it, and returns the nearest x results.
 
 ## Local Development
 

@@ -7,9 +7,11 @@ window.functionData = (function () {
           label: "Process Large Data Volumes",
           subtitle: "Process Large Data Volumes",
           description:
-            "This function takes a large JSON payload, calculates the distance between a supplied cordinate and the data, sorts it, and returns the nearest x results.",
+            "From a large JSON payload calculates the distance between a supplied point of origin cordinate and the data, sorts it, and returns the nearest x results.",
           inputs: [
-            {label: "Latitude", name: "latitude", type:"text"},{label: "Longitude", name: "longitude", type:"text"},{label: "Length", name:"length", type:"text"}
+            { label: "Latitude", name: "latitude", type: "text" },
+            { label: "Longitude", name: "longitude", type: "text" },
+            { label: "Length", name: "length", type: "text" }
           ],
           functions: [
             {
@@ -27,7 +29,8 @@ window.functionData = (function () {
 const sampleData = require("./data/sample-data.json");
 
 /**
- * This function takes a large JSON payload, calculates the distance between a supplied cordinate and the data, sorts it, and returns the nearest x results.
+ * From a large JSON payload calculates the distance between a supplied
+ * point of origin cordinate and the data, sorts it, and returns the nearest x results.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *
@@ -75,6 +78,8 @@ module.exports = async function (event, context, logger) {
 };
 
 /**
+ * Calculate distance between two geographical points
+ *
  * @param {string} latitudeSt:  represents the latitude of the origin point
  * @param {string} longitudeSt:  represents the longitude of the origin point
  * @param {string} latitudeSch:  represents the latitude of the school
@@ -131,8 +136,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This function takes a large JSON payload, calculates the distance between a supplied cordinate
- * and the data, sort's it, and returns the nearest x results.
+ * From a large JSON payload calculates the distance between a supplied point of origin cordinate
+ * and the data, sorts it, and returns the nearest x results.
  */
 public class ProcessLargeDataFunction implements SalesforceFunction<FunctionInput, FunctionOutput> {
   private static final Logger LOGGER = LoggerFactory.getLogger(ProcessLargeDataFunction.class);
@@ -431,8 +436,7 @@ public class School {
           name: "02_InvocationEvent",
           label: "Invocation Event",
           subtitle: "Functions Recipes",
-          description:
-            "Detects a payload type and returns information about it.",
+          description: "Receives a payload and returns information about it.",
           inputs: [
             {
               type: "text",
@@ -440,7 +444,7 @@ public class School {
             },
             {
               type: "text",
-              label: "key"
+              label: "value"
             }
           ],
           functions: [
@@ -456,7 +460,7 @@ public class School {
                   body: `"use strict";
 
 /**
- * Detects a payload type and returns information about it
+ * Receives a payload and returns information about it.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *
@@ -506,33 +510,20 @@ module.exports = async function (event, context, logger) {
           name: "03_Context_DataApiQuery",
           label: "Data API Query",
           subtitle: "Functions Recipes",
-          description:
-            "The exported method is the entry point for your code when the function is invoked.",
+          description: "Returns accounts and its contacts by keyword.",
+          inputs: [{ label: "Keyword", name: "keyword", type: "text" }],
           functions: [
             {
               name: "03_Context_DataApiQuery_JS",
               label: "Context - Data API Query - JavaScript",
+              deployment: "functions_recipes.dataapiqueryjs",
               language: "JavaScript",
-              inputs: [
-                {
-                  type: "number",
-                  label: "latitude"
-                },
-                {
-                  type: "number",
-                  label: "longitude"
-                },
-                {
-                  type: "number",
-                  label: "length"
-                }
-              ],
               files: [
                 {
                   name: "index.js",
                   label: "Invocation Event",
                   body: `/**
- * Returns accounts and its contacts by keyword
+ * Returns accounts and its contacts by keyword.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *
@@ -577,21 +568,8 @@ module.exports = async function (event, context, logger) {
             {
               name: "03_Context_OrgInfo_TypeScript",
               label: "Context - OrgInfo - TypeScript",
+              deployment: "functions_recipes.orginfots",
               language: "TypeScript",
-              inputs: [
-                {
-                  type: "number",
-                  label: "latitude"
-                },
-                {
-                  type: "number",
-                  label: "longitude"
-                },
-                {
-                  type: "number",
-                  label: "length"
-                }
-              ],
               files: [
                 {
                   name: "index.ts",
@@ -658,26 +636,20 @@ export class OrgInfo {
           label: "SalesforceSDK",
           subtitle: "Functions Recipes",
           description:
-            "This function takes a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.",
+            "Receives a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.",
+          inputs: [
+            { label: "Name", name: "name", type: "text" },
+            { label: "Account Number", name: "accountNumber", type: "text" },
+            { label: "Industry", name: "industry", type: "text" },
+            { label: "Type", name: "type", type: "text" },
+            { label: "Website", name: "website", type: "text" }
+          ],
           functions: [
             {
               name: "03_Context_SalesforceSDK_JS",
               label: "Context - SalesforceSDK - JavaScript",
+              deployment: "functions_recipes.salesforcesdkjs",
               language: "JavaScript",
-              inputs: [
-                {
-                  type: "number",
-                  label: "latitude"
-                },
-                {
-                  type: "number",
-                  label: "longitude"
-                },
-                {
-                  type: "number",
-                  label: "length"
-                }
-              ],
               files: [
                 {
                   name: "index.js",
@@ -685,7 +657,8 @@ export class OrgInfo {
                   body: `"use strict";
 
 /**
- * This function takes a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.
+ * Receives a payload containing account details, and creates the record.
+ * It then uses a SOQL query to return the newly created Account.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *
@@ -745,21 +718,8 @@ module.exports = async function (event, context, logger) {
             {
               name: "03_Context_SalesforceSDK_Java",
               label: "Context - SalesforceSDK - Java",
+              deployment: "functions_recipes.salesforcesdkjava",
               language: "Java",
-              inputs: [
-                {
-                  type: "number",
-                  label: "latitude"
-                },
-                {
-                  type: "number",
-                  label: "longitude"
-                },
-                {
-                  type: "number",
-                  label: "length"
-                }
-              ],
               files: [
                 {
                   name: "SalesforceSDKFunction.java",
@@ -937,26 +897,21 @@ public class FunctionOutput {
           label: "UnitOfWork",
           subtitle: "Functions Recipes",
           description:
-            "This function takes a payload containing Account, Contact, and Case details and uses the Unit of Work pattern to assign the corresponding values to to its Record while maintaining the relationships. It then commits the unit of work and returns the Record Id's for each object.",
+            "Receives a payload containing Account, Contact, and Case details and uses the Unit of Work pattern to assign the corresponding values to to its Record while maintaining the relationships. It then commits the unit of work and returns the Record Id's for each object.",
+          inputs: [
+            { label: "First Name", name: "firstName", type: "text" },
+            { label: "Last Name", name: "lastName", type: "text" },
+            { label: "Account Name", name: "accountName", type: "text" },
+            { label: "Website", name: "website", type: "text" },
+            { label: "Subject", name: "subject", type: "text" },
+            { label: "Description", name: "description", type: "text" }
+          ],
           functions: [
             {
               name: "03_Context_UnitOfWork_JS",
-              label: "Context - UnitofWork - JavaScript",
+              label: "Context - UnitOfWork - JavaScript",
+              deployment: "functions_recipes.unitofworkjs",
               language: "JavaScript",
-              inputs: [
-                {
-                  type: "number",
-                  label: "latitude"
-                },
-                {
-                  type: "number",
-                  label: "longitude"
-                },
-                {
-                  type: "number",
-                  label: "length"
-                }
-              ],
               files: [
                 {
                   name: "index.js",
@@ -964,10 +919,10 @@ public class FunctionOutput {
                   body: `"use strict";
 
 /**
- * This function takes a payload containing Account, Contact, and Case details and
- * uses the Unit of Work pattern to assign the corresponding values to to its Record
- * while maintaining the relationships. It then commits the unit of work and returns
- * the Record Id's for each object.
+ * Receives a payload containing Account, Contact, and Case details and uses the
+ * Unit of Work pattern to assign the corresponding values to to its Record
+ * while maintaining the relationships. It then commits the unit of work and
+ * returns the Record Id's for each object.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *
@@ -1057,21 +1012,8 @@ function validateField(field, value) {
             {
               name: "03_Context_UnitOfWork_Java",
               label: "UnitOfWork - Java",
+              deployment: "functions_recipes.unitofworkjava",
               language: "Java",
-              inputs: [
-                {
-                  type: "number",
-                  label: "latitude"
-                },
-                {
-                  type: "number",
-                  label: "longitude"
-                },
-                {
-                  type: "number",
-                  label: "length"
-                }
-              ],
               files: [
                 {
                   name: "UnitOfWorkFunction.java",
@@ -1094,9 +1036,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This function takes a payload containing Account, Contact, and Case details and uses the Unit of
- * Work pattern to assign the corresponding values to it's Record while maintaining the
- * relationships. It then commits the Unit of Work and returns the record Id's for each object.
+ * Receives a payload containing Account, Contact, and Case details and uses the Unit of Work
+ * pattern to assign the corresponding values to to its Record while maintaining the relationships.
+ * It then commits the unit of work and returns the Record Id's for each object.
  */
 public class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, FunctionOutput> {
   private static final Logger LOGGER = LoggerFactory.getLogger(UnitOfWorkFunction.class);
@@ -1301,31 +1243,22 @@ public class FunctionOutput {
           subtitle: "Functions Recipes",
           description:
             "Generates an amount of log messages every number of seconds.",
+          inputs: [
+            { label: "Amount", name: "amount", type: "number" },
+            { label: "Timeout", name: "timeout", type: "number" }
+          ],
           functions: [
             {
               name: "04_Logger_JS",
               label: "Logger - JavaScript",
+              deployment: "functions_recipes.loggerjs",
               language: "JavaScript",
-              inputs: [
-                {
-                  type: "number",
-                  label: "latitude"
-                },
-                {
-                  type: "number",
-                  label: "longitude"
-                },
-                {
-                  type: "number",
-                  label: "length"
-                }
-              ],
               files: [
                 {
                   name: "index.js",
                   label: "Logger",
                   body: `/**
- * Generates an amount of log messages every number of seconds
+ * Generates an amount of log messages every number of seconds.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *
@@ -1373,25 +1306,13 @@ module.exports = async function (event, context, logger) {
           subtitle: "Functions Recipes",
           description:
             "Returns the derivate password hash using pbkdf2 getting the salt from the Environment.",
+          inputs: [{ label: "Password", name: "password", type: "text" }],
           functions: [
             {
               name: "05_Environment_JS",
               label: "Environment",
+              deployment: "functions_recipes.environmentjs",
               language: "JavaScript",
-              inputs: [
-                {
-                  type: "number",
-                  label: "latitude"
-                },
-                {
-                  type: "number",
-                  label: "longitude"
-                },
-                {
-                  type: "number",
-                  label: "length"
-                }
-              ],
               files: [
                 {
                   name: "index.js",
@@ -1405,7 +1326,7 @@ const { promisify } = require("util");
 const pbkdf2 = promisify(crypto.pbkdf2);
 
 /**
- * Returns the derivate password hash using pbkdf2 getting the salt from the Environment
+ * Returns the derivate password hash using pbkdf2 getting the salt from the Environment.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *

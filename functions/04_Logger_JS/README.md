@@ -1,6 +1,6 @@
 # loggerjs Function
 
-Generates an amount of log messages every number of seconds
+Generates an amount of log messages every number of seconds.
 
 ## Local Development
 

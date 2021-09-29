@@ -16,9 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This function takes a payload containing Account, Contact, and Case details and uses the Unit of
- * Work pattern to assign the corresponding values to it's Record while maintaining the
- * relationships. It then commits the Unit of Work and returns the record Id's for each object.
+ * Receives a payload containing Account, Contact, and Case details and uses the Unit of Work
+ * pattern to assign the corresponding values to to its Record while maintaining the relationships.
+ * It then commits the unit of work and returns the Record Id's for each object.
  */
 public class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, FunctionOutput> {
   private static final Logger LOGGER = LoggerFactory.getLogger(UnitOfWorkFunction.class);

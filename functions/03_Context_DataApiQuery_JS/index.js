@@ -1,5 +1,5 @@
 /**
- * Returns accounts and its contacts by keyword
+ * Returns accounts and its contacts by keyword.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *

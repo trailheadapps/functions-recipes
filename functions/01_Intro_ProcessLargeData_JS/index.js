@@ -3,7 +3,8 @@
 const sampleData = require("./data/sample-data.json");
 
 /**
- * This function takes a large JSON payload, calculates the distance between a supplied cordinate and the data, sorts it, and returns the nearest x results.
+ * From a large JSON payload calculates the distance between a supplied
+ * point of origin cordinate and the data, sorts it, and returns the nearest x results.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *
@@ -51,6 +52,8 @@ module.exports = async function (event, context, logger) {
 };
 
 /**
+ * Calculate distance between two geographical points
+ *
  * @param {string} latitudeSt:  represents the latitude of the origin point
  * @param {string} longitudeSt:  represents the longitude of the origin point
  * @param {string} latitudeSch:  represents the latitude of the school

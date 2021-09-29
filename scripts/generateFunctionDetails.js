@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const Handlebars = require("handlebars");
 const templateSrc = fs.readFileSync(
-  path.join(__dirname, "./template/functionDetails.js.tpl"),
+  path.join(__dirname, "./template/functionDetails.template.js"),
   "utf8"
 );
 const template = Handlebars.compile(templateSrc);

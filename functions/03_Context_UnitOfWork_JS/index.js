@@ -1,10 +1,10 @@
 "use strict";
 
 /**
- * This function takes a payload containing Account, Contact, and Case details and
- * uses the Unit of Work pattern to assign the corresponding values to to its Record
- * while maintaining the relationships. It then commits the unit of work and returns
- * the Record Id's for each object.
+ * Receives a payload containing Account, Contact, and Case details and uses the
+ * Unit of Work pattern to assign the corresponding values to to its Record
+ * while maintaining the relationships. It then commits the unit of work and
+ * returns the Record Id's for each object.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *
