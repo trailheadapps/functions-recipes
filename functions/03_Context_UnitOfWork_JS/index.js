@@ -57,8 +57,22 @@ module.exports = async function (event, context, logger) {
       Description: payload.description,
       Origin: "Web",
       Status: "New",
-      AccountId: accountId,
-      ContactId: contactId
+      AccountId: accountId, // Get the ReferenceId from previous operation
+      ContactId: contactId // Get the ReferenceId from previous operation
+    }
+  });
+
+  // Register a follow up Case for Creation
+  const followupCaseId = uow.registerCreate({
+    type: "Case",
+    fields: {
+      ParentId: serviceCaseId, // Get the ReferenceId from previous operation
+      Subject: "Follow Up",
+      Description: "Follow up with Customer",
+      Origin: "Web",
+      Status: "New",
+      AccountId: accountId, // Get the ReferenceId from previous operation
+      ContactId: contactId // Get the ReferenceId from previous operation
     }
   });
 
@@ -69,7 +83,10 @@ module.exports = async function (event, context, logger) {
     const result = {
       accountId: response.get(accountId).id,
       contactId: response.get(contactId).id,
-      caseId: response.get(serviceCaseId).id
+      cases: {
+        serviceCaseId: response.get(serviceCaseId).id,
+        followupCaseId: response.get(followupCaseId).id
+      }
     };
     return result;
   } catch (err) {

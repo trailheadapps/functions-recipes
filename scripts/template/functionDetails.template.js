@@ -76,11 +76,13 @@ window.functionData = (function () {
           inputs: [
             {
               type: "text",
-              label: "type"
+              name: "name",
+              label: "Name"
             },
             {
-              type: "text",
-              label: "value"
+              type: "number",
+              name: "year",
+              label: "Year"
             }
           ],
           functions: [
@@ -248,6 +250,11 @@ window.functionData = (function () {
                   name: "FunctionOutput.java",
                   label: "UnitOfWork",
                   body: `{{{source.unitOfWorkJava_Output}}}`
+                },
+                {
+                  name: "Cases.java",
+                  label: "UnitOfWork",
+                  body: `{{{source.unitOfWorkJava_Cases}}}`
                 }
               ]
             }

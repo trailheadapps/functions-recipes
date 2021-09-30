@@ -64,6 +64,7 @@ const sourceMap = {
     "03_Context_UnitOfWork_Java",
     "FunctionOutput.java"
   ),
+  unitOfWorkJava_Cases: loadJava("03_Context_UnitOfWork_Java", "Cases.java"),
   loggerJS_Function: loadJS("04_Logger_JS"),
   environmentJS_Function: loadJS("05_Environment_JS")
 };

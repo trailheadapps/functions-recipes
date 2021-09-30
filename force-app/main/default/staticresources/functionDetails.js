@@ -440,11 +440,13 @@ public class School {
           inputs: [
             {
               type: "text",
-              label: "type"
+              name: "name",
+              label: "Name"
             },
             {
-              type: "text",
-              label: "value"
+              type: "number",
+              name: "year",
+              label: "Year"
             }
           ],
           functions: [
@@ -975,8 +977,22 @@ module.exports = async function (event, context, logger) {
       Description: payload.description,
       Origin: "Web",
       Status: "New",
-      AccountId: accountId,
-      ContactId: contactId
+      AccountId: accountId, // Get the ReferenceId from previous operation
+      ContactId: contactId // Get the ReferenceId from previous operation
+    }
+  });
+
+  // Register a follow up Case for Creation
+  const followupCaseId = uow.registerCreate({
+    type: "Case",
+    fields: {
+      ParentId: serviceCaseId, // Get the ReferenceId from previous operation
+      Subject: "Follow Up",
+      Description: "Follow up with Customer",
+      Origin: "Web",
+      Status: "New",
+      AccountId: accountId, // Get the ReferenceId from previous operation
+      ContactId: contactId // Get the ReferenceId from previous operation
     }
   });
 
@@ -987,7 +1003,10 @@ module.exports = async function (event, context, logger) {
     const result = {
       accountId: response.get(accountId).id,
       contactId: response.get(contactId).id,
-      caseId: response.get(serviceCaseId).id
+      cases: {
+        serviceCaseId: response.get(serviceCaseId).id,
+        followupCaseId: response.get(followupCaseId).id
+      }
     };
     return result;
   } catch (err) {
@@ -1028,9 +1047,6 @@ import com.salesforce.functions.jvm.sdk.data.Record;
 import com.salesforce.functions.jvm.sdk.data.RecordModificationResult;
 import com.salesforce.functions.jvm.sdk.data.ReferenceId;
 import com.salesforce.functions.jvm.sdk.data.builder.UnitOfWorkBuilder;
-import java.time.Clock;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1042,7 +1058,6 @@ import org.slf4j.LoggerFactory;
  */
 public class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, FunctionOutput> {
   private static final Logger LOGGER = LoggerFactory.getLogger(UnitOfWorkFunction.class);
-  private Clock clock = Clock.systemUTC();
 
   @Override
   public FunctionOutput apply(InvocationEvent<FunctionInput> event, Context context)
@@ -1070,6 +1085,7 @@ public class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, Fun
             .newRecordBuilder("Contact")
             .withField("FirstName", firstName)
             .withField("LastName", lastName)
+            .withField("AccountId", accountRefId)
             .build();
     ReferenceId contactRefId = unitOfWork.registerCreate(contact);
 
@@ -1087,47 +1103,23 @@ public class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, Fun
             .build();
     ReferenceId serviceCaseRefId = unitOfWork.registerCreate(serviceCase);
 
-    // Calculate two days from now to set a reminder date
-    long twoDaysFromNow = clock.millis() + 2 * 24 * 60 * 60 * 1000;
-
-    // Here we will create two Tasks related to the case
-    // Call reminder task
-    Record reminderTask =
+    Record followupCase =
         dataApi
-            .newRecordBuilder("Task")
-            .withField("Subject", "Call")
-            .withField("WhatId", serviceCaseRefId)
-            .withField("WhoId", contactRefId)
-            .withField("Description", "Please call customer to verify service location")
-            .withField("Priority", "High")
-            .withField("isReminderSet", true)
-            .withField("ActivityDate", twoDaysFromNow)
+            .newRecordBuilder("Case")
+            .withField("ParentId", serviceCaseRefId)
+            .withField("Subject", "Follow Up")
+            .withField("Description", "Follow up with Customer")
+            .withField("Origin", "Web")
+            .withField("Status", "New")
+            .withField("AccountId", accountRefId)
+            .withField("ContactId", contactRefId)
             .build();
-
-    // Email follow up task
-    Record followupTask =
-        dataApi
-            .newRecordBuilder("Task")
-            .withField("Subject", "Email")
-            .withField("WhatId", serviceCaseRefId)
-            .withField("WhoId", contactRefId)
-            .withField(
-                "Description", "Please follow up with customer after verifying service location")
-            .build();
-
-    // Register the tasks to be created
-    ReferenceId reminderTaskRefId = unitOfWork.registerCreate(reminderTask);
-    ReferenceId followupTaskRefId = unitOfWork.registerCreate(followupTask);
+    ReferenceId followupCaseRefId = unitOfWork.registerCreate(followupCase);
 
     // The transaction will be committed and all the objects are going to be created.
     // The resulting map contains the Id's of the created objects
     Map<ReferenceId, RecordModificationResult> result =
         dataApi.commitUnitOfWork(unitOfWork.build());
-
-    // Create a List with the multiple Task Reference Ids
-    List<String> taskIds = new ArrayList<>();
-    taskIds.add(result.get(reminderTaskRefId).getId());
-    taskIds.add(result.get(followupTaskRefId).getId());
 
     LOGGER.info("Function successfully commited UoW with {} affected records!", result.size());
 
@@ -1135,17 +1127,7 @@ public class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, Fun
     return new FunctionOutput(
         result.get(accountRefId).getId(),
         result.get(contactRefId).getId(),
-        result.get(serviceCaseRefId).getId(),
-        taskIds);
-  }
-
-  /**
-   * Sets the clock used to calculate the reminder date. Useful for testing.
-   *
-   * @param clock
-   */
-  public void setClock(Clock clock) {
-    this.clock = clock;
+        new Cases(result.get(serviceCaseRefId).getId(), result.get(followupCaseRefId).getId()));
   }
 }
 `
@@ -1200,19 +1182,15 @@ public class FunctionInput {
                   label: "UnitOfWork",
                   body: `package com.salesforce.functions.recipes;
 
-import java.util.List;
-
 public class FunctionOutput {
   private final String accountId;
   private final String contactId;
-  private final String caseId;
-  private final List<String> taskIds;
+  private final Cases cases;
 
-  public FunctionOutput(String accountId, String contactId, String caseId, List<String> taskIds) {
+  public FunctionOutput(String accountId, String contactId, Cases cases) {
     this.accountId = accountId;
     this.contactId = contactId;
-    this.caseId = caseId;
-    this.taskIds = taskIds;
+    this.cases = cases;
   }
 
   public String getAccountId() {
@@ -1223,12 +1201,32 @@ public class FunctionOutput {
     return this.contactId;
   }
 
-  public String getCaseId() {
-    return this.caseId;
+  public Cases getCases() {
+    return this.cases;
+  }
+}
+`
+                },
+                {
+                  name: "Cases.java",
+                  label: "UnitOfWork",
+                  body: `package com.salesforce.functions.recipes;
+
+public class Cases {
+  private final String serviceCaseId;
+  private final String followupCaseId;
+
+  public Cases(String serviceCaseId, String followupCaseId) {
+    this.serviceCaseId = serviceCaseId;
+    this.followupCaseId = followupCaseId;
   }
 
-  public List<String> getTaskIds() {
-    return this.taskIds;
+  public String getServiceCaseId() {
+    return serviceCaseId;
+  }
+
+  public String getFollowupCaseId() {
+    return followupCaseId;
   }
 }
 `

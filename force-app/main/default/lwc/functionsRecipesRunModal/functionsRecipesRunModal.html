@@ -21,7 +21,7 @@
           <span class="slds-assistive-text">Close</span>
         </button>
         <div class="slds-modal__title slds-hyphenate slds-text-align_center">
-          Run {selectedFunction.label} Functions
+          Run {selectedFunction.label} Function
         </div>
         <div
           class="
@@ -51,30 +51,32 @@
                   type="inlineMessage"
                 ></c-error-panel>
               </template>
-              <div
-                class="
-                  slds-text-body_regular
-                  slds-p-bottom_small
-                  slds-text-align_center
-                "
-              >
-                Please provide the available inputs to run the function.
-              </div>
-              <template
-                for:each={selectedFunction.inputs}
-                for:item="item"
-                for:index="i"
-              >
-                <lightning-input
-                  key={item.i}
-                  type={item.type}
-                  label={item.label}
-                  name={item.name}
-                  required
-                  onchange={handleChange}
-                  style="width: 50%"
+              <template if:true={selectedFunction.inputs}>
+                <div
+                  class="
+                    slds-text-body_regular
+                    slds-p-bottom_small
+                    slds-text-align_center
+                  "
                 >
-                </lightning-input>
+                  Please provide the available inputs to run the function.
+                </div>
+                <template
+                  for:each={selectedFunction.inputs}
+                  for:item="item"
+                  for:index="i"
+                >
+                  <lightning-input
+                    key={item.i}
+                    type={item.type}
+                    label={item.label}
+                    name={item.name}
+                    required
+                    onchange={handleChange}
+                    style="width: 50%"
+                  >
+                  </lightning-input>
+                </template>
               </template>
             </template>
             <template if:true={result}>
@@ -95,12 +97,14 @@
           onclick={handleClose}
         >
         </lightning-button>
-        <lightning-button
-          label="Invoke"
-          name="invoke"
-          variant="brand"
-          onclick={invokeFunction}
-        ></lightning-button>
+        <template if:false={result}>
+          <lightning-button
+            label="Invoke"
+            name="invoke"
+            variant="brand"
+            onclick={invokeFunction}
+          ></lightning-button>
+        </template>
       </footer>
     </div>
   </section>
