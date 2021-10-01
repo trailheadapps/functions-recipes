@@ -19,7 +19,7 @@
     "watch": "tsc -w"
   },
   "devDependencies": {
-    "@types/chai": "^4.2.19",
+    "@types/chai": "^4.2.22",
     "@types/chai-as-promised": "^7.1.4",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.4.12",
