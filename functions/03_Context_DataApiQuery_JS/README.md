@@ -25,5 +25,5 @@ sf run function start --verbose
 4. Invoke your function locally
 
 ```
-sf run function --url=http://localhost:8080 --payload='{"keyword":"america"}'
+sf run function --function-url=http://localhost:8080 --payload='{"keyword":"america"}'
 ```

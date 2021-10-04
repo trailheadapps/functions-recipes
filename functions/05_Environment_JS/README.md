@@ -25,5 +25,5 @@ sf run function start -e PASSWORD_SALT="make this a random passphrase" --verbose
 4. Invoke your function locally
 
 ```
-sf run function --url=http://localhost:8080 --payload='{"password":"test"}'
+sf run function --function-url=http://localhost:8080 --payload='{"password":"test"}'
 ```
