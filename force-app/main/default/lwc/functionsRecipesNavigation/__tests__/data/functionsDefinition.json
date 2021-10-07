@@ -1,0 +1,379 @@
+[
+    {
+        "name": "01_Intro_ProcessLargeData",
+        "label": "Process Large Data Volumes",
+        "subtitle": "Process Large Data Volumes",
+        "description": "From a large JSON payload calculates the distance between a supplied point of origin cordinate and the data, sorts it, and returns the nearest x results.",
+        "inputs": [
+            {
+                "label": "Latitude",
+                "name": "latitude",
+                "type": "text"
+            },
+            {
+                "label": "Longitude",
+                "name": "longitude",
+                "type": "text"
+            },
+            {
+                "label": "Length",
+                "name": "length",
+                "type": "text"
+            }
+        ],
+        "functions": [
+            {
+                "name": "01_Intro_ProcessLargeData_JS",
+                "label": "Process Large Data - JavaScript",
+                "deployment": "functions_recipes.processlargedatajs",
+                "language": "JavaScript",
+                "files": [
+                    {
+                        "name": "index.js",
+                        "label": "Index",
+                        "path": "/",
+                        "body": "\"use strict\";\n\nconst sampleData = require(\"./data/sample-data.json\");\n\n/**\n * From a large JSON payload calculates the distance between a supplied\n * point of origin cordinate and the data, sorts it, and returns the nearest x results.\n *\n * The exported method is the entry point for your code when the function is invoked.\n *\n * Following parameters are pre-configured and provided to your function on execution:\n * @param event: represents the data associated with the occurrence of an event, and\n *                 supporting metadata about the source of that occurrence.\n * @param context: represents the connection to Functions and your Salesforce org.\n * @param logger: logging handler used to capture application logs and trace specifically\n *                 to a given execution of a function.\n */\nmodule.exports = async function (event, context, logger) {\n  const data = event.data || {};\n  logger.info(\n    `Invoking processlargedatajs Function with payload ${JSON.stringify(data)}`\n  );\n\n  // validate the payload params\n  if (!data.latitude || !data.longitude) {\n    throw new Error(`Please provide latitude and longitude`);\n  }\n\n  // Sets 5 if length is not provided, also accepts length = 0\n  const length = data.length ?? 5;\n\n  // Iterate through the schools in the file and calculate the distance using the distance function below\n  const schools = sampleData.schools\n    .map((school) => {\n      return Object.assign({}, school, {\n        distance: distance(\n          data.latitude,\n          data.longitude,\n          school.latitude,\n          school.longitude\n        )\n      });\n    })\n    // Sort schools by distance distance from the provided location\n    .sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));\n\n  // Assign the nearest x schools to the results constant based on the length property provided in the payload\n  const results = schools.slice(0, length);\n\n  // return the results\n  return { schools: results };\n};\n\n/**\n * Calculate distance between two geographical points\n *\n * @param {string} latitudeSt:  represents the latitude of the origin point\n * @param {string} longitudeSt:  represents the longitude of the origin point\n * @param {string} latitudeSch:  represents the latitude of the school\n * @param {string} longitudeSch:  represents the longitude of the school\n * ....\n * @returns {number} distance between point a and b\n */\nfunction distance(latitudeSt, longitudeSt, latitudeSch, longitudeSch) {\n  if (latitudeSt == latitudeSch && longitudeSt == longitudeSch) {\n    return 0;\n  } else {\n    const radLatitudeSf = (Math.PI * latitudeSt) / 180;\n    const radLatitudeSch = (Math.PI * latitudeSch) / 180;\n    const theta = longitudeSt - longitudeSch;\n    const radTheta = (Math.PI * theta) / 180;\n    let dist =\n      Math.sin(radLatitudeSf) * Math.sin(radLatitudeSch) +\n      Math.cos(radLatitudeSf) * Math.cos(radLatitudeSch) * Math.cos(radTheta);\n    if (dist > 1) {\n      dist = 1;\n    }\n    dist = Math.acos(dist);\n    dist = (dist * 180) / Math.PI;\n    dist = dist * 60 * 1.1515;\n    return dist;\n  }\n}\n"
+                    }
+                ]
+            },
+            {
+                "name": "01_Intro_ProcessLargeData_Java",
+                "label": "Process Large Data - Java",
+                "deployment": "functions_recipes.processlargedatajava",
+                "language": "Java",
+                "files": [
+                    {
+                        "name": "ProcessLargeDataFunction.java",
+                        "label": "Process Large Data Function",
+                        "path": "/",
+                        "body": "package com.salesforce.functions.recipes;\n\nimport com.google.gson.Gson;\nimport com.google.gson.stream.JsonReader;\nimport com.salesforce.functions.jvm.sdk.Context;\nimport com.salesforce.functions.jvm.sdk.InvocationEvent;\nimport com.salesforce.functions.jvm.sdk.SalesforceFunction;\nimport java.io.FileReader;\nimport java.util.Comparator;\nimport java.util.List;\nimport java.util.stream.Collectors;\nimport org.slf4j.Logger;\nimport org.slf4j.LoggerFactory;\n\n/**\n * From a large JSON payload calculates the distance between a supplied point of origin cordinate\n * and the data, sorts it, and returns the nearest x results.\n */\npublic class ProcessLargeDataFunction implements SalesforceFunction<FunctionInput, FunctionOutput> {\n  private static final Logger LOGGER = LoggerFactory.getLogger(ProcessLargeDataFunction.class);\n\n  @Override\n  public FunctionOutput apply(InvocationEvent<FunctionInput> event, Context context)\n      throws Exception {\n    // Read Input Parameters\n    // - Point of Origin\n    double latitudeSt = event.getData().getLatitude();\n    double longitudeSt = event.getData().getLongitude();\n    // - Number of results to return\n    int length = event.getData().getLength();\n\n    // Read Schools JSON Database into memory\n    JsonReader reader = new JsonReader(new FileReader(\"data/sample-data.json\"));\n    Gson gson = new Gson();\n    JsonResponse response = gson.fromJson(reader, JsonResponse.class);\n\n    // Calculate Distance from point of origin -> Sort by Distance -> Limit results\n    List<School> schools =\n        response.getSchools().stream()\n            .map(\n                school -> {\n                  school.setDistance(\n                      distance(\n                          latitudeSt, longitudeSt, school.getLatitude(), school.getLongitude()));\n                  return school;\n                })\n            .sorted(Comparator.comparingDouble(School::getDistance))\n            .limit(length)\n            .collect(Collectors.toList());\n\n    LOGGER.info(\"Function successfully filtered {} schools\", schools.size());\n\n    return new FunctionOutput(schools);\n  }\n\n  /**\n   * Calculate distance between two geographic points\n   *\n   * @param latitudeSt Latitude point of origin\n   * @param longitudeSt Longitude point of origin\n   * @param latitudeSch Latitude school\n   * @param longitudeSch Longitude school\n   * @return double Distance between point of origin and school\n   */\n  private double distance(\n      double latitudeSt, double longitudeSt, double latitudeSch, double longitudeSch) {\n    if (latitudeSt == latitudeSch && longitudeSt == longitudeSch) {\n      return 0;\n    } else {\n      double radLatitudeSt = (Math.PI * latitudeSt) / 180;\n      double radLatitudeSch = (Math.PI * latitudeSch) / 180;\n      double theta = longitudeSt - longitudeSch;\n      double radTheta = (Math.PI * theta) / 180;\n      double dist =\n          Math.sin(radLatitudeSt) * Math.sin(radLatitudeSch)\n              + Math.cos(radLatitudeSt) * Math.cos(radLatitudeSch) * Math.cos(radTheta);\n      if (dist > 1) {\n        dist = 1;\n      }\n      dist = Math.acos(dist);\n      dist = (dist * 180) / Math.PI;\n      return dist;\n    }\n  }\n}\n"
+                    },
+                    {
+                        "name": "FunctionInput.java",
+                        "label": "Function Input",
+                        "path": "/",
+                        "body": "package com.salesforce.functions.recipes;\n\npublic class FunctionInput {\n  private double latitude;\n  private double longitude;\n  private int length;\n\n  public FunctionInput() {}\n\n  public FunctionInput(double latitude, double longitude, int length) {\n    this.latitude = latitude;\n    this.longitude = longitude;\n    this.length = length;\n  }\n\n  public double getLatitude() {\n    return latitude;\n  }\n\n  public double getLongitude() {\n    return longitude;\n  }\n\n  public int getLength() {\n    return length;\n  }\n}\n"
+                    },
+                    {
+                        "name": "FunctionOutput.java",
+                        "label": "Function Output",
+                        "path": "/",
+                        "body": "package com.salesforce.functions.recipes;\n\nimport java.util.List;\n\npublic class FunctionOutput {\n  private final List<School> schools;\n\n  public FunctionOutput(List<School> schools) {\n    this.schools = schools;\n  }\n\n  public List<School> getSchools() {\n    return schools;\n  }\n}\n"
+                    },
+                    {
+                        "name": "JavaResponse.java",
+                        "label": "Java Response",
+                        "path": "/",
+                        "body": "package com.salesforce.functions.recipes;\n\nimport java.util.List;\n\npublic class JsonResponse {\n  private List<School> schools;\n\n  public List<School> getSchools() {\n    return schools;\n  }\n\n  public void setSchools(List<School> schools) {\n    this.schools = schools;\n  }\n}\n"
+                    },
+                    {
+                        "name": "School.java",
+                        "label": "School",
+                        "path": "/",
+                        "body": "package com.salesforce.functions.recipes;\n\npublic class School {\n  private String name;\n  private String website;\n  private String description;\n  private String[] levels;\n  private String[] languages;\n  private String format;\n  private String format_description;\n  private String street;\n  private String city;\n  private String state;\n  private String zip;\n  private String country;\n  private double latitude;\n  private double longitude;\n  private double distance;\n\n  public String getName() {\n    return this.name;\n  }\n\n  public void setName(String name) {\n    this.name = name;\n  }\n\n  public String getWebsite() {\n    return this.website;\n  }\n\n  public void setWebsite(String website) {\n    this.website = website;\n  }\n\n  public String getDescription() {\n    return this.description;\n  }\n\n  public void setDescription(String description) {\n    this.description = description;\n  }\n\n  public String[] getLevels() {\n    return this.levels;\n  }\n\n  public void setLevels(String[] levels) {\n    this.levels = levels;\n  }\n\n  public String[] getLanguages() {\n    return this.languages;\n  }\n\n  public void setLanguages(String[] languages) {\n    this.languages = languages;\n  }\n\n  public String getFormat() {\n    return this.format;\n  }\n\n  public void setFormat(String format) {\n    this.format = format;\n  }\n\n  public String getFormat_description() {\n    return this.format_description;\n  }\n\n  public void setFormat_description(String format_description) {\n    this.format_description = format_description;\n  }\n\n  public String getStreet() {\n    return this.street;\n  }\n\n  public void setStreet(String street) {\n    this.street = street;\n  }\n\n  public String getCity() {\n    return this.city;\n  }\n\n  public void setCity(String city) {\n    this.city = city;\n  }\n\n  public String getState() {\n    return this.state;\n  }\n\n  public void setState(String state) {\n    this.state = state;\n  }\n\n  public String getZip() {\n    return this.zip;\n  }\n\n  public void setZip(String zip) {\n    this.zip = zip;\n  }\n\n  public String getCountry() {\n    return this.country;\n  }\n\n  public void setCountry(String country) {\n    this.country = country;\n  }\n\n  public double getLatitude() {\n    return this.latitude;\n  }\n\n  public void setLatitude(double latitude) {\n    this.latitude = latitude;\n  }\n\n  public double getLongitude() {\n    return this.longitude;\n  }\n\n  public void setLongitude(double longitude) {\n    this.longitude = longitude;\n  }\n\n  public double getDistance() {\n    return this.distance;\n  }\n\n  public void setDistance(double distance) {\n    this.distance = distance;\n  }\n}\n"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "02_InvocationEvent",
+        "label": "Invocation Event",
+        "subtitle": "Functions Recipes",
+        "description": "Receives a payload and returns information about it.",
+        "inputs": [
+            {
+                "type": "text",
+                "name": "name",
+                "label": "Name"
+            },
+            {
+                "type": "number",
+                "name": "year",
+                "label": "Year"
+            }
+        ],
+        "functions": [
+            {
+                "name": "02_InvocationEvent_JS",
+                "label": "Invocation Event - JavaScript",
+                "deployment": "functions_recipes.invocationeventjs",
+                "language": "JavaScript",
+                "files": [
+                    {
+                        "name": "index.js",
+                        "label": "Invocation Event",
+                        "body": "\"use strict\";\n\n/**\n * Receives a payload and returns information about it.\n *\n * The exported method is the entry point for your code when the function is invoked.\n *\n * Following parameters are pre-configured and provided to your function on execution:\n * @param event: represents the data associated with the occurrence of an event, and\n *                 supporting metadata about the source of that occurrence.\n * @param context: represents the connection to Functions and your Salesforce org.\n * @param logger: logging handler used to capture application logs and trace specifically\n *                 to a given execution of a function.\n */\nmodule.exports = async function (event, context, logger) {\n  const data = event.data || {};\n  logger.info(\n    `Invoking invocationeventjs with payload ${JSON.stringify(data)}`\n  );\n\n  // Extract information from the event (https://cloudevents.io/)\n  const { id, dataContentType, source, type, time } = event;\n  const results = {\n    id,\n    data,\n    dataContentType,\n    source,\n    type,\n    time,\n    payloadInfo: {}\n  };\n\n  // Identify the payload type\n  if (typeof data === \"object\") {\n    results.payloadInfo.type = \"object\";\n    results.payloadInfo.keys = Object.keys(data);\n  } else {\n    throw new Error(`Payload of type '${typeof data}' not supported`);\n  }\n\n  logger.info(JSON.stringify(results));\n  return results;\n};\n"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "03_Context_DataApiQuery",
+        "label": "Data API Query",
+        "subtitle": "Functions Recipes",
+        "description": "Returns accounts and its contacts by keyword.",
+        "inputs": [
+            {
+                "label": "Keyword",
+                "name": "keyword",
+                "type": "text"
+            }
+        ],
+        "functions": [
+            {
+                "name": "03_Context_DataApiQuery_JS",
+                "label": "Context - Data API Query - JavaScript",
+                "deployment": "functions_recipes.dataapiqueryjs",
+                "language": "JavaScript",
+                "files": [
+                    {
+                        "name": "index.js",
+                        "label": "Invocation Event",
+                        "body": "/**\n * Returns accounts and its contacts by keyword.\n *\n * The exported method is the entry point for your code when the function is invoked.\n *\n * Following parameters are pre-configured and provided to your function on execution:\n * @param event: represents the data associated with the occurrence of an event, and\n *                 supporting metadata about the source of that occurrence.\n * @param context: represents the connection to Functions and your Salesforce org.\n * @param logger: logging handler used to capture application logs and trace specifically\n *                 to a given execution of a function.\n */\nmodule.exports = async function (event, context, logger) {\n  logger.info(\n    `Invoking datapiqueryjs Function with payload ${JSON.stringify(\n      event.data || {}\n    )}`\n  );\n\n  const keyword = event.data.keyword;\n  if (!keyword || typeof keyword !== \"string\") {\n    throw new Error(\"Please specify a keyword to search accounts\");\n  }\n\n  const results = await context.org.dataApi.query(\n    `SELECT Id, Name, (SELECT Name, Email FROM Contacts) FROM Account WHERE Name LIKE '%${keyword}%'`\n  );\n  logger.info(JSON.stringify(results));\n  return results;\n};\n"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "03_Context_OrgInfo",
+        "label": "OrgInfo",
+        "subtitle": "Functions Recipes",
+        "description": "Returns the Salesforce Org information attached to the context.",
+        "functions": [
+            {
+                "name": "03_Context_OrgInfo_TypeScript",
+                "label": "Context - OrgInfo - TypeScript",
+                "deployment": "functions_recipes.orginfots",
+                "language": "TypeScript",
+                "files": [
+                    {
+                        "name": "index.ts",
+                        "label": "Index",
+                        "body": "import { InvocationEvent, Context, Logger, Org } from \"sf-fx-sdk-nodejs\";\n\n/**\n * Returns the Salesforce Org information attached to the context.\n *\n * The exported method is the entry point for your code when the function is invoked.\n *\n * Following parameters are pre-configured and provided to your function on execution:\n * @param event: represents the data associated with the occurrence of an event, and\n *                 supporting metadata about the source of that occurrence.\n * @param context: represents the connection to Functions and your Salesforce org.\n * @param logger: logging handler used to capture application logs and trace specifically\n *                 to a given execution of a function.\n */\nexport default async function execute(\n  event: InvocationEvent<any>,\n  context: Context,\n  logger: Logger\n): Promise<OrgInfo> {\n  logger.info(\n    `Invoking orginfots Function with payload ${JSON.stringify(\n      event.data || {}\n    )}`\n  );\n\n  // Check if org is null or undefined\n  if (context.org == null) {\n    throw new Error(\"Function isn't bind to any organization\");\n  }\n\n  // Extract Org info metadata into its own object and return it\n  const orgInfo: OrgInfo = new OrgInfo(context.org);\n  return orgInfo;\n}\n\n// OrgInfo represents Org's metadata\nexport class OrgInfo {\n  apiVersion: string;\n  baseUrl: string;\n  domainUrl: string;\n  id: string;\n  user: any;\n\n  constructor(org: Org) {\n    this.apiVersion = org.apiVersion;\n    this.baseUrl = org.baseUrl;\n    this.domainUrl = org.domainUrl;\n    this.id = org.id;\n    this.user = org.user;\n  }\n}\n"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "03_Context_SalesforceSDK",
+        "label": "SalesforceSDK",
+        "subtitle": "Functions Recipes",
+        "description": "Receives a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.",
+        "inputs": [
+            {
+                "label": "Name",
+                "name": "name",
+                "type": "text"
+            },
+            {
+                "label": "Account Number",
+                "name": "accountNumber",
+                "type": "text"
+            },
+            {
+                "label": "Industry",
+                "name": "industry",
+                "type": "text"
+            },
+            {
+                "label": "Type",
+                "name": "type",
+                "type": "text"
+            },
+            {
+                "label": "Website",
+                "name": "website",
+                "type": "text"
+            }
+        ],
+        "functions": [
+            {
+                "name": "03_Context_SalesforceSDK_JS",
+                "label": "Context - SalesforceSDK - JavaScript",
+                "deployment": "functions_recipes.salesforcesdkjs",
+                "language": "JavaScript",
+                "files": [
+                    {
+                        "name": "index.js",
+                        "label": "Salesforce SDK",
+                        "body": "\"use strict\";\n\n/**\n * Receives a payload containing account details, and creates the record.\n * It then uses a SOQL query to return the newly created Account.\n *\n * The exported method is the entry point for your code when the function is invoked.\n *\n * Following parameters are pre-configured and provided to your function on execution:\n * @param event: represents the data associated with the occurrence of an event, and\n *                 supporting metadata about the source of that occurrence.\n * @param context: represents the connection to Functions and your Salesforce org.\n * @param logger: logging handler used to capture application logs and trace specifically\n *                 to a given execution of a function.\n */\nmodule.exports = async function (event, context, logger) {\n  logger.info(\n    `Invoking salesforcesdkjs Function with payload ${JSON.stringify(\n      event.data || {}\n    )}`\n  );\n\n  // Extract Properties from Payload\n  const { name, accountNumber, industry, type, website } = event.data;\n\n  // Validate the payload params\n  if (!name) {\n    throw new Error(`Please provide account name`);\n  }\n\n  // Define a record using the RecordForCreate type and providing the Developer Name\n  const account = {\n    type: \"Account\",\n    fields: {\n      Name: `${name}-${Date.now()}`,\n      AccountNumber: accountNumber,\n      Industry: industry,\n      Type: type,\n      Website: website\n    }\n  };\n\n  try {\n    // Insert the record using the SalesforceSDK DataApi and get the new Record Id from the result\n    const { id: recordId } = await context.org.dataApi.create(account);\n\n    // Query Accounts using the SalesforceSDK DataApi to verify that our new Account was created.\n    const soql = `SELECT Fields(STANDARD) FROM Account WHERE Id = '${recordId}'`;\n    const queryResults = await context.org.dataApi.query(soql);\n    return queryResults;\n  } catch (err) {\n    // Catch any DML errors and pass the throw an error with the message\n    const errorMessage = `Failed to insert record. Root Cause: ${err.message}`;\n    logger.error(errorMessage);\n    throw new Error(errorMessage);\n  }\n};\n"
+                    }
+                ]
+            },
+            {
+                "name": "03_Context_SalesforceSDK_Java",
+                "label": "Context - SalesforceSDK - Java",
+                "deployment": "functions_recipes.salesforcesdkjava",
+                "language": "Java",
+                "files": [
+                    {
+                        "name": "SalesforceSDKFunction.java",
+                        "label": "Salesforce SDK",
+                        "body": "package com.salesforce.functions.recipes;\n\nimport com.salesforce.functions.jvm.sdk.Context;\nimport com.salesforce.functions.jvm.sdk.InvocationEvent;\nimport com.salesforce.functions.jvm.sdk.SalesforceFunction;\nimport com.salesforce.functions.jvm.sdk.data.DataApi;\nimport com.salesforce.functions.jvm.sdk.data.Record;\nimport com.salesforce.functions.jvm.sdk.data.RecordModificationResult;\nimport java.text.SimpleDateFormat;\nimport java.util.ArrayList;\nimport java.util.Date;\nimport java.util.List;\nimport org.slf4j.Logger;\nimport org.slf4j.LoggerFactory;\n\n/**\n * This function takes a payload containing account details, and creates the record. It then uses a\n * SOQL query to return the newly created Account.\n */\npublic class SalesforceSDKFunction implements SalesforceFunction<FunctionInput, FunctionOutput> {\n  private static final Logger LOGGER = LoggerFactory.getLogger(SalesforceSDKFunction.class);\n\n  @Override\n  public FunctionOutput apply(InvocationEvent<FunctionInput> event, Context context)\n      throws Exception {\n\n    // Retrieve payload fields\n    String accountName = event.getData().getName();\n\n    if (accountName == null) {\n      throw new Exception(\"Account Name is required\");\n    }\n\n    String accountNumber = event.getData().getAccountNumber();\n    String industry = event.getData().getIndustry();\n    String type = event.getData().getType();\n    String website = event.getData().getWebsite();\n\n    // Insert the record using the SalesforceSDK DataApi and get the new Record Id from the result\n    DataApi dataApi = context.getOrg().get().getDataApi();\n\n    String timeStamp = new SimpleDateFormat(\"yyyy.MM.dd.HH.mm.ss\").format(new Date());\n    String accountNameWithTimestamp = String.format(\"%s-%s\", accountName, timeStamp);\n\n    Record account =\n        dataApi\n            .newRecordBuilder(\"Account\")\n            .withField(\"Name\", accountNameWithTimestamp)\n            .withField(\"AccountNumber\", accountNumber)\n            .withField(\"Industry\", industry)\n            .withField(\"Type\", type)\n            .withField(\"Website\", website)\n            .build();\n\n    RecordModificationResult createResult = dataApi.create(account);\n\n    // Query Accounts using the SalesforceSDK DataApi to verify that our new Account was created.\n    String queryString =\n        String.format(\"SELECT Id, Name FROM Account WHERE Id = '%s'\", createResult.getId());\n    List<Record> records = dataApi.query(queryString).getRecords();\n\n    LOGGER.info(\"Function successfully queried {} account records!\", records.size());\n\n    List<Account> accounts = new ArrayList<>();\n    for (Record record : records) {\n      String id = record.getStringField(\"Id\").get();\n      String name = record.getStringField(\"Name\").get();\n      accounts.add(new Account(id, name));\n    }\n\n    return new FunctionOutput(accounts);\n  }\n}\n"
+                    },
+                    {
+                        "name": "Account.java",
+                        "label": "Salesforce SDK",
+                        "body": "package com.salesforce.functions.recipes;\n\npublic class Account {\n  private final String id;\n  private final String name;\n\n  public Account(String id, String name) {\n    this.id = id;\n    this.name = name;\n  }\n\n  public String getId() {\n    return id;\n  }\n\n  public String getName() {\n    return name;\n  }\n}\n"
+                    },
+                    {
+                        "name": "FunctionInput.java",
+                        "label": "Salesforce SDK",
+                        "body": "package com.salesforce.functions.recipes;\n\npublic class FunctionInput {\n  private String name;\n  private String accountNumber;\n  private String industry;\n  private String type;\n  private String website;\n\n  public FunctionInput() {}\n\n  public FunctionInput(\n      String name, String accountNumber, String industry, String type, String website) {\n    this.name = name;\n    this.accountNumber = accountNumber;\n    this.industry = industry;\n    this.type = type;\n    this.website = website;\n  }\n\n  public String getName() {\n    return this.name;\n  }\n\n  public String getAccountNumber() {\n    return this.accountNumber;\n  }\n\n  public String getIndustry() {\n    return this.industry;\n  }\n\n  public String getType() {\n    return this.type;\n  }\n\n  public String getWebsite() {\n    return this.website;\n  }\n}\n"
+                    },
+                    {
+                        "name": "FunctionOutput.java",
+                        "label": "Salesforce SDK",
+                        "body": "package com.salesforce.functions.recipes;\n\nimport java.util.List;\n\npublic class FunctionOutput {\n  private final List<Account> accounts;\n\n  public FunctionOutput(List<Account> accounts) {\n    this.accounts = accounts;\n  }\n\n  public List<Account> getAccounts() {\n    return accounts;\n  }\n}\n"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "03_Context_UnitOfWork",
+        "label": "UnitOfWork",
+        "subtitle": "Functions Recipes",
+        "description": "Receives a payload containing Account, Contact, and Case details and uses the Unit of Work pattern to assign the corresponding values to to its Record while maintaining the relationships. It then commits the unit of work and returns the Record Id's for each object.",
+        "inputs": [
+            {
+                "label": "First Name",
+                "name": "firstName",
+                "type": "text"
+            },
+            {
+                "label": "Last Name",
+                "name": "lastName",
+                "type": "text"
+            },
+            {
+                "label": "Account Name",
+                "name": "accountName",
+                "type": "text"
+            },
+            {
+                "label": "Website",
+                "name": "website",
+                "type": "text"
+            },
+            {
+                "label": "Subject",
+                "name": "subject",
+                "type": "text"
+            },
+            {
+                "label": "Description",
+                "name": "description",
+                "type": "text"
+            }
+        ],
+        "functions": [
+            {
+                "name": "03_Context_UnitOfWork_JS",
+                "label": "Context - UnitOfWork - JavaScript",
+                "deployment": "functions_recipes.unitofworkjs",
+                "language": "JavaScript",
+                "files": [
+                    {
+                        "name": "index.js",
+                        "label": "UnitOfWork",
+                        "body": "\"use strict\";\n\n/**\n * Receives a payload containing Account, Contact, and Case details and uses the\n * Unit of Work pattern to assign the corresponding values to to its Record\n * while maintaining the relationships. It then commits the unit of work and\n * returns the Record Id's for each object.\n *\n * The exported method is the entry point for your code when the function is invoked.\n *\n * Following parameters are pre-configured and provided to your function on execution:\n * @param event: represents the data associated with the occurrence of an event, and\n *                 supporting metadata about the source of that occurrence.\n * @param context: represents the connection to Functions and your Salesforce org.\n * @param logger: logging handler used to capture application logs and trace specifically\n *                 to a given execution of a function.\n */\nmodule.exports = async function (event, context, logger) {\n  logger.info(\n    `Invoking unitofworkjs Function with payload ${JSON.stringify(\n      event.data || {}\n    )}`\n  );\n\n  // Validate Input\n  const payload = event.data;\n  validateField(\"accountName\", payload.accountName);\n  validateField(\"lastName\", payload.lastName);\n  validateField(\"subject\", payload.subject);\n\n  // Create a unit of work that inserts multiple objects.\n  const uow = context.org.dataApi.newUnitOfWork();\n\n  // Register a new Account for Creation\n  const accountId = uow.registerCreate({\n    type: \"Account\",\n    fields: {\n      Name: payload.accountName\n    }\n  });\n\n  // Register a new Contact for Creation\n  const contactId = uow.registerCreate({\n    type: \"Contact\",\n    fields: {\n      FirstName: payload.firstName,\n      LastName: payload.lastName,\n      AccountId: accountId // Get the ReferenceId from previous operation\n    }\n  });\n\n  // Register a new Case for Creation\n  const serviceCaseId = uow.registerCreate({\n    type: \"Case\",\n    fields: {\n      Subject: payload.subject,\n      Description: payload.description,\n      Origin: \"Web\",\n      Status: \"New\",\n      AccountId: accountId, // Get the ReferenceId from previous operation\n      ContactId: contactId // Get the ReferenceId from previous operation\n    }\n  });\n\n  // Register a follow up Case for Creation\n  const followupCaseId = uow.registerCreate({\n    type: \"Case\",\n    fields: {\n      ParentId: serviceCaseId, // Get the ReferenceId from previous operation\n      Subject: \"Follow Up\",\n      Description: \"Follow up with Customer\",\n      Origin: \"Web\",\n      Status: \"New\",\n      AccountId: accountId, // Get the ReferenceId from previous operation\n      ContactId: contactId // Get the ReferenceId from previous operation\n    }\n  });\n\n  try {\n    // Commit the Unit of Work with all the previous registered operations\n    const response = await context.org.dataApi.commitUnitOfWork(uow);\n    // Construct the result by getting the Id from the successful inserts\n    const result = {\n      accountId: response.get(accountId).id,\n      contactId: response.get(contactId).id,\n      cases: {\n        serviceCaseId: response.get(serviceCaseId).id,\n        followupCaseId: response.get(followupCaseId).id\n      }\n    };\n    return result;\n  } catch (err) {\n    const errorMessage = `Failed to insert record. Root Cause : ${err.message}`;\n    logger.error(errorMessage);\n    throw new Error(errorMessage);\n  }\n};\n\n/**\n * Throws an Error if a value isn't present\n * @param {String} field\n * @param {any} value\n */\nfunction validateField(field, value) {\n  if (!value) throw new Error(`Please provide ${field}`);\n}\n"
+                    }
+                ]
+            },
+            {
+                "name": "03_Context_UnitOfWork_Java",
+                "label": "UnitOfWork - Java",
+                "deployment": "functions_recipes.unitofworkjava",
+                "language": "Java",
+                "files": [
+                    {
+                        "name": "UnitOfWorkFunction.java",
+                        "label": "UnitOfWork",
+                        "body": "package com.salesforce.functions.recipes;\n\nimport com.salesforce.functions.jvm.sdk.Context;\nimport com.salesforce.functions.jvm.sdk.InvocationEvent;\nimport com.salesforce.functions.jvm.sdk.SalesforceFunction;\nimport com.salesforce.functions.jvm.sdk.data.DataApi;\nimport com.salesforce.functions.jvm.sdk.data.Record;\nimport com.salesforce.functions.jvm.sdk.data.RecordModificationResult;\nimport com.salesforce.functions.jvm.sdk.data.ReferenceId;\nimport com.salesforce.functions.jvm.sdk.data.builder.UnitOfWorkBuilder;\nimport java.util.Map;\nimport org.slf4j.Logger;\nimport org.slf4j.LoggerFactory;\n\n/**\n * Receives a payload containing Account, Contact, and Case details and uses the Unit of Work\n * pattern to assign the corresponding values to to its Record while maintaining the relationships.\n * It then commits the unit of work and returns the Record Id's for each object.\n */\npublic class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, FunctionOutput> {\n  private static final Logger LOGGER = LoggerFactory.getLogger(UnitOfWorkFunction.class);\n\n  @Override\n  public FunctionOutput apply(InvocationEvent<FunctionInput> event, Context context)\n      throws Exception {\n\n    String accountName = event.getData().getAccountName();\n    String firstName = event.getData().getFirstName();\n    String lastName = event.getData().getLastName();\n    String subject = event.getData().getSubject();\n    String description = event.getData().getDescription();\n\n    DataApi dataApi = context.getOrg().get().getDataApi();\n\n    // Create a Unit of Work that inserts multiple objects\n    UnitOfWorkBuilder unitOfWork = dataApi.newUnitOfWorkBuilder();\n\n    // You can use the DataApi to create a new Record\n    Record account = dataApi.newRecordBuilder(\"Account\").withField(\"Name\", accountName).build();\n    // A ReferenceId will be returned to assign relationships with other objects within the same\n    // transaction\n    ReferenceId accountRefId = unitOfWork.registerCreate(account);\n\n    Record contact =\n        dataApi\n            .newRecordBuilder(\"Contact\")\n            .withField(\"FirstName\", firstName)\n            .withField(\"LastName\", lastName)\n            .withField(\"AccountId\", accountRefId)\n            .build();\n    ReferenceId contactRefId = unitOfWork.registerCreate(contact);\n\n    // Here we are using the accountRefId and contactRefId to specify the relationship with the\n    // temporary Id's created by the Unit of Work builder\n    Record serviceCase =\n        dataApi\n            .newRecordBuilder(\"Case\")\n            .withField(\"Subject\", subject)\n            .withField(\"Description\", description)\n            .withField(\"Origin\", \"Web\")\n            .withField(\"Status\", \"New\")\n            .withField(\"AccountId\", accountRefId)\n            .withField(\"ContactId\", contactRefId)\n            .build();\n    ReferenceId serviceCaseRefId = unitOfWork.registerCreate(serviceCase);\n\n    Record followupCase =\n        dataApi\n            .newRecordBuilder(\"Case\")\n            .withField(\"ParentId\", serviceCaseRefId)\n            .withField(\"Subject\", \"Follow Up\")\n            .withField(\"Description\", \"Follow up with Customer\")\n            .withField(\"Origin\", \"Web\")\n            .withField(\"Status\", \"New\")\n            .withField(\"AccountId\", accountRefId)\n            .withField(\"ContactId\", contactRefId)\n            .build();\n    ReferenceId followupCaseRefId = unitOfWork.registerCreate(followupCase);\n\n    // The transaction will be committed and all the objects are going to be created.\n    // The resulting map contains the Id's of the created objects\n    Map<ReferenceId, RecordModificationResult> result =\n        dataApi.commitUnitOfWork(unitOfWork.build());\n\n    LOGGER.info(\"Function successfully commited UoW with {} affected records!\", result.size());\n\n    // Construct the result by getting de Id's from the created objects\n    return new FunctionOutput(\n        result.get(accountRefId).getId(),\n        result.get(contactRefId).getId(),\n        new Cases(result.get(serviceCaseRefId).getId(), result.get(followupCaseRefId).getId()));\n  }\n}\n"
+                    },
+                    {
+                        "name": "FunctionInput.java",
+                        "label": "Salesforce SDK",
+                        "body": "package com.salesforce.functions.recipes;\n\npublic class FunctionInput {\n  private String accountName;\n  private String firstName;\n  private String lastName;\n  private String subject;\n  private String description;\n\n  public FunctionInput() {}\n\n  public FunctionInput(\n      String accountName, String firstName, String lastName, String subject, String description) {\n    this.accountName = accountName;\n    this.firstName = firstName;\n    this.lastName = lastName;\n    this.subject = subject;\n    this.description = description;\n  }\n\n  public String getAccountName() {\n    return this.accountName;\n  }\n\n  public String getFirstName() {\n    return this.firstName;\n  }\n\n  public String getLastName() {\n    return this.lastName;\n  }\n\n  public String getSubject() {\n    return this.subject;\n  }\n\n  public String getDescription() {\n    return this.description;\n  }\n}\n"
+                    },
+                    {
+                        "name": "FunctionOutput.java",
+                        "label": "UnitOfWork",
+                        "body": "package com.salesforce.functions.recipes;\n\npublic class FunctionOutput {\n  private final String accountId;\n  private final String contactId;\n  private final Cases cases;\n\n  public FunctionOutput(String accountId, String contactId, Cases cases) {\n    this.accountId = accountId;\n    this.contactId = contactId;\n    this.cases = cases;\n  }\n\n  public String getAccountId() {\n    return this.accountId;\n  }\n\n  public String getContactId() {\n    return this.contactId;\n  }\n\n  public Cases getCases() {\n    return this.cases;\n  }\n}\n"
+                    },
+                    {
+                        "name": "Cases.java",
+                        "label": "UnitOfWork",
+                        "body": "package com.salesforce.functions.recipes;\n\npublic class Cases {\n  private final String serviceCaseId;\n  private final String followupCaseId;\n\n  public Cases(String serviceCaseId, String followupCaseId) {\n    this.serviceCaseId = serviceCaseId;\n    this.followupCaseId = followupCaseId;\n  }\n\n  public String getServiceCaseId() {\n    return serviceCaseId;\n  }\n\n  public String getFollowupCaseId() {\n    return followupCaseId;\n  }\n}\n"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "04_Logger",
+        "label": "Logger",
+        "subtitle": "Functions Recipes",
+        "description": "Generates an amount of log messages every number of seconds.",
+        "inputs": [
+            {
+                "label": "Amount",
+                "name": "amount",
+                "type": "number"
+            },
+            {
+                "label": "Timeout",
+                "name": "timeout",
+                "type": "number"
+            }
+        ],
+        "functions": [
+            {
+                "name": "04_Logger_JS",
+                "label": "Logger - JavaScript",
+                "deployment": "functions_recipes.loggerjs",
+                "language": "JavaScript",
+                "files": [
+                    {
+                        "name": "index.js",
+                        "label": "Logger",
+                        "body": "/**\n * Generates an amount of log messages every number of seconds.\n *\n * The exported method is the entry point for your code when the function is invoked.\n *\n * Following parameters are pre-configured and provided to your function on execution:\n * @param event: represents the data associated with the occurrence of an event, and\n *                 supporting metadata about the source of that occurrence.\n * @param context: represents the connection to Functions and your Salesforce org.\n * @param logger: logging handler used to capture application logs and trace specifically\n *                 to a given execution of a function.\n */\nmodule.exports = async function (event, context, logger) {\n  logger.info(\n    `Invoking loggerjs Function with payload ${JSON.stringify(\n      event.data || {}\n    )}`\n  );\n\n  let { amount = 5, timeout = 5 } = event.data;\n\n  let count = 0;\n  setInterval(() => {\n    if (+amount <= count) return;\n    count++;\n\n    logger.info(\n      `${count} ${\n        count == 1 ? \"elephant\" : \"elephants\"\n      } balancing over a spiderweb at ${new Date()}`\n    );\n  }, timeout * 1000);\n\n  return {\n    status: `Logger Started: Generating ${amount} log messages every ${timeout} seconds`\n  };\n};\n"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "05_Environment_JS",
+        "label": "Environment",
+        "subtitle": "Functions Recipes",
+        "description": "Returns the derivate password hash using pbkdf2 getting the salt from the Environment.",
+        "inputs": [
+            {
+                "label": "Password",
+                "name": "password",
+                "type": "text"
+            }
+        ],
+        "functions": [
+            {
+                "name": "05_Environment_JS",
+                "label": "Environment",
+                "deployment": "functions_recipes.environmentjs",
+                "language": "JavaScript",
+                "files": [
+                    {
+                        "name": "index.js",
+                        "label": "Environment",
+                        "body": "\"use strict\";\n\nconst crypto = require(\"crypto\");\nconst { promisify } = require(\"util\");\n\n// Turn pbkdf2 function from callback based to Promises\nconst pbkdf2 = promisify(crypto.pbkdf2);\n\n/**\n * Returns the derivate password hash using pbkdf2 getting the salt from the Environment.\n *\n * The exported method is the entry point for your code when the function is invoked.\n *\n * Following parameters are pre-configured and provided to your function on execution:\n * @param event: represents the data associated with the occurrence of an event, and\n *                 supporting metadata about the source of that occurrence.\n * @param context: represents the connection to Functions and your Salesforce org.\n * @param logger: logging handler used to capture application logs and trace specifically\n *                 to a given execution of a function.\n */\nmodule.exports = async function (event, context, logger) {\n  logger.info(\n    `Invoking environmentjs Function with payload ${JSON.stringify(\n      event.data || {}\n    )}`\n  );\n\n  const keyLength = event.data.keyLength || 32;\n  const password = event.data.password;\n\n  if (!password || typeof password !== \"string\") {\n    throw new Error(\"Please provide a password to encrypt\");\n  }\n\n  // Get secret \"salt\" from \"private\" secrets store\n  const salt = process.env.PASSWORD_SALT;\n  if (!salt) {\n    throw new Error(\"Please setup PASSWORD_SALT as Environment Variable\");\n  }\n\n  // Calculate the password derivate using the pbkdf2 algorithm\n  // More information can be found here:\n  // https://nodejs.org/dist/latest-v14.x/docs/api/crypto.html#crypto_crypto_pbkdf2_password_salt_iterations_keylen_digest_callback\n  const results = await pbkdf2(password, salt, 10e3, keyLength, \"sha512\");\n  return results.toString(\"hex\");\n};\n"
+                    }
+                ]
+            }
+        ]
+    }
+]
