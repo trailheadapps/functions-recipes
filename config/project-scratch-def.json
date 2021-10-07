@@ -1,7 +1,6 @@
 {
   "orgName": "Functions Recipes",
   "edition": "Developer",
-  "release": "Preview",
   "features": ["Functions", "EnableSetPasswordInApi"],
   "settings": {
     "lightningExperienceSettings": {

@@ -18,11 +18,11 @@ You can use Functions both locally and deployed to a Salesforce Organization, if
 
 ### Prerequisites
 
-Please refer to the [Install Prerequisites](https://developer.salesforce.com/docs/platform/functions/guide/install_intro#install-local-functions-tools) for detailed information about the necessary tools to start developing Salesforce Functions.
+Please refer to the [Install Prerequisites](https://sfdc.co/functions-install-guide) for detailed information about the necessary tools to start developing Salesforce Functions.
 
 ## Salesforce Org Setup and Deployment
 
-For more information about how to configure your organization for Salesforce Functions, please refer to the [documentation](https://developer.salesforce.com/docs/platform/functions/guide/config-org#enable-functions-on-dev-hub-orgs)
+For more information about how to configure your organization for Salesforce Functions, please refer to the [documentation](http://sfdc.co/functions-org-config)
 
 **Prerequisite: Functions Enabled Org**
 
@@ -45,6 +45,28 @@ cd functions-recipes
 sfdx force:org:create -s -f config/project-scratch-def.json -a functions_recipes
 ```
 
+## Salesforce Functions Deployment
+
+For more information about how to deploy Functions to a Compute Environment and connect it to an org, please refer to to the [documentation](https://developer.salesforce.com/docs/platform/functions/guide/deploy)
+
+1. Login to your Salesforce Functions account:
+
+```
+sf login functions
+```
+
+2. Create a **Compute Environment** to deploy the functions and connected it to your org:
+
+```sh
+sf env create compute --connected-org=functions_recipes --alias=recipes_env
+```
+
+3. Deploy the functions
+
+```sh
+sf deploy functions --connected-org=functions_recipes
+```
+
 4. Push source app to the scratch org:
 
 ```sh
@@ -61,28 +83,6 @@ sfdx force:user:permset:assign -n FunctionsRecipes
 
 ```sh
 sfdx force:user:permset:assign -n Functions
-```
-
-## Salesforce Functions Deployment
-
-For more information about how to deploy Functions to a Compute Environment and connect it to an org, please refer to to the [documentation](https://developer.salesforce.com/docs/platform/functions/guide/deploy)
-
-1. Login to your Salesforce Functions account:
-
-```
-sf login functions
-```
-
-2. Create a **Compute Environment** to deploy the functions and connected it to your org:
-
-```sh
-sf env create compute --connected-org=functions_recipes --setalias=recipes_env
-```
-
-3. Deploy the functions
-
-```sh
-sf deploy functions --connected-org=functions_recipes
 ```
 
 ## Functions Recipes App
