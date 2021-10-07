@@ -36,6 +36,21 @@ describe("c-error-panel", () => {
     expect(messageEl.textContent).toBe(MESSAGE);
   });
 
+  it("displays reduced errors", () => {
+    const MESSAGE = { message: "An error has ocurred" };
+
+    // Create initial element
+    const element = createElement("c-error-panel", {
+      is: ErrorPanel
+    });
+    element.error = MESSAGE;
+    element.type = "inlineMessage";
+    document.body.appendChild(element);
+
+    const messageEl = element.shadowRoot.querySelector("p");
+    expect(messageEl.textContent).toBe(MESSAGE.message);
+  });
+
   it("displays no error details when no errors are passed as parameters", () => {
     // Create initial element
     const element = createElement("c-error-panel", {
