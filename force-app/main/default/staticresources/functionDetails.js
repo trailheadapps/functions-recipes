@@ -7,9 +7,11 @@ window.functionData = (function () {
           label: "Process Large Data Volumes",
           subtitle: "Process Large Data Volumes",
           description:
-            "This function takes a large JSON payload, calculates the distance between a supplied cordinate and the data, sorts it, and returns the nearest x results.",
+            "From a large JSON payload calculates the distance between a supplied point of origin cordinate and the data, sorts it, and returns the nearest x results.",
           inputs: [
-            {label: "Latitude", name: "latitude", type:"text"},{label: "Longitude", name: "longitude", type:"text"},{label: "Length", name:"length", type:"text"}
+            { label: "Latitude", name: "latitude", type: "text" },
+            { label: "Longitude", name: "longitude", type: "text" },
+            { label: "Length", name: "length", type: "text" }
           ],
           functions: [
             {
@@ -27,7 +29,8 @@ window.functionData = (function () {
 const sampleData = require("./data/sample-data.json");
 
 /**
- * This function takes a large JSON payload, calculates the distance between a supplied cordinate and the data, sorts it, and returns the nearest x results.
+ * From a large JSON payload calculates the distance between a supplied
+ * point of origin cordinate and the data, sorts it, and returns the nearest x results.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *
@@ -75,6 +78,8 @@ module.exports = async function (event, context, logger) {
 };
 
 /**
+ * Calculate distance between two geographical points
+ *
  * @param {string} latitudeSt:  represents the latitude of the origin point
  * @param {string} longitudeSt:  represents the longitude of the origin point
  * @param {string} latitudeSch:  represents the latitude of the school
@@ -131,8 +136,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This function takes a large JSON payload, calculates the distance between a supplied cordinate
- * and the data, sort's it, and returns the nearest x results.
+ * From a large JSON payload calculates the distance between a supplied point of origin cordinate
+ * and the data, sorts it, and returns the nearest x results.
  */
 public class ProcessLargeDataFunction implements SalesforceFunction<FunctionInput, FunctionOutput> {
   private static final Logger LOGGER = LoggerFactory.getLogger(ProcessLargeDataFunction.class);
@@ -431,16 +436,17 @@ public class School {
           name: "02_InvocationEvent",
           label: "Invocation Event",
           subtitle: "Functions Recipes",
-          description:
-            "Detects a payload type and returns information about it.",
+          description: "Receives a payload and returns information about it.",
           inputs: [
             {
               type: "text",
-              label: "type"
+              name: "name",
+              label: "Name"
             },
             {
-              type: "text",
-              label: "key"
+              type: "number",
+              name: "year",
+              label: "Year"
             }
           ],
           functions: [
@@ -456,7 +462,7 @@ public class School {
                   body: `"use strict";
 
 /**
- * Detects a payload type and returns information about it
+ * Receives a payload and returns information about it.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *
@@ -506,33 +512,20 @@ module.exports = async function (event, context, logger) {
           name: "03_Context_DataApiQuery",
           label: "Data API Query",
           subtitle: "Functions Recipes",
-          description:
-            "The exported method is the entry point for your code when the function is invoked.",
+          description: "Returns accounts and its contacts by keyword.",
+          inputs: [{ label: "Keyword", name: "keyword", type: "text" }],
           functions: [
             {
               name: "03_Context_DataApiQuery_JS",
               label: "Context - Data API Query - JavaScript",
+              deployment: "functions_recipes.dataapiqueryjs",
               language: "JavaScript",
-              inputs: [
-                {
-                  type: "number",
-                  label: "latitude"
-                },
-                {
-                  type: "number",
-                  label: "longitude"
-                },
-                {
-                  type: "number",
-                  label: "length"
-                }
-              ],
               files: [
                 {
                   name: "index.js",
                   label: "Invocation Event",
                   body: `/**
- * Returns accounts and its contacts by keyword
+ * Returns accounts and its contacts by keyword.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *
@@ -577,21 +570,8 @@ module.exports = async function (event, context, logger) {
             {
               name: "03_Context_OrgInfo_TypeScript",
               label: "Context - OrgInfo - TypeScript",
+              deployment: "functions_recipes.orginfots",
               language: "TypeScript",
-              inputs: [
-                {
-                  type: "number",
-                  label: "latitude"
-                },
-                {
-                  type: "number",
-                  label: "longitude"
-                },
-                {
-                  type: "number",
-                  label: "length"
-                }
-              ],
               files: [
                 {
                   name: "index.ts",
@@ -658,26 +638,20 @@ export class OrgInfo {
           label: "SalesforceSDK",
           subtitle: "Functions Recipes",
           description:
-            "This function takes a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.",
+            "Receives a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.",
+          inputs: [
+            { label: "Name", name: "name", type: "text" },
+            { label: "Account Number", name: "accountNumber", type: "text" },
+            { label: "Industry", name: "industry", type: "text" },
+            { label: "Type", name: "type", type: "text" },
+            { label: "Website", name: "website", type: "text" }
+          ],
           functions: [
             {
               name: "03_Context_SalesforceSDK_JS",
               label: "Context - SalesforceSDK - JavaScript",
+              deployment: "functions_recipes.salesforcesdkjs",
               language: "JavaScript",
-              inputs: [
-                {
-                  type: "number",
-                  label: "latitude"
-                },
-                {
-                  type: "number",
-                  label: "longitude"
-                },
-                {
-                  type: "number",
-                  label: "length"
-                }
-              ],
               files: [
                 {
                   name: "index.js",
@@ -685,7 +659,8 @@ export class OrgInfo {
                   body: `"use strict";
 
 /**
- * This function takes a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.
+ * Receives a payload containing account details, and creates the record.
+ * It then uses a SOQL query to return the newly created Account.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *
@@ -745,21 +720,8 @@ module.exports = async function (event, context, logger) {
             {
               name: "03_Context_SalesforceSDK_Java",
               label: "Context - SalesforceSDK - Java",
+              deployment: "functions_recipes.salesforcesdkjava",
               language: "Java",
-              inputs: [
-                {
-                  type: "number",
-                  label: "latitude"
-                },
-                {
-                  type: "number",
-                  label: "longitude"
-                },
-                {
-                  type: "number",
-                  label: "length"
-                }
-              ],
               files: [
                 {
                   name: "SalesforceSDKFunction.java",
@@ -937,26 +899,21 @@ public class FunctionOutput {
           label: "UnitOfWork",
           subtitle: "Functions Recipes",
           description:
-            "This function takes a payload containing Account, Contact, and Case details and uses the Unit of Work pattern to assign the corresponding values to to its Record while maintaining the relationships. It then commits the unit of work and returns the Record Id's for each object.",
+            "Receives a payload containing Account, Contact, and Case details and uses the Unit of Work pattern to assign the corresponding values to to its Record while maintaining the relationships. It then commits the unit of work and returns the Record Id's for each object.",
+          inputs: [
+            { label: "First Name", name: "firstName", type: "text" },
+            { label: "Last Name", name: "lastName", type: "text" },
+            { label: "Account Name", name: "accountName", type: "text" },
+            { label: "Website", name: "website", type: "text" },
+            { label: "Subject", name: "subject", type: "text" },
+            { label: "Description", name: "description", type: "text" }
+          ],
           functions: [
             {
               name: "03_Context_UnitOfWork_JS",
-              label: "Context - UnitofWork - JavaScript",
+              label: "Context - UnitOfWork - JavaScript",
+              deployment: "functions_recipes.unitofworkjs",
               language: "JavaScript",
-              inputs: [
-                {
-                  type: "number",
-                  label: "latitude"
-                },
-                {
-                  type: "number",
-                  label: "longitude"
-                },
-                {
-                  type: "number",
-                  label: "length"
-                }
-              ],
               files: [
                 {
                   name: "index.js",
@@ -964,10 +921,10 @@ public class FunctionOutput {
                   body: `"use strict";
 
 /**
- * This function takes a payload containing Account, Contact, and Case details and
- * uses the Unit of Work pattern to assign the corresponding values to to its Record
- * while maintaining the relationships. It then commits the unit of work and returns
- * the Record Id's for each object.
+ * Receives a payload containing Account, Contact, and Case details and uses the
+ * Unit of Work pattern to assign the corresponding values to to its Record
+ * while maintaining the relationships. It then commits the unit of work and
+ * returns the Record Id's for each object.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *
@@ -1020,8 +977,22 @@ module.exports = async function (event, context, logger) {
       Description: payload.description,
       Origin: "Web",
       Status: "New",
-      AccountId: accountId,
-      ContactId: contactId
+      AccountId: accountId, // Get the ReferenceId from previous operation
+      ContactId: contactId // Get the ReferenceId from previous operation
+    }
+  });
+
+  // Register a follow up Case for Creation
+  const followupCaseId = uow.registerCreate({
+    type: "Case",
+    fields: {
+      ParentId: serviceCaseId, // Get the ReferenceId from previous operation
+      Subject: "Follow Up",
+      Description: "Follow up with Customer",
+      Origin: "Web",
+      Status: "New",
+      AccountId: accountId, // Get the ReferenceId from previous operation
+      ContactId: contactId // Get the ReferenceId from previous operation
     }
   });
 
@@ -1032,7 +1003,10 @@ module.exports = async function (event, context, logger) {
     const result = {
       accountId: response.get(accountId).id,
       contactId: response.get(contactId).id,
-      caseId: response.get(serviceCaseId).id
+      cases: {
+        serviceCaseId: response.get(serviceCaseId).id,
+        followupCaseId: response.get(followupCaseId).id
+      }
     };
     return result;
   } catch (err) {
@@ -1057,21 +1031,8 @@ function validateField(field, value) {
             {
               name: "03_Context_UnitOfWork_Java",
               label: "UnitOfWork - Java",
+              deployment: "functions_recipes.unitofworkjava",
               language: "Java",
-              inputs: [
-                {
-                  type: "number",
-                  label: "latitude"
-                },
-                {
-                  type: "number",
-                  label: "longitude"
-                },
-                {
-                  type: "number",
-                  label: "length"
-                }
-              ],
               files: [
                 {
                   name: "UnitOfWorkFunction.java",
@@ -1086,21 +1047,17 @@ import com.salesforce.functions.jvm.sdk.data.Record;
 import com.salesforce.functions.jvm.sdk.data.RecordModificationResult;
 import com.salesforce.functions.jvm.sdk.data.ReferenceId;
 import com.salesforce.functions.jvm.sdk.data.builder.UnitOfWorkBuilder;
-import java.time.Clock;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This function takes a payload containing Account, Contact, and Case details and uses the Unit of
- * Work pattern to assign the corresponding values to it's Record while maintaining the
- * relationships. It then commits the Unit of Work and returns the record Id's for each object.
+ * Receives a payload containing Account, Contact, and Case details and uses the Unit of Work
+ * pattern to assign the corresponding values to to its Record while maintaining the relationships.
+ * It then commits the unit of work and returns the Record Id's for each object.
  */
 public class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, FunctionOutput> {
   private static final Logger LOGGER = LoggerFactory.getLogger(UnitOfWorkFunction.class);
-  private Clock clock = Clock.systemUTC();
 
   @Override
   public FunctionOutput apply(InvocationEvent<FunctionInput> event, Context context)
@@ -1128,6 +1085,7 @@ public class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, Fun
             .newRecordBuilder("Contact")
             .withField("FirstName", firstName)
             .withField("LastName", lastName)
+            .withField("AccountId", accountRefId)
             .build();
     ReferenceId contactRefId = unitOfWork.registerCreate(contact);
 
@@ -1145,47 +1103,23 @@ public class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, Fun
             .build();
     ReferenceId serviceCaseRefId = unitOfWork.registerCreate(serviceCase);
 
-    // Calculate two days from now to set a reminder date
-    long twoDaysFromNow = clock.millis() + 2 * 24 * 60 * 60 * 1000;
-
-    // Here we will create two Tasks related to the case
-    // Call reminder task
-    Record reminderTask =
+    Record followupCase =
         dataApi
-            .newRecordBuilder("Task")
-            .withField("Subject", "Call")
-            .withField("WhatId", serviceCaseRefId)
-            .withField("WhoId", contactRefId)
-            .withField("Description", "Please call customer to verify service location")
-            .withField("Priority", "High")
-            .withField("isReminderSet", true)
-            .withField("ActivityDate", twoDaysFromNow)
+            .newRecordBuilder("Case")
+            .withField("ParentId", serviceCaseRefId)
+            .withField("Subject", "Follow Up")
+            .withField("Description", "Follow up with Customer")
+            .withField("Origin", "Web")
+            .withField("Status", "New")
+            .withField("AccountId", accountRefId)
+            .withField("ContactId", contactRefId)
             .build();
-
-    // Email follow up task
-    Record followupTask =
-        dataApi
-            .newRecordBuilder("Task")
-            .withField("Subject", "Email")
-            .withField("WhatId", serviceCaseRefId)
-            .withField("WhoId", contactRefId)
-            .withField(
-                "Description", "Please follow up with customer after verifying service location")
-            .build();
-
-    // Register the tasks to be created
-    ReferenceId reminderTaskRefId = unitOfWork.registerCreate(reminderTask);
-    ReferenceId followupTaskRefId = unitOfWork.registerCreate(followupTask);
+    ReferenceId followupCaseRefId = unitOfWork.registerCreate(followupCase);
 
     // The transaction will be committed and all the objects are going to be created.
     // The resulting map contains the Id's of the created objects
     Map<ReferenceId, RecordModificationResult> result =
         dataApi.commitUnitOfWork(unitOfWork.build());
-
-    // Create a List with the multiple Task Reference Ids
-    List<String> taskIds = new ArrayList<>();
-    taskIds.add(result.get(reminderTaskRefId).getId());
-    taskIds.add(result.get(followupTaskRefId).getId());
 
     LOGGER.info("Function successfully commited UoW with {} affected records!", result.size());
 
@@ -1193,17 +1127,7 @@ public class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, Fun
     return new FunctionOutput(
         result.get(accountRefId).getId(),
         result.get(contactRefId).getId(),
-        result.get(serviceCaseRefId).getId(),
-        taskIds);
-  }
-
-  /**
-   * Sets the clock used to calculate the reminder date. Useful for testing.
-   *
-   * @param clock
-   */
-  public void setClock(Clock clock) {
-    this.clock = clock;
+        new Cases(result.get(serviceCaseRefId).getId(), result.get(followupCaseRefId).getId()));
   }
 }
 `
@@ -1258,19 +1182,15 @@ public class FunctionInput {
                   label: "UnitOfWork",
                   body: `package com.salesforce.functions.recipes;
 
-import java.util.List;
-
 public class FunctionOutput {
   private final String accountId;
   private final String contactId;
-  private final String caseId;
-  private final List<String> taskIds;
+  private final Cases cases;
 
-  public FunctionOutput(String accountId, String contactId, String caseId, List<String> taskIds) {
+  public FunctionOutput(String accountId, String contactId, Cases cases) {
     this.accountId = accountId;
     this.contactId = contactId;
-    this.caseId = caseId;
-    this.taskIds = taskIds;
+    this.cases = cases;
   }
 
   public String getAccountId() {
@@ -1281,12 +1201,32 @@ public class FunctionOutput {
     return this.contactId;
   }
 
-  public String getCaseId() {
-    return this.caseId;
+  public Cases getCases() {
+    return this.cases;
+  }
+}
+`
+                },
+                {
+                  name: "Cases.java",
+                  label: "UnitOfWork",
+                  body: `package com.salesforce.functions.recipes;
+
+public class Cases {
+  private final String serviceCaseId;
+  private final String followupCaseId;
+
+  public Cases(String serviceCaseId, String followupCaseId) {
+    this.serviceCaseId = serviceCaseId;
+    this.followupCaseId = followupCaseId;
   }
 
-  public List<String> getTaskIds() {
-    return this.taskIds;
+  public String getServiceCaseId() {
+    return serviceCaseId;
+  }
+
+  public String getFollowupCaseId() {
+    return followupCaseId;
   }
 }
 `
@@ -1301,31 +1241,22 @@ public class FunctionOutput {
           subtitle: "Functions Recipes",
           description:
             "Generates an amount of log messages every number of seconds.",
+          inputs: [
+            { label: "Amount", name: "amount", type: "number" },
+            { label: "Timeout", name: "timeout", type: "number" }
+          ],
           functions: [
             {
               name: "04_Logger_JS",
               label: "Logger - JavaScript",
+              deployment: "functions_recipes.loggerjs",
               language: "JavaScript",
-              inputs: [
-                {
-                  type: "number",
-                  label: "latitude"
-                },
-                {
-                  type: "number",
-                  label: "longitude"
-                },
-                {
-                  type: "number",
-                  label: "length"
-                }
-              ],
               files: [
                 {
                   name: "index.js",
                   label: "Logger",
                   body: `/**
- * Generates an amount of log messages every number of seconds
+ * Generates an amount of log messages every number of seconds.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *
@@ -1343,11 +1274,11 @@ module.exports = async function (event, context, logger) {
     )}\`
   );
 
-  const { amount = 5, timeout = 5 } = event.data;
+  let { amount = 5, timeout = 5 } = event.data;
 
   let count = 0;
   setInterval(() => {
-    if (amount === count) return;
+    if (+amount <= count) return;
     count++;
 
     logger.info(
@@ -1373,25 +1304,13 @@ module.exports = async function (event, context, logger) {
           subtitle: "Functions Recipes",
           description:
             "Returns the derivate password hash using pbkdf2 getting the salt from the Environment.",
+          inputs: [{ label: "Password", name: "password", type: "text" }],
           functions: [
             {
               name: "05_Environment_JS",
               label: "Environment",
+              deployment: "functions_recipes.environmentjs",
               language: "JavaScript",
-              inputs: [
-                {
-                  type: "number",
-                  label: "latitude"
-                },
-                {
-                  type: "number",
-                  label: "longitude"
-                },
-                {
-                  type: "number",
-                  label: "length"
-                }
-              ],
               files: [
                 {
                   name: "index.js",
@@ -1405,7 +1324,7 @@ const { promisify } = require("util");
 const pbkdf2 = promisify(crypto.pbkdf2);
 
 /**
- * Returns the derivate password hash using pbkdf2 getting the salt from the Environment
+ * Returns the derivate password hash using pbkdf2 getting the salt from the Environment.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *

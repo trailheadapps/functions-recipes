@@ -1,17 +1,38 @@
 <template>
   <div class="slds-var-m-vertical_small">
-    <span class="slds-text-color_destructive">
-      {friendlyMessage}.
-      <template if:true={errorMessages.length}>
-        <a onclick={handleShowDetailsClick}> Show details.</a>
-      </template>
-    </span>
     <template if:true={errorMessages.length}>
-      <template if:true={viewDetails}>
-        <template for:each={errorMessages} for:item="message">
-          <p class="slds-text-body_regular" key={message}>{message}</p>
-        </template>
-      </template>
+      <div class="slds-box slds-box_xx-small">
+        <div class="slds-grid slds-wrap">
+          <div
+            class="
+              slds-large-size_1-of-12
+              slds-medium-size_1-of-8
+              slds-small-size_1-of-5
+              slds-align_absolute-center
+            "
+          >
+            <lightning-icon
+              icon-name="utility:error"
+              variant="error"
+              size="medium"
+            ></lightning-icon>
+          </div>
+          <div
+            class="
+              slds-large-size_11-of-12
+              slds-medium-size_7-of-8
+              slds-small-size_4-of-5
+              slds-p-around_medium
+            "
+          >
+            <div class="slds-col slds-align-middle">
+              <template for:each={errorMessages} for:item="message">
+                <p class="slds-text-body_regular" key={message}>{message}</p>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
     </template>
   </div>
 </template>

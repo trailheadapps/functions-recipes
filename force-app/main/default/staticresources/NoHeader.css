@@ -5,3 +5,8 @@
 .slds-template_default{
     padding:0px !important;
 }
+
+[data-component-id="flowruntime_interview1"] { 
+    padding: 0 1rem 1rem 1rem;
+    margin-top: -0.5rem;
+}

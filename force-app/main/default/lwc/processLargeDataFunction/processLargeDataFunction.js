@@ -143,7 +143,7 @@ export default class ProcessLargeDataFunction extends NavigationMixin(
   }
 
   get functionTitle() {
-    return `Process Large Data Volumes`;
+    return `LWC Example`;
   }
 
   get mapLoaded() {

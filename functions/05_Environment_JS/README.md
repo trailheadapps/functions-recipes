@@ -1,6 +1,6 @@
 # environmentjs Function
 
-Returns the derivate password hash using `pbkdf2` getting the salt from the Environment
+Returns the derivate password hash using `pbkdf2` getting the salt from the Environment.
 
 ## Local Development
 

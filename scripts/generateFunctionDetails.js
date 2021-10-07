@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const Handlebars = require("handlebars");
 const templateSrc = fs.readFileSync(
-  path.join(__dirname, "./template/functionDetails.js.tpl"),
+  path.join(__dirname, "./template/functionDetails.template.js"),
   "utf8"
 );
 const template = Handlebars.compile(templateSrc);
@@ -64,6 +64,7 @@ const sourceMap = {
     "03_Context_UnitOfWork_Java",
     "FunctionOutput.java"
   ),
+  unitOfWorkJava_Cases: loadJava("03_Context_UnitOfWork_Java", "Cases.java"),
   loggerJS_Function: loadJS("04_Logger_JS"),
   environmentJS_Function: loadJS("05_Environment_JS")
 };

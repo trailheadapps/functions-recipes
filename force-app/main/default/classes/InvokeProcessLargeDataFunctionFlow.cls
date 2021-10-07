@@ -10,6 +10,16 @@ public with sharing class InvokeProcessLargeDataFunctionFlow {
     functions.FunctionInvocation invocation = fn.invoke(
       JSON.serialize(payload)
     );
+
+    // Check if there is any error during the invocation
+    if (invocation.getStatus() == functions.FunctionInvocationStatus.ERROR) {
+      throw new CalloutException(
+        (invocation.getError() != null
+          ? invocation.getError().getMessage()
+          : 'UNKNOWN')
+      );
+    }
+
     String response = invocation.getResponse();
     // Serialize the Response into an Object
     Output output = (Output) JSON.deserialize(response, Output.class);

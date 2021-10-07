@@ -7,7 +7,7 @@ const { promisify } = require("util");
 const pbkdf2 = promisify(crypto.pbkdf2);
 
 /**
- * Returns the derivate password hash using pbkdf2 getting the salt from the Environment
+ * Returns the derivate password hash using pbkdf2 getting the salt from the Environment.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *

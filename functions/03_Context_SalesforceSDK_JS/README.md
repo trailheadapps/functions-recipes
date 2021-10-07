@@ -1,6 +1,6 @@
 # salesforcesdkjs Function
 
-This function takes a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.
+Receives a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.
 
 ## Local Development
 

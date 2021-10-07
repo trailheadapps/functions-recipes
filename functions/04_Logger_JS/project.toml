@@ -4,5 +4,5 @@ schema-version = "0.2"
 [com.salesforce]
 schema-version = "0.1"
 id = "loggerjs"
-description = "Generates an amount of log messages every number of seconds"
+description = "Generates an amount of log messages every number of seconds."
 type = "function"

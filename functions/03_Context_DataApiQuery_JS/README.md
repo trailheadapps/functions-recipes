@@ -1,6 +1,6 @@
 # dataapiquery Function
 
-Returns accounts and its contacts by keyword
+Returns accounts and its contacts by keyword.
 
 ## Local Development
 
