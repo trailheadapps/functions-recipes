@@ -85,6 +85,18 @@ sfdx force:user:permset:assign -n FunctionsRecipes
 sfdx force:user:permset:assign -n Functions
 ```
 
+7. Open the **Functions Recipes** App
+
+```sh
+sfdx force:org:open -p "/lightning/n/Functions"
+```
+
+8. Activate the **Functions Recipes** Theme (Optional)
+
+```
+sfdx force:org:open -p "/lightning/setup/ThemingAndBranding/home"
+```
+
 ## Functions Recipes App
 
 After deploying both the Salesforce app and the functions, you can open the Salesforce org and navigate to the **Functions Recipes** application:
