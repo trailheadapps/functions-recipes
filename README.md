@@ -93,7 +93,7 @@ sfdx force:org:open -p "/lightning/n/Functions"
 
 8. Activate the **Functions Recipes** Theme (Optional)
 
-```
+```sh
 sfdx force:org:open -p "/lightning/setup/ThemingAndBranding/home"
 ```
 
