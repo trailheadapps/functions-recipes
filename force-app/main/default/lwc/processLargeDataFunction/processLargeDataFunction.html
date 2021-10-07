@@ -1,9 +1,7 @@
 <template>
   <div class="slds-grid slds-wrap">
-    <div class="slds-size_1-of-3 slds-p-right_medium">
+    <div class="slds-size_1-of-3 slds-var-p-right_medium">
       <lightning-card title={functionTitle} icon-name="standard:location">
-        <!--lightning-button label="View Source" name="view source" slot="actions" icon-name="utility:new_window"
-          onclick={viewSource}></lightning-button-->
         <div class="slds-var-m-around_medium">
           <div class="description">
             Process large data volumes in a function. Take the users current
@@ -13,8 +11,8 @@
           <div
             class="
               slds-text-heading_small
-              slds-p-top_small
-              slds-p-bottom_x-small
+              slds-var-p-top_small
+              slds-var-p-bottom_x-small
             "
           >
             Parameters
@@ -22,7 +20,7 @@
           <div class="slds-grid slds-wrap">
             <div class="slds-size_1-of-1">
               <lightning-combobox
-                class="slds-p-bottom_small"
+                class="slds-var-p-bottom_small"
                 name="results"
                 label="Number of Results"
                 value={length}
@@ -59,11 +57,13 @@
           <template if:false={functionRunning}>
             <template if:false={mapLoaded}>
               <div class="slds-align_absolute-center">
-                <c-error-panel error-message={errorMessage}></c-error-panel>
+                <c-error-panel
+                  friendly-message="Invoke Function to view results"
+                ></c-error-panel>
               </div>
             </template>
             <template if:true={mapLoaded}>
-              <div class="slds-p-around_medium">
+              <div class="slds-var-p-around_medium">
                 <lightning-map
                   center={userLocation}
                   map-markers={mapMarkers}

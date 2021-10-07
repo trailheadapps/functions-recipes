@@ -7,7 +7,7 @@ export default class ErrorPanel extends LightningElement {
   /** Single or array of LDS errors */
   @api error;
   /** Generic / user-friendly message */
-  @api friendlyMessage = "Error retrieving data";
+  @api friendlyMessage = "An error has ocurred";
   /** Type of error message **/
   @api type;
 
@@ -15,10 +15,6 @@ export default class ErrorPanel extends LightningElement {
 
   get errorMessages() {
     return reduceErrors(this.error);
-  }
-
-  handleShowDetailsClick() {
-    this.viewDetails = !this.viewDetails;
   }
 
   render() {

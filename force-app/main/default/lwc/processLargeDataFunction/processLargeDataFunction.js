@@ -1,43 +1,18 @@
 import { LightningElement } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { NavigationMixin } from "lightning/navigation";
-import validateDeployment from "@salesforce/apex/FunctionUtilities.validateDeployment";
 import invoke from "@salesforce/apex/InvokeProcessLargeDataFunction.invoke";
 
 export default class ProcessLargeDataFunction extends NavigationMixin(
   LightningElement
 ) {
-  functionLabel = "JavaScript";
-  functionName = "functions_recipes.processlargedatajs";
   length = 5;
-  loading = true;
-  sourceMap = {
-    JavaScript:
-      "https://github.com/trailheadapps/functions-recipes/blob/main/functions/01_Intro_ProcessLargeData_JS/index.js"
-  };
-  functionDeployed;
   userLocation;
   functionRunning;
   mapMarkers = [];
   nearbyLocations;
   message = { message: "Invoke function to view results" };
   error;
-
-  connectedCallback() {
-    this.validateFunctionDeployment();
-  }
-
-  validateFunctionDeployment() {
-    // The validateDeployment method in apex will check to see if a function has been deployed
-    validateDeployment({ functionName: this.functionName })
-      .then((result) => {
-        this.functionDeployed = result;
-        this.loading = false;
-      })
-      .catch((error) => {
-        this.showError(error);
-      });
-  }
 
   invokeFunction() {
     this.getGeolocation();
@@ -59,7 +34,6 @@ export default class ProcessLargeDataFunction extends NavigationMixin(
         },
         (error) => {
           // In the event of an error show a message and set a default latitude and longitude
-          //this.showToast("Current Location", error.message, "info");
           this.userLocation = {
             location: {
               Latitude: 37.784798236043166,
@@ -83,7 +57,6 @@ export default class ProcessLargeDataFunction extends NavigationMixin(
 
     // Invoke Function
     invoke({
-      functionName: this.functionName,
       payload: JSON.stringify(payload)
     })
       .then((data) => {
@@ -125,7 +98,6 @@ export default class ProcessLargeDataFunction extends NavigationMixin(
 
   showError(error) {
     this.error = error;
-    this.loading = false;
     this.showToast(
       "An error has ocurred",
       error?.message || error?.body?.message,
@@ -160,25 +132,15 @@ export default class ProcessLargeDataFunction extends NavigationMixin(
   }
 
   viewSource() {
-    const source = this.sourceMap[this.functionLabel];
     // Navigate to a URL
     this[NavigationMixin.Navigate](
       {
         type: "standard__webPage",
         attributes: {
-          url: source
+          url: "https://github.com/trailheadapps/functions-recipes/blob/main/functions/01_Intro_ProcessLargeData_JS/index.js"
         }
       },
       true
     );
-  }
-
-  get functionOptions() {
-    return [
-      {
-        label: "JavaScript",
-        value: "functions_recipes.processlargedatajs"
-      }
-    ];
   }
 }
