@@ -47,6 +47,7 @@ export default class CodeBlock extends LightningElement {
         })
         .catch((error) => {
           this.error = error;
+          console.log("error", this.error);
         });
     } else {
       this.highlightCodeSegment();
