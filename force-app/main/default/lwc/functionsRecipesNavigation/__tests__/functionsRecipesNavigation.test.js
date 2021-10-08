@@ -22,4 +22,33 @@ describe("c-functions-recipes-navigation", () => {
     );
     expect(navigationItems).not.toBeNull();
   });
+
+  it('sends "next" event on button click', () => {
+    const element = createElement("c-functions-recipes-navigation", {
+      is: FunctionsRecipesNavigation
+    });
+    element.selectedFunction = "home";
+    element.definition = functionsDefinition;
+    document.body.appendChild(element);
+
+    // Mock handlers for child events
+    const selectItem = jest.fn();
+
+    // Add event listener to catch events
+    element.addEventListener("navselect", selectItem);
+
+    // Click the navigation button
+    const nextButtonEls = element.shadowRoot.querySelectorAll(
+      "lightning-vertical-navigation-item"
+    );
+    nextButtonEls[0].click();
+
+    // Return a promise to wait for any asynchronous DOM updates. Jest
+    // will automatically wait for the Promise chain to complete before
+    // ending the test and fail the test if the promise rejects.
+    return Promise.resolve().then(() => {
+      // Validate if mocked events got fired
+      expect(selectItem.mock.calls.length).toBe(1);
+    });
+  });
 });
