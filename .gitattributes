@@ -1,0 +1,8 @@
+# Set Java files to LF
+*.java text eol=lf
+pom.xml text eol=lf
+mvnw text eol=lf
+maven-wrapper.properties text eol=lf
+
+# And everything else automatic
+* text=auto
