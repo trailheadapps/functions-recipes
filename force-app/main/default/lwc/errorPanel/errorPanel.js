@@ -7,7 +7,7 @@ export default class ErrorPanel extends LightningElement {
   /** Single or array of LDS errors */
   @api error;
   /** Generic / user-friendly message */
-  @api friendlyMessage = "An error has ocurred";
+  @api friendlyMessage = "An error has occurred";
   /** Type of error message **/
   @api type;
 

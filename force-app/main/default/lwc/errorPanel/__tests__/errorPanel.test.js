@@ -10,7 +10,7 @@ describe("c-error-panel", () => {
   });
 
   it("displays a default friendly message", () => {
-    const MESSAGE = "An error has ocurred";
+    const MESSAGE = "An error has occurred";
 
     // Create initial element
     const element = createElement("c-error-panel", {

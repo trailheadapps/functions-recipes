@@ -99,7 +99,7 @@ export default class ProcessLargeDataFunction extends NavigationMixin(
   showError(error) {
     this.error = error;
     this.showToast(
-      "An error has ocurred",
+      "An error has occurred",
       error?.message || error?.body?.message,
       "error"
     );

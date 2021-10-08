@@ -1,16 +1,16 @@
 <template>
   <lightning-vertical-navigation
     selected-item={selectedItem}
-    class="slds-p-around_xx-small"
+    class="slds-var-p-around_xx-small"
   >
     <lightning-vertical-navigation-item
       label="Home"
       name="home"
       onclick={selectItem}
     ></lightning-vertical-navigation-item>
-    <template for:each={definition} for:item="item" for:index="i">
+    <template for:each={definition} for:item="item" for:index="name">
       <lightning-vertical-navigation-item
-        key={item.i}
+        key={item.name}
         label={item.label}
         name={item.name}
         onclick={selectItem}
