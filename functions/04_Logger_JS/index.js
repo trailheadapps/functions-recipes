@@ -10,7 +10,7 @@
  * @param logger: logging handler used to capture application logs and trace specifically
  *                 to a given execution of a function.
  */
-module.exports = async function (event, context, logger) {
+export default async function (event, context, logger) {
   logger.info(
     `Invoking loggerjs Function with payload ${JSON.stringify(
       event.data || {}
@@ -34,4 +34,4 @@ module.exports = async function (event, context, logger) {
   return {
     status: `Logger Started: Generating ${amount} log messages every ${timeout} seconds`
   };
-};
+}

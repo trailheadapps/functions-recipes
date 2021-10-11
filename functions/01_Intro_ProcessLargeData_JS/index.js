@@ -1,6 +1,7 @@
-"use strict";
-
-const sampleData = require("./data/sample-data.json");
+import { readFileSync } from "fs";
+const sampleData = JSON.parse(
+  readFileSync(new URL("./data/sample-data.json", import.meta.url))
+);
 
 /**
  * From a large JSON payload calculates the distance between a supplied
@@ -15,7 +16,7 @@ const sampleData = require("./data/sample-data.json");
  * @param logger: logging handler used to capture application logs and trace specifically
  *                 to a given execution of a function.
  */
-module.exports = async function (event, context, logger) {
+export default async function (event, context, logger) {
   const data = event.data || {};
   logger.info(
     `Invoking processlargedatajs Function with payload ${JSON.stringify(data)}`
@@ -49,7 +50,7 @@ module.exports = async function (event, context, logger) {
 
   // return the results
   return { schools: results };
-};
+}
 
 /**
  * Calculate distance between two geographical points

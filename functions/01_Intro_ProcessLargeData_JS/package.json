@@ -3,7 +3,8 @@
   "private": true,
   "version": "1.0.0",
   "author": "salesforce.com",
-  "description": "This function takes a large JSON payload, calculates the distance between a supplied cordinate and the data, sorts it, and returns the nearest x results.",
+  "type": "module",
+  "description": "From a large JSON payload calculates the distance between a supplied point of origin cordinate and the data, sorts it, and returns the nearest x results.",
   "license": "CC0-1.0",
   "main": "index.js",
   "repository": {
@@ -18,8 +19,8 @@
   },
   "devDependencies": {
     "chai": "^4.3.4",
-    "eslint": "^7.32.0",
-    "mocha": "^9.0.3",
+    "eslint": "^8.0.0",
+    "mocha": "^9.1.2",
     "sinon": "^11.1.2"
   }
 }

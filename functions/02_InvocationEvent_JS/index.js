@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * Receives a payload and returns information about it.
  *
@@ -12,7 +10,7 @@
  * @param logger: logging handler used to capture application logs and trace specifically
  *                 to a given execution of a function.
  */
-module.exports = async function (event, context, logger) {
+export default async function (event, context, logger) {
   const data = event.data || {};
   logger.info(
     `Invoking invocationeventjs with payload ${JSON.stringify(data)}`
@@ -40,4 +38,4 @@ module.exports = async function (event, context, logger) {
 
   logger.info(JSON.stringify(results));
   return results;
-};
+}

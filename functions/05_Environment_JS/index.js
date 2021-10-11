@@ -1,7 +1,5 @@
-"use strict";
-
-const crypto = require("crypto");
-const { promisify } = require("util");
+import crypto from "crypto";
+import { promisify } from "util";
 
 // Turn pbkdf2 function from callback based to Promises
 const pbkdf2 = promisify(crypto.pbkdf2);
@@ -18,7 +16,7 @@ const pbkdf2 = promisify(crypto.pbkdf2);
  * @param logger: logging handler used to capture application logs and trace specifically
  *                 to a given execution of a function.
  */
-module.exports = async function (event, context, logger) {
+export default async function (event, context, logger) {
   logger.info(
     `Invoking environmentjs Function with payload ${JSON.stringify(
       event.data || {}
@@ -43,4 +41,4 @@ module.exports = async function (event, context, logger) {
   // https://nodejs.org/dist/latest-v14.x/docs/api/crypto.html#crypto_crypto_pbkdf2_password_salt_iterations_keylen_digest_callback
   const results = await pbkdf2(password, salt, 10e3, keyLength, "sha512");
   return results.toString("hex");
-};
+}

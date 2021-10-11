@@ -5,6 +5,6 @@ setupFilesAfterEnv.push("<rootDir>/jest-sa11y-setup.js");
 
 module.exports = {
   ...jestConfig,
-  modulePathIgnorePatterns: ["<rootDir>/.localdevserver"],
+  modulePathIgnorePatterns: ["<rootDir>/.localdevserver", "functions/*"],
   setupFilesAfterEnv
 };

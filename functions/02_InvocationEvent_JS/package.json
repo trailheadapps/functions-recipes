@@ -2,6 +2,7 @@
   "name": "invocationevent-js-function",
   "private": true,
   "version": "1.0.0",
+  "type": "module",
   "author": "salesforce.com",
   "description": "Detects a payload type and returns information about it",
   "license": "CC0-1.0",

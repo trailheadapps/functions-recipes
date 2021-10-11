@@ -1,10 +1,10 @@
-"use strict";
-
-const { expect } = require("chai");
-const { createSandbox } = require("sinon");
-const testPayload = require("../data/sample-payload.json");
-const execute = require("../index");
-
+import { expect } from "chai";
+import createSandbox from "sinon/lib/sinon/create-sandbox.js";
+import { readFileSync } from "fs";
+const testPayload = JSON.parse(
+  readFileSync(new URL("../data/sample-payload.json", import.meta.url))
+);
+import execute from "../index.js";
 /**
  * unitofworkjs Function unit tests.
  */

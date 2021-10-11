@@ -1,8 +1,8 @@
-const { expect } = require("chai");
-const { useFakeTimers, createSandbox } = require("sinon");
+import { expect } from "chai";
+import createSandbox from "sinon/lib/sinon/create-sandbox.js";
+import { useFakeTimers } from "sinon/lib/sinon/util/fake-timers.js";
 
-const execute = require("../index");
-
+import execute from "../index.js";
 /**
  * loggerjs unit tests.
  */

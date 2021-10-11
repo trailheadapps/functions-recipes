@@ -25,5 +25,5 @@ sf run function start --verbose
 4. Invoke your function locally with a JSON payload
 
 ```
-sf run function --function-url=http://localhost:8080 --payload='{"type":"json", "value": "Hello Functions"}'
+sf run function --function-url=http://localhost:8080 --payload='{"name":"Jason", "message": "Hello Functions"}'
 ```
