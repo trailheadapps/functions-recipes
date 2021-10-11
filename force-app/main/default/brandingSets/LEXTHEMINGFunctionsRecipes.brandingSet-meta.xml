@@ -2,11 +2,11 @@
 <BrandingSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <brandingSetProperty>
         <propertyName>BRAND_COLOR</propertyName>
-        <propertyValue>#372375</propertyValue>
+        <propertyValue>#4D3499</propertyValue>
     </brandingSetProperty>
     <brandingSetProperty>
         <propertyName>PAGE_BACKGROUND_COLOR</propertyName>
-        <propertyValue>#f3f3f3</propertyValue>
+        <propertyValue>#4D3499</propertyValue>
     </brandingSetProperty>
     <brandingSetProperty>
         <propertyName>HEADER_BACKGROUND_COLOR</propertyName>
@@ -14,11 +14,11 @@
     </brandingSetProperty>
     <brandingSetProperty>
         <propertyName>BRAND_IMAGE</propertyName>
-        <propertyValue>/file-asset/functionsrecipeslogo1?v=1</propertyValue>
+        <propertyValue>/file-asset/functionssflogo?v=1</propertyValue>
     </brandingSetProperty>
     <brandingSetProperty>
         <propertyName>BANNER_IMAGE</propertyName>
-        <propertyValue />
+        <propertyValue>/file-asset/backgroundoption1?v=1</propertyValue>
     </brandingSetProperty>
     <brandingSetProperty>
         <propertyName>GROUPS_BANNER_IMAGE</propertyName>

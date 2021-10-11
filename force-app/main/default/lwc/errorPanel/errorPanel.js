@@ -5,20 +5,16 @@ import inlineMessage from "./templates/inlineMessage.html";
 
 export default class ErrorPanel extends LightningElement {
   /** Single or array of LDS errors */
-  @api errors;
+  @api error;
   /** Generic / user-friendly message */
-  @api friendlyMessage = "Error retrieving data";
+  @api friendlyMessage = "An error has occurred";
   /** Type of error message **/
   @api type;
 
   viewDetails = false;
 
   get errorMessages() {
-    return reduceErrors(this.errors);
-  }
-
-  handleShowDetailsClick() {
-    this.viewDetails = !this.viewDetails;
+    return reduceErrors(this.error);
   }
 
   render() {

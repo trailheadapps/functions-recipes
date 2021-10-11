@@ -13,6 +13,7 @@ export default class FunctionsRecipesContent extends NavigationMixin(
   get selectedFunction() {
     return this._selectedFunction;
   }
+  @api showHome;
 
   languages = [];
 
@@ -56,8 +57,25 @@ export default class FunctionsRecipesContent extends NavigationMixin(
     );
   }
 
+  viewDocs() {
+    const url = "https://developer.salesforce.com/docs/platform/functions";
+    this[NavigationMixin.Navigate](
+      {
+        type: "standard__webPage",
+        attributes: {
+          url: url
+        }
+      },
+      true
+    );
+  }
+
   openRunFunctionModal() {
     this.showRunFunctionModal = true;
+  }
+
+  closeRunFunctionModal() {
+    this.showRunFunctionModal = false;
   }
 
   get fileset() {
@@ -69,7 +87,12 @@ export default class FunctionsRecipesContent extends NavigationMixin(
   }
 
   get functionTitle() {
-    return this._selectedFunction.label;
+    if (this.showHome) {
+      return "Home";
+      // eslint-disable-next-line no-else-return
+    } else {
+      return this._selectedFunction.label;
+    }
   }
 
   get functionName() {
@@ -77,10 +100,19 @@ export default class FunctionsRecipesContent extends NavigationMixin(
   }
 
   get functionSubTitle() {
-    return this._selectedFunction.subtitle;
+    if (this.showHome) {
+      return "Get Started";
+      // eslint-disable-next-line no-else-return
+    } else {
+      return this._selectedFunction.subtitle;
+    }
   }
 
   get functionInputs() {
     return this._selectedFunction.functions[this.selectedIndex].inputs;
+  }
+
+  get functionFullName() {
+    return this._selectedFunction.functions[this.selectedIndex].name;
   }
 }

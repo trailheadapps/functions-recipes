@@ -1,8 +1,10 @@
 public inherited sharing class InvokeProcessLargeDataFunction {
   @AuraEnabled
-  public static String invoke(String functionName, String payload) {
+  public static String invoke(String payload) {
     // Instantiate the function
-    functions.Function ldvFunction = functions.Function.get(functionName);
+    functions.Function ldvFunction = functions.Function.get(
+      'functions_recipes.processlargedatajs'
+    );
 
     // Invoke the function
     functions.FunctionInvocation invocation = ldvFunction.invoke(payload);

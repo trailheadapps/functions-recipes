@@ -1,6 +1,6 @@
 # dataapiquery Function
 
-Returns accounts and its contacts by keyword
+Returns accounts and its contacts by keyword.
 
 ## Local Development
 
@@ -19,11 +19,11 @@ npm test
 3. Start your function locally
 
 ```
-sfdx run:function:start --verbose
+sf run function start --verbose
 ```
 
 4. Invoke your function locally
 
 ```
-sfdx run:function --url=http://localhost:8080 --payload='{"keyword":"america"}'
+sf run function --function-url=http://localhost:8080 --payload='{"keyword":"america"}'
 ```

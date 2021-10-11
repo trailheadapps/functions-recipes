@@ -1,6 +1,6 @@
 # environmentjs Function
 
-Returns the derivate password hash using pbkdf2 getting the salt from the Environment
+Returns the derivate password hash using `pbkdf2` getting the salt from the Environment.
 
 ## Local Development
 
@@ -19,11 +19,11 @@ npm test
 3. Start your function locally
 
 ```
-sfdx run:function:start -e PASSWORD_SALT="make this a random passphrase" --verbose
+sf run function start -e PASSWORD_SALT="make this a random passphrase" --verbose
 ```
 
 4. Invoke your function locally
 
 ```
-sfdx run:function --url=http://localhost:8080 --payload='{"password":"test"}'
+sf run function --function-url=http://localhost:8080 --payload='{"password":"test"}'
 ```

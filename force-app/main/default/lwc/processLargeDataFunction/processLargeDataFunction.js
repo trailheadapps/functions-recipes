@@ -1,42 +1,22 @@
 import { LightningElement } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
-import validateDeployment from "@salesforce/apex/FunctionUtilities.validateDeployment";
+import { NavigationMixin } from "lightning/navigation";
 import invoke from "@salesforce/apex/InvokeProcessLargeDataFunction.invoke";
 
-export default class ProcessLargeDataFunction extends LightningElement {
-  functionLabel = "JavaScript";
-  functionName = "functions_recipes.processlargedatajs";
+export default class ProcessLargeDataFunction extends NavigationMixin(
+  LightningElement
+) {
   length = 5;
-  loading = true;
-  sourceMap = {
-    JavaScript:
-      "https://github.com/trailheadapps/functions-recipes/blob/main/functions/01_Intro_ProcessLargeData_JS/index.js"
-  };
-  functionDeployed;
   userLocation;
+  functionRunning;
   mapMarkers = [];
   nearbyLocations;
+  message = { message: "Invoke function to view results" };
   error;
-
-  connectedCallback() {
-    this.validateFunctionDeployment();
-  }
-
-  validateFunctionDeployment() {
-    // The validateDeployment method in apex will check to see if a function has been deployed
-    validateDeployment({ functionName: this.functionName })
-      .then((result) => {
-        this.functionDeployed = result;
-        this.loading = false;
-      })
-      .catch((error) => {
-        this.showError(error);
-      });
-  }
 
   invokeFunction() {
     this.getGeolocation();
-    this.loading = true;
+    this.functionRunning = true;
   }
 
   getGeolocation() {
@@ -54,14 +34,14 @@ export default class ProcessLargeDataFunction extends LightningElement {
         },
         (error) => {
           // In the event of an error show a message and set a default latitude and longitude
-          this.showToast("Current Location", error.message, "info");
           this.userLocation = {
             location: {
-              Latitude: 37.789828572142724,
-              Longitude: -122.39724878744052
+              Latitude: 37.784798236043166,
+              Longitude: -122.40056125397507
             }
           };
           this.getNearbyLocations();
+          this.error = error;
         }
       );
     }
@@ -77,7 +57,6 @@ export default class ProcessLargeDataFunction extends LightningElement {
 
     // Invoke Function
     invoke({
-      functionName: this.functionName,
       payload: JSON.stringify(payload)
     })
       .then((data) => {
@@ -99,7 +78,7 @@ export default class ProcessLargeDataFunction extends LightningElement {
           };
           this.mapMarkers.push(marker);
         });
-        this.loading = false;
+        this.functionRunning = false;
       })
       .catch((error) => {
         this.showError(error);
@@ -119,9 +98,8 @@ export default class ProcessLargeDataFunction extends LightningElement {
 
   showError(error) {
     this.error = error;
-    this.loading = false;
     this.showToast(
-      "An error has ocurred",
+      "An error has occurred",
       error?.message || error?.body?.message,
       "error"
     );
@@ -137,7 +115,7 @@ export default class ProcessLargeDataFunction extends LightningElement {
   }
 
   get functionTitle() {
-    return `ProcessLargeData ${this.functionLabel}`;
+    return `LWC Example`;
   }
 
   get mapLoaded() {
@@ -153,16 +131,16 @@ export default class ProcessLargeDataFunction extends LightningElement {
     ];
   }
 
-  get sourceURL() {
-    return this.sourceMap[this.functionLabel];
-  }
-
-  get functionOptions() {
-    return [
+  viewSource() {
+    // Navigate to a URL
+    this[NavigationMixin.Navigate](
       {
-        label: "JavaScript",
-        value: "functions_recipes.processlargedatajs"
-      }
-    ];
+        type: "standard__webPage",
+        attributes: {
+          url: "https://github.com/trailheadapps/functions-recipes/blob/main/functions/01_Intro_ProcessLargeData_JS/index.js"
+        }
+      },
+      true
+    );
   }
 }

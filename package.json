@@ -13,46 +13,44 @@
     "clean": "lerna clean && rimraf node_modules **/node_modules",
     "lint": "eslint **/lwc/**",
     "test": "npm run test:unit",
-    "test:unit": "sfdx-lwc-jest",
-    "test:unit:watch": "sfdx-lwc-jest --watch",
-    "test:unit:debug": "sfdx-lwc-jest --debug",
-    "test:unit:coverage": "sfdx-lwc-jest --coverage",
+    "test:unit": "sfdx-lwc-jest --skipApiVersionCheck",
+    "test:unit:watch": "sfdx-lwc-jest --watch --skipApiVersionCheck",
+    "test:unit:debug": "sfdx-lwc-jest --debug --skipApiVersionCheck",
+    "test:unit:coverage": "sfdx-lwc-jest --coverage --skipApiVersionCheck",
     "prettier": "prettier --write \"**/*.{cls,cmp,component,css,html,js,ts,json,md,page,trigger,xml,yaml,yml}\"",
     "prettier:verify": "prettier --list-different \"**/*.{cls,cmp,component,css,html,js,ts,json,md,page,trigger,xml,yaml,yml}\"",
     "postinstall": "lerna exec -- npm install && lerna link && husky install",
-    "precommit": "lint-staged",
+    "precommit": "lint-staged && node scripts/generateFunctionDetails.js",
     "ci:postinstall": "lerna exec -- npm ci && lerna link"
   },
   "devDependencies": {
     "@lwc/eslint-plugin-lwc": "^1.0.1",
     "@prettier/plugin-xml": "^1.0.2",
-    "@sa11y/jest": "^0.4.3",
-    "@salesforce/eslint-config-lwc": "^2.1.1",
+    "@sa11y/jest": "^1.0.0",
+    "@salesforce/eslint-config-lwc": "^2.2.0",
     "@salesforce/eslint-plugin-aura": "^2.0.0",
     "@salesforce/eslint-plugin-lightning": "^0.1.1",
     "@salesforce/sfdx-lwc-jest": "^1.0.1",
-    "@typescript-eslint/eslint-plugin": "^4.29.0",
-    "@typescript-eslint/parser": "^4.29.0",
+    "@typescript-eslint/eslint-plugin": "^4.31.0",
+    "@typescript-eslint/parser": "^4.31.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-import": "^2.24.2",
     "eslint-plugin-jest": "^24.4.0",
-    "husky": "^7.0.1",
+    "husky": "^7.0.2",
     "lerna": "^4.0.0",
-    "lint-staged": "^11.1.1",
+    "lint-staged": "^11.1.2",
     "prettier": "^2.3.2",
     "prettier-plugin-apex": "^1.10.0",
     "rimraf": "^3.0.2",
-    "typescript": "^4.3.5"
+    "typescript": "^4.4.2"
   },
   "lint-staged": {
     "**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,ts,xml,yaml,yml}": [
       "prettier --write"
     ],
-    "**/{aura,lwc}/**": [
-      "eslint"
-    ],
     "**/lwc/**": [
+      "eslint",
       "sfdx-lwc-jest --skipApiVersionCheck -- --bail --findRelatedTests"
     ]
   },

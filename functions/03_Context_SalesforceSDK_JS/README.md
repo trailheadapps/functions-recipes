@@ -1,6 +1,6 @@
 # salesforcesdkjs Function
 
-This function takes a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.
+Receives a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.
 
 ## Local Development
 
@@ -19,17 +19,17 @@ npm test
 3. Start your function locally
 
 ```
-sfdx run:function:start --verbose
+sf run function start --verbose
 ```
 
-4. Invoke your function locally with a valid Payload
+4. Invoke your function locally with a valid payload
 
 ```
-sfdx run:function --url=http://localhost:8080 --payload=@data/sample-payload.json
+sf run function --function-url=http://localhost:8080 --payload=@data/sample-payload.json
 ```
 
-5. Invoke your function locally with an Invalid Payload
+5. Invoke your function locally with an invalid payload
 
 ```
-sfdx run:function --url=http://localhost:8080 --payload=@data/sample-invalid-payload.json
+sf run function --function-url=http://localhost:8080 --payload=@data/sample-invalid-payload.json
 ```

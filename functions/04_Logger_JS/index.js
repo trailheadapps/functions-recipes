@@ -1,5 +1,5 @@
 /**
- * Generates an amount of log messages every number of seconds
+ * Generates an amount of log messages every number of seconds.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *
@@ -17,11 +17,11 @@ module.exports = async function (event, context, logger) {
     )}`
   );
 
-  const { amount = 5, timeout = 5 } = event.data;
+  let { amount = 5, timeout = 5 } = event.data;
 
   let count = 0;
   setInterval(() => {
-    if (amount === count) return;
+    if (+amount <= count) return;
     count++;
 
     logger.info(

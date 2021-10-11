@@ -1,6 +1,6 @@
 # processlargedatajs Function
 
-This function takes a large JSON payload, calculates the distance between a supplied cordinate and the data, sorts it, and returns the nearest x results.
+From a large JSON payload calculates the distance between a supplied point of origin cordinate and the data, sorts it, and returns the nearest x results.
 
 ## Local Development
 
@@ -19,11 +19,11 @@ npm test
 3. Start your function locally
 
 ```
-sfdx run:function:start --verbose
+sf run function start --verbose
 ```
 
 4. Invoke your function locally
 
 ```
-sfdx run:function --url=http://localhost:8080 --payload=@data/sample-payload
+sf run function --function-url=http://localhost:8080 --payload=@data/sample-payload
 ```

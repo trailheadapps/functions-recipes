@@ -1,6 +1,6 @@
-.spinnerContainer {
+.spinner-container {
   position: relative;
   display: inline-block;
-  min-height: 50px;
+  min-height: 250px;
   width: 100%;
 }

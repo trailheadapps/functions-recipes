@@ -1,6 +1,6 @@
 # orginfots Function
 
-It returns the Salesforce Org information attached to the context
+Returns the Salesforce Org information attached to the context.
 
 ## Local Development
 
@@ -25,11 +25,11 @@ npm test
 4. Start your function locally
 
 ```
-sfdx run:function:start --verbose
+sf run function:start --verbose
 ```
 
 5. Invoke your function locally
 
 ```
-sfdx run:function --url=http://localhost:8080 --payload='{}'
+sf run function --function-url=http://localhost:8080 --payload='{}'
 ```

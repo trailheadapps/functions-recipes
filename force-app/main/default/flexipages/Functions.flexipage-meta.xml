@@ -4,6 +4,7 @@
         <itemInstances>
             <componentInstance>
                 <componentName>functionsRecipesContainer</componentName>
+                <identifier>functionsRecipesContainerId</identifier>
             </componentInstance>
         </itemInstances>
         <name>content</name>

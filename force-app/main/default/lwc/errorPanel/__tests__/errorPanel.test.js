@@ -10,7 +10,7 @@ describe("c-error-panel", () => {
   });
 
   it("displays a default friendly message", () => {
-    const MESSAGE = "Error retrieving data";
+    const MESSAGE = "An error has occurred";
 
     // Create initial element
     const element = createElement("c-error-panel", {
@@ -36,6 +36,21 @@ describe("c-error-panel", () => {
     expect(messageEl.textContent).toBe(MESSAGE);
   });
 
+  it("displays reduced errors", () => {
+    const MESSAGE = { message: "An error has ocurred" };
+
+    // Create initial element
+    const element = createElement("c-error-panel", {
+      is: ErrorPanel
+    });
+    element.error = MESSAGE;
+    element.type = "inlineMessage";
+    document.body.appendChild(element);
+
+    const messageEl = element.shadowRoot.querySelector("p");
+    expect(messageEl.textContent).toBe(MESSAGE.message);
+  });
+
   it("displays no error details when no errors are passed as parameters", () => {
     // Create initial element
     const element = createElement("c-error-panel", {
@@ -45,74 +60,5 @@ describe("c-error-panel", () => {
 
     const inputEl = element.shadowRoot.querySelector("lightning-input");
     expect(inputEl).toBeNull();
-  });
-
-  it("displays error details when errors are passed as parameters", () => {
-    const ERROR_MESSAGES_INPUT = [
-      { statusText: "First bad error" },
-      { statusText: "Second bad error" }
-    ];
-    const ERROR_MESSAGES_OUTPUT = ["First bad error", "Second bad error"];
-
-    // Create initial element
-    const element = createElement("c-error-panel", {
-      is: ErrorPanel
-    });
-    element.errors = ERROR_MESSAGES_INPUT;
-    document.body.appendChild(element);
-
-    const inputEl = element.shadowRoot.querySelector("a");
-    inputEl.checked = true;
-    inputEl.dispatchEvent(new CustomEvent("click"));
-
-    // Return a promise to wait for any asynchronous DOM updates. Jest
-    // will automatically wait for the Promise chain to complete before
-    // ending the test and fail the test if the promise rejects.
-    return Promise.resolve().then(() => {
-      const messageTexts = Array.from(
-        element.shadowRoot.querySelectorAll("p")
-      ).map((errorMessage) => (errorMessage = errorMessage.textContent));
-      expect(messageTexts).toEqual(ERROR_MESSAGES_OUTPUT);
-    });
-  });
-
-  it("is accessible when inline message", () => {
-    const ERROR_MESSAGES_INPUT = [
-      { statusText: "First bad error" },
-      { statusText: "Second bad error" }
-    ];
-
-    const element = createElement("c-error-panel", {
-      is: ErrorPanel
-    });
-
-    element.type = "inlineMessage";
-    element.errors = ERROR_MESSAGES_INPUT;
-    document.body.appendChild(element);
-
-    // Click link to show details
-    element.shadowRoot.querySelector("a").click();
-
-    return Promise.resolve().then(() => expect(element).toBeAccessible());
-  });
-
-  it("is accessible when no data illustration", () => {
-    const ERROR_MESSAGES_INPUT = [
-      { statusText: "First bad error" },
-      { statusText: "Second bad error" }
-    ];
-
-    const element = createElement("c-error-panel", {
-      is: ErrorPanel
-    });
-
-    element.type = "noDataIllustration";
-    element.errors = ERROR_MESSAGES_INPUT;
-    document.body.appendChild(element);
-
-    // Click link to show details
-    element.shadowRoot.querySelector("a").click();
-
-    return Promise.resolve().then(() => expect(element).toBeAccessible());
   });
 });

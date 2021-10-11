@@ -1,7 +1,8 @@
 "use strict";
 
 /**
- * This function takes a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.
+ * Receives a payload containing account details, and creates the record.
+ * It then uses a SOQL query to return the newly created Account.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *

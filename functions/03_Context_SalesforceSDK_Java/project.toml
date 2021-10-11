@@ -1,0 +1,8 @@
+[_]
+schema-version = "0.2"
+
+[com.salesforce]
+schema-version = "0.1"
+id = "salesforcesdkjava"
+description = "This function takes a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account."
+type = "function"

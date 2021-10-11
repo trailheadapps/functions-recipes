@@ -6,13 +6,14 @@
           <div class="functions-nav expand-container">
             <c-functions-recipes-navigation
               definition={definition}
-              selected-item={selectedFunction.name}
+              selected-item={selectedItem}
               onnavselect={handleNavSelect}
             ></c-functions-recipes-navigation>
           </div>
           <div class="functions-content slds-p-around_medium slds-scrollable_y">
             <c-functions-recipes-content
               selected-function={selectedFunction}
+              show-home={showHome}
             ></c-functions-recipes-content>
           </div>
         </div>

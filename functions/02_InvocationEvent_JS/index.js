@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * Detects a payload type and returns information about it
+ * Receives a payload and returns information about it.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *

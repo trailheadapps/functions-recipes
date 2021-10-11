@@ -41,7 +41,7 @@ describe("Unit Tests", () => {
         {
           attributes: {
             type: "Account",
-            url: "/services/data/v52.0/sobjects/Account/0018A00000bmUOkQAM"
+            url: "/services/data/v53.0/sobjects/Account/0018A00000bmUOkQAM"
           },
           Id: "0018A00000bmUOkQAM",
           Name: "Burlington Textiles Corp of America",
@@ -52,7 +52,7 @@ describe("Unit Tests", () => {
               {
                 attributes: {
                   type: "Contact",
-                  url: "/services/data/v52.0/sobjects/Contact/0038A00000YJqSvQAL"
+                  url: "/services/data/v53.0/sobjects/Contact/0038A00000YJqSvQAL"
                 },
                 Name: "Jack Rogers",
                 Email: "jrogers@burlington.com"

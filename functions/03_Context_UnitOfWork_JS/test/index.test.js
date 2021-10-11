@@ -18,13 +18,15 @@ describe("Unit Tests", () => {
   const resultIds = {
     accountId: "0012F000ACTFN",
     contactId: "0012F000CTCFN",
-    caseId: "0012F000CSELFN"
+    serviceCaseId: "0012F000CSELFN",
+    folowupCaseId: "0012F000CSALFN"
   };
 
   beforeEach(() => {
     mockContext = {
       org: {
-        dataApi: { newUnitOfWork: () => {}, commitUnitOfWork: () => {} }
+        dataApi: { newUnitOfWork: () => {}, commitUnitOfWork: () => {} },
+        user: { id: "0052F000009KLZS" }
       },
       logger: { info: () => {}, error: () => {} }
     };
@@ -59,6 +61,7 @@ describe("Unit Tests", () => {
     mockResponse.get.onCall(0).returns({ id: "0012F000ACTFN" });
     mockResponse.get.onCall(1).returns({ id: "0012F000CTCFN" });
     mockResponse.get.onCall(2).returns({ id: "0012F000CSELFN" });
+    mockResponse.get.onCall(3).returns({ id: "0012F000CSALFN" });
 
     // set the mock promise response for work.commit()
     mockContext.org.dataApi.commitUnitOfWork.callsFake(() => {
@@ -77,9 +80,10 @@ describe("Unit Tests", () => {
     expect(results).to.be.not.undefined;
     expect(results).has.property("accountId");
     expect(results).has.property("contactId");
-    expect(results).has.property("caseId");
+    expect(results).has.property("cases");
     expect(results.accountId).to.be.eql(resultIds.accountId);
     expect(results.contactId).to.be.eql(resultIds.contactId);
-    expect(results.caseId).to.be.eql(resultIds.caseId);
+    expect(results.cases.serviceCaseId).to.be.eql(resultIds.serviceCaseId);
+    expect(results.cases.followupCaseId).to.be.eql(resultIds.folowupCaseId);
   });
 });

@@ -1,0 +1,8 @@
+[_]
+schema-version = "0.2"
+
+[com.salesforce]
+schema-version = "0.1"
+id = "unitofworkjava"
+description = "Receives a payload containing Account, Contact, and Case details and uses the Unit of Work pattern."
+type = "function"
