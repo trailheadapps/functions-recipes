@@ -24,9 +24,10 @@ window.functionData = (function () {
                   name: "index.js",
                   label: "Index",
                   path: "/",
-                  body: `"use strict";
-
-const sampleData = require("./data/sample-data.json");
+                  body: `import { readFileSync } from "fs";
+const sampleData = JSON.parse(
+  readFileSync(new URL("./data/sample-data.json", import.meta.url))
+);
 
 /**
  * From a large JSON payload calculates the distance between a supplied
@@ -41,7 +42,7 @@ const sampleData = require("./data/sample-data.json");
  * @param logger: logging handler used to capture application logs and trace specifically
  *                 to a given execution of a function.
  */
-module.exports = async function (event, context, logger) {
+export default async function (event, context, logger) {
   const data = event.data || {};
   logger.info(
     \`Invoking processlargedatajs Function with payload \${JSON.stringify(data)}\`
@@ -75,7 +76,7 @@ module.exports = async function (event, context, logger) {
 
   // return the results
   return { schools: results };
-};
+}
 
 /**
  * Calculate distance between two geographical points
@@ -459,9 +460,7 @@ public class School {
                 {
                   name: "index.js",
                   label: "Invocation Event",
-                  body: `"use strict";
-
-/**
+                  body: `/**
  * Receives a payload and returns information about it.
  *
  * The exported method is the entry point for your code when the function is invoked.
@@ -473,7 +472,7 @@ public class School {
  * @param logger: logging handler used to capture application logs and trace specifically
  *                 to a given execution of a function.
  */
-module.exports = async function (event, context, logger) {
+export default async function (event, context, logger) {
   const data = event.data || {};
   logger.info(
     \`Invoking invocationeventjs with payload \${JSON.stringify(data)}\`
@@ -501,7 +500,7 @@ module.exports = async function (event, context, logger) {
 
   logger.info(JSON.stringify(results));
   return results;
-};
+}
 `
                 }
               ]
@@ -536,7 +535,7 @@ module.exports = async function (event, context, logger) {
  * @param logger: logging handler used to capture application logs and trace specifically
  *                 to a given execution of a function.
  */
-module.exports = async function (event, context, logger) {
+export default async function (event, context, logger) {
   logger.info(
     \`Invoking datapiqueryjs Function with payload \${JSON.stringify(
       event.data || {}
@@ -553,7 +552,7 @@ module.exports = async function (event, context, logger) {
   );
   logger.info(JSON.stringify(results));
   return results;
-};
+}
 `
                 }
               ]
@@ -656,9 +655,7 @@ export class OrgInfo {
                 {
                   name: "index.js",
                   label: "Salesforce SDK",
-                  body: `"use strict";
-
-/**
+                  body: `/**
  * Receives a payload containing account details, and creates the record.
  * It then uses a SOQL query to return the newly created Account.
  *
@@ -671,7 +668,7 @@ export class OrgInfo {
  * @param logger: logging handler used to capture application logs and trace specifically
  *                 to a given execution of a function.
  */
-module.exports = async function (event, context, logger) {
+export default async function (event, context, logger) {
   logger.info(
     \`Invoking salesforcesdkjs Function with payload \${JSON.stringify(
       event.data || {}
@@ -712,7 +709,7 @@ module.exports = async function (event, context, logger) {
     logger.error(errorMessage);
     throw new Error(errorMessage);
   }
-};
+}
 `
                 }
               ]
@@ -918,9 +915,7 @@ public class FunctionOutput {
                 {
                   name: "index.js",
                   label: "UnitOfWork",
-                  body: `"use strict";
-
-/**
+                  body: `/**
  * Receives a payload containing Account, Contact, and Case details and uses the
  * Unit of Work pattern to assign the corresponding values to to its Record
  * while maintaining the relationships. It then commits the unit of work and
@@ -935,7 +930,7 @@ public class FunctionOutput {
  * @param logger: logging handler used to capture application logs and trace specifically
  *                 to a given execution of a function.
  */
-module.exports = async function (event, context, logger) {
+export default async function (event, context, logger) {
   logger.info(
     \`Invoking unitofworkjs Function with payload \${JSON.stringify(
       event.data || {}
@@ -1014,7 +1009,7 @@ module.exports = async function (event, context, logger) {
     logger.error(errorMessage);
     throw new Error(errorMessage);
   }
-};
+}
 
 /**
  * Throws an Error if a value isn't present
@@ -1267,7 +1262,7 @@ public class Cases {
  * @param logger: logging handler used to capture application logs and trace specifically
  *                 to a given execution of a function.
  */
-module.exports = async function (event, context, logger) {
+export default async function (event, context, logger) {
   logger.info(
     \`Invoking loggerjs Function with payload \${JSON.stringify(
       event.data || {}
@@ -1291,7 +1286,7 @@ module.exports = async function (event, context, logger) {
   return {
     status: \`Logger Started: Generating \${amount} log messages every \${timeout} seconds\`
   };
-};
+}
 `
                 }
               ]
@@ -1315,10 +1310,8 @@ module.exports = async function (event, context, logger) {
                 {
                   name: "index.js",
                   label: "Environment",
-                  body: `"use strict";
-
-const crypto = require("crypto");
-const { promisify } = require("util");
+                  body: `import crypto from "crypto";
+import { promisify } from "util";
 
 // Turn pbkdf2 function from callback based to Promises
 const pbkdf2 = promisify(crypto.pbkdf2);
@@ -1335,7 +1328,7 @@ const pbkdf2 = promisify(crypto.pbkdf2);
  * @param logger: logging handler used to capture application logs and trace specifically
  *                 to a given execution of a function.
  */
-module.exports = async function (event, context, logger) {
+export default async function (event, context, logger) {
   logger.info(
     \`Invoking environmentjs Function with payload \${JSON.stringify(
       event.data || {}
@@ -1360,7 +1353,7 @@ module.exports = async function (event, context, logger) {
   // https://nodejs.org/dist/latest-v14.x/docs/api/crypto.html#crypto_crypto_pbkdf2_password_salt_iterations_keylen_digest_callback
   const results = await pbkdf2(password, salt, 10e3, keyLength, "sha512");
   return results.toString("hex");
-};
+}
 `
                 }
               ]

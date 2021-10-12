@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * Receives a payload containing Account, Contact, and Case details and uses the
  * Unit of Work pattern to assign the corresponding values to to its Record
@@ -15,7 +13,7 @@
  * @param logger: logging handler used to capture application logs and trace specifically
  *                 to a given execution of a function.
  */
-module.exports = async function (event, context, logger) {
+export default async function (event, context, logger) {
   logger.info(
     `Invoking unitofworkjs Function with payload ${JSON.stringify(
       event.data || {}
@@ -94,7 +92,7 @@ module.exports = async function (event, context, logger) {
     logger.error(errorMessage);
     throw new Error(errorMessage);
   }
-};
+}
 
 /**
  * Throws an Error if a value isn't present

@@ -1,9 +1,10 @@
 {
-  "name": "dataapiqueryjs-function",
-  "version": "0.0.1",
-  "author": "TODO",
-  "description": "TODO",
-  "license": "UNLICENSED",
+  "name": "dataapiquery-js-function",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "author": "salesforce.com",
+  "description": "Returns accounts and its contacts by keyword.",
   "main": "index.js",
   "repository": {
     "type": "git"
@@ -18,7 +19,7 @@
   "devDependencies": {
     "chai": "^4.3.4",
     "eslint": "^7.32.0",
-    "mocha": "^9.0.3",
+    "mocha": "^9.1.2",
     "sinon": "^11.1.2"
   }
 }

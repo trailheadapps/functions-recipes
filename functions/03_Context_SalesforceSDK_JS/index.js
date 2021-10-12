@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * Receives a payload containing account details, and creates the record.
  * It then uses a SOQL query to return the newly created Account.
@@ -13,7 +11,7 @@
  * @param logger: logging handler used to capture application logs and trace specifically
  *                 to a given execution of a function.
  */
-module.exports = async function (event, context, logger) {
+export default async function (event, context, logger) {
   logger.info(
     `Invoking salesforcesdkjs Function with payload ${JSON.stringify(
       event.data || {}
@@ -54,4 +52,4 @@ module.exports = async function (event, context, logger) {
     logger.error(errorMessage);
     throw new Error(errorMessage);
   }
-};
+}

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Returns the Salesforce Org information attached to the context.
  *

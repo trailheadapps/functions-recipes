@@ -1,9 +1,7 @@
-"use strict";
+import { expect } from "chai";
+import createSandbox from "sinon/lib/sinon/create-sandbox.js";
 
-const { expect } = require("chai");
-const { createSandbox } = require("sinon");
-
-const execute = require("../index");
+import execute from "../index.js";
 
 /**
  * environmentjs Function unit tests.

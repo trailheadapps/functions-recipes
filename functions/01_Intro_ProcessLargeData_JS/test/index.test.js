@@ -1,10 +1,11 @@
-"use strict";
+import { expect } from "chai";
+import { readFileSync } from "fs";
+import createSandbox from "sinon/lib/sinon/create-sandbox.js";
 
-const { expect } = require("chai");
-const { createSandbox } = require("sinon");
-
-const execute = require("../index");
-const payload = require("../data/sample-payload.json");
+import execute from "../index.js";
+const payload = JSON.parse(
+  readFileSync(new URL("../data/sample-payload.json", import.meta.url))
+);
 
 /**
  * processlargedatajs Function unit tests.

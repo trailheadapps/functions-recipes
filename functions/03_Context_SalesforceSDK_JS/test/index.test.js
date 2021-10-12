@@ -1,12 +1,16 @@
-"use strict";
-
-const { expect } = require("chai");
-const { createSandbox } = require("sinon");
-const testResponse = require("../data/test-data.json");
-const testPayload = require("../data/sample-payload.json");
-const testInvalidPayload = require("../data/sample-invalid-payload.json");
-const execute = require("../index");
-
+import { expect } from "chai";
+import createSandbox from "sinon/lib/sinon/create-sandbox.js";
+import { readFileSync } from "fs";
+const testResponse = JSON.parse(
+  readFileSync(new URL("../data/test-data.json", import.meta.url))
+);
+const testPayload = JSON.parse(
+  readFileSync(new URL("../data/sample-payload.json", import.meta.url))
+);
+const testInvalidPayload = JSON.parse(
+  readFileSync(new URL("../data/sample-invalid-payload.json", import.meta.url))
+);
+import execute from "../index.js";
 /**
  * salesforcesdkjs Function unit tests.
  */
