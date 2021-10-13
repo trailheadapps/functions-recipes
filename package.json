@@ -11,7 +11,7 @@
   },
   "scripts": {
     "clean": "lerna clean && rimraf node_modules **/node_modules",
-    "lint": "eslint **/lwc/**",
+    "lint": "eslint **/lwc/**/*.js",
     "test": "npm run test:unit && npm run test:functions",
     "test:unit": "sfdx-lwc-jest --skipApiVersionCheck",
     "test:unit:watch": "sfdx-lwc-jest --watch --skipApiVersionCheck",
@@ -51,7 +51,7 @@
     "**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,ts,xml,yaml,yml}": [
       "prettier --write"
     ],
-    "**/lwc/**": [
+    "**/lwc/**/*.js": [
       "eslint",
       "sfdx-lwc-jest --skipApiVersionCheck -- --bail --findRelatedTests"
     ]
