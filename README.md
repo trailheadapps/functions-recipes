@@ -10,7 +10,7 @@ Salesforce Functions lets you use the Salesforce Platform for building event-dri
 
 **Functions Recipes** is a library of examples to help you getting started with Salesforce Functions and get used to their main features.
 
-To learn more about Salesforce Functions please visit the [documentation center](https://developer.salesforce.com/docs/platform/functions/guide/index.html).
+To learn more about Salesforce Functions please visit the [documentation center](https://developer.salesforce.com/docs/platform/functions/overview).
 
 ## Getting Started
 
