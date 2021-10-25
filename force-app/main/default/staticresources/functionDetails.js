@@ -25,8 +25,13 @@ window.functionData = (function () {
                   label: "Index",
                   path: "/",
                   body: `import { readFileSync } from "fs";
-const sampleData = JSON.parse(
-  readFileSync(new URL("./data/sample-data.json", import.meta.url))
+
+// Local Schools Database API by Code.org
+// License: CC BY-NC-SA 4.0
+// Url: https://code.org/learn/find-school/json
+// Read Schools JSON Database into memory
+const schoolsData = JSON.parse(
+  readFileSync(new URL("./data/schools.json", import.meta.url))
 );
 
 /**
@@ -57,7 +62,7 @@ export default async function (event, context, logger) {
   const length = data.length ?? 5;
 
   // Iterate through the schools in the file and calculate the distance using the distance function below
-  const schools = sampleData.schools
+  const schools = schoolsData.schools
     .map((school) => {
       return Object.assign({}, school, {
         distance: distance(
@@ -153,8 +158,11 @@ public class ProcessLargeDataFunction implements SalesforceFunction<FunctionInpu
     // - Number of results to return
     int length = event.getData().getLength();
 
+    // Local Schools Database API by Code.org
+    // License: CC BY-NC-SA 4.0
+    // Url: https://code.org/learn/find-school/json
     // Read Schools JSON Database into memory
-    JsonReader reader = new JsonReader(new FileReader("data/sample-data.json"));
+    JsonReader reader = new JsonReader(new FileReader("data/schools.json"));
     Gson gson = new Gson();
     JsonResponse response = gson.fromJson(reader, JsonResponse.class);
 
