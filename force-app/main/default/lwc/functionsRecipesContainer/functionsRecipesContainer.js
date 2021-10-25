@@ -24,7 +24,7 @@ export default class FunctionsRecipesContainer extends LightningElement {
 
   handleNavSelect(event) {
     const name = event.detail;
-    if (name === "home") {
+    if (name === "functions-home") {
       this.showHome = true;
     } else {
       this.selectedFunction = this.definition.find(
