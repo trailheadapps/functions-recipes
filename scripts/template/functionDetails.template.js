@@ -266,6 +266,8 @@ window.functionData = (function () {
           subtitle: "Functions Recipes",
           description:
             "Generates an amount of log messages every number of seconds.",
+          instructions:
+            "Run: <code>sf env log tail -e compute-env-alias</code> to retrieve logs after invoking the function.",
           inputs: [
             { label: "Amount", name: "amount", type: "number" },
             { label: "Timeout", name: "timeout", type: "number" }
@@ -276,6 +278,7 @@ window.functionData = (function () {
               label: "Logger - JavaScript",
               deployment: "functions_recipes.loggerjs",
               language: "JavaScript",
+
               files: [
                 {
                   name: "index.js",
@@ -292,6 +295,8 @@ window.functionData = (function () {
           subtitle: "Functions Recipes",
           description:
             "Returns the derivate password hash using pbkdf2 getting the salt from the Environment.",
+          instructions:
+            'Run: <code>sf env var set PASSWORD_SALT="a random passphrase" -e compute-env-alias</code> to set the necessary configuration value.',
           inputs: [{ label: "Password", name: "password", type: "text" }],
           functions: [
             {

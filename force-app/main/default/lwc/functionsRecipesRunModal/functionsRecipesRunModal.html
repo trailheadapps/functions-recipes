@@ -51,6 +51,15 @@
                   type="inlineMessage"
                 ></c-error-panel>
               </template>
+              <template if:true={selectedFunction.instructions}>
+                <div class="slds-notify slds-notify_alert" role="alert">
+                  <span class="slds-assistive-text">info</span>
+                  <lightning-formatted-rich-text
+                    value={selectedFunction.instructions}
+                  ></lightning-formatted-rich-text>
+                </div>
+                <hr />
+              </template>
               <template if:true={selectedFunction.inputs}>
                 <div
                   class="
@@ -59,7 +68,7 @@
                     slds-text-align_center
                   "
                 >
-                  Please provide the available inputs to run the function.
+                  Please provide the required inputs to run the function.
                 </div>
                 <template
                   for:each={selectedFunction.inputs}
