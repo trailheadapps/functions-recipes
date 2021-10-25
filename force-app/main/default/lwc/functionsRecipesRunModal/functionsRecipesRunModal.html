@@ -52,13 +52,21 @@
                 ></c-error-panel>
               </template>
               <template if:true={selectedFunction.instructions}>
-                <div class="slds-notify slds-notify_alert" role="alert">
-                  <span class="slds-assistive-text">info</span>
-                  <lightning-formatted-rich-text
-                    value={selectedFunction.instructions}
-                  ></lightning-formatted-rich-text>
+                <span class="slds-assistive-text">info</span>
+                <div class="slds-box slds-m-around_large">
+                  <div class="slds-inline_icon_text slds-grid">
+                    <lightning-icon
+                      class="slds-p-right_medium slds-align-middle"
+                      icon-name="utility:info"
+                      size="medium"
+                    ></lightning-icon>
+                    <div class="slds-col slds-align-middle">
+                      <lightning-formatted-rich-text
+                        value={selectedFunction.instructions}
+                      ></lightning-formatted-rich-text>
+                    </div>
+                  </div>
                 </div>
-                <hr />
               </template>
               <template if:true={selectedFunction.inputs}>
                 <div
