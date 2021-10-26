@@ -1,5 +1,5 @@
 {
-  "name": "bulkapijs-function",
+  "name": "bulkingest-function",
   "version": "0.0.1",
   "type": "module",
   "author": "TODO",
@@ -23,7 +23,6 @@
     "sinon": "^10.0.0"
   },
   "dependencies": {
-    "jsforce": "^1.10.1",
     "undici": "^4.8.1"
   }
 }
