@@ -43,6 +43,23 @@
               ></lightning-spinner>
             </div>
           </template>
+          <template if:true={selectedFunction.instructions}>
+            <span class="slds-assistive-text">info</span>
+            <div class="slds-box slds-m-around_large">
+              <div class="slds-inline_icon_text slds-grid">
+                <lightning-icon
+                  class="slds-p-right_medium slds-align-middle"
+                  icon-name="utility:info"
+                  size="medium"
+                ></lightning-icon>
+                <div class="slds-col slds-align-middle">
+                  <lightning-formatted-rich-text
+                    value={selectedFunction.instructions}
+                  ></lightning-formatted-rich-text>
+                </div>
+              </div>
+            </div>
+          </template>
           <template if:false={loading}>
             <template if:false={result}>
               <template if:true={error}>
@@ -50,23 +67,6 @@
                   error={error}
                   type="inlineMessage"
                 ></c-error-panel>
-              </template>
-              <template if:true={selectedFunction.instructions}>
-                <span class="slds-assistive-text">info</span>
-                <div class="slds-box slds-m-around_large">
-                  <div class="slds-inline_icon_text slds-grid">
-                    <lightning-icon
-                      class="slds-p-right_medium slds-align-middle"
-                      icon-name="utility:info"
-                      size="medium"
-                    ></lightning-icon>
-                    <div class="slds-col slds-align-middle">
-                      <lightning-formatted-rich-text
-                        value={selectedFunction.instructions}
-                      ></lightning-formatted-rich-text>
-                    </div>
-                  </div>
-                </div>
               </template>
               <template if:true={selectedFunction.inputs}>
                 <div
