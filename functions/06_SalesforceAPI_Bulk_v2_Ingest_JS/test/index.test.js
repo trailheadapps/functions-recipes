@@ -11,6 +11,7 @@ const baseUrl = "https://test.salesforce.com";
 const apiVersion = "53.0";
 const accessToken = "this-is-so-secure";
 
+const jobId = "7505e000007L8etAAC";
 const accountsCsv = `
 ExternalID__c,Name,Description,Website
 aa51eb49-da99-4066-9ea5-c411fa3ed971,McLaughlin-Cruickshank,Persevering modular open architecture,http://zdnet.com
@@ -27,90 +28,6 @@ const mockExternal = mockAgent.get(
 const mockSalesforce = mockAgent.get(baseUrl);
 mockAgent.disableNetConnect();
 
-// Mock External API Requests
-mockExternal
-  .intercept({
-    path: "/accounts.csv",
-    method: "GET"
-  })
-  .reply(200, accountsCsv);
-
-// Mock Salesforce API Requests
-const authHeaders = {
-  Authorization: `Bearer ${accessToken}`
-};
-
-// Mock Create Job
-const jobId = "7505e000007L8etAAC";
-mockSalesforce
-  .intercept({
-    path: `/services/data/v${apiVersion}/jobs/ingest`,
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...authHeaders
-    },
-    body: JSON.stringify({
-      operation: "upsert",
-      object: "Account",
-      contentType: "CSV",
-      externalIdFieldName: "ExternalID__c"
-    })
-  })
-  .reply(200, {
-    id: jobId,
-    operation: "upsert",
-    object: "Account",
-    createdById: "0055e0000046G6VAAU",
-    createdDate: "2021-10-26T20:22:57.000+0000",
-    systemModstamp: "2021-10-26T20:22:57.000+0000",
-    state: "Open",
-    concurrencyMode: "Parallel",
-    contentType: "CSV",
-    apiVersion: apiVersion,
-    contentUrl: `services/data/v${apiVersion}/jobs/ingest/${jobId}/batches`,
-    lineEnding: "LF",
-    columnDelimiter: "COMMA"
-  });
-
-// Mock Upload Batch
-mockSalesforce
-  .intercept({
-    path: `/services/data/v${apiVersion}/jobs/ingest/${jobId}/batches`,
-    method: "PUT",
-    headers: {
-      "Content-Type": "text/csv",
-      ...authHeaders
-    }
-  })
-  .reply(201, "");
-
-// Mock Close Job
-mockSalesforce
-  .intercept({
-    path: `/services/data/v${apiVersion}/jobs/ingest/${jobId}`,
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      ...authHeaders
-    },
-    body: JSON.stringify({
-      state: "UploadComplete"
-    })
-  })
-  .reply(200, {
-    id: jobId,
-    operation: "upsert",
-    object: "Account",
-    createdById: "0055e0000046G6VAAU",
-    createdDate: "2021-10-26T20:22:57.000+0000",
-    systemModstamp: "2021-10-26T20:22:57.000+0000",
-    state: "UploadComplete",
-    concurrencyMode: "Parallel",
-    contentType: "CSV",
-    apiVersion: apiVersion
-  });
-
 /**
  *  bulkingestjs unit tests.
  */
@@ -120,6 +37,89 @@ describe("Unit Tests", () => {
   let mockLogger;
 
   beforeEach(() => {
+    // Mock External API Request
+    mockExternal
+      .intercept({
+        path: "/accounts.csv",
+        method: "GET"
+      })
+      .reply(200, accountsCsv);
+
+    // Mock Salesforce Auth Token
+    const authHeaders = {
+      Authorization: `Bearer ${accessToken}`
+    };
+
+    // Mock Create Job
+    mockSalesforce
+      .intercept({
+        path: `/services/data/v${apiVersion}/jobs/ingest`,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...authHeaders
+        },
+        body: JSON.stringify({
+          operation: "upsert",
+          object: "Account",
+          contentType: "CSV",
+          externalIdFieldName: "ExternalID__c"
+        })
+      })
+      .reply(200, {
+        id: jobId,
+        operation: "upsert",
+        object: "Account",
+        createdById: "0055e0000046G6VAAU",
+        createdDate: "2021-10-26T20:22:57.000+0000",
+        systemModstamp: "2021-10-26T20:22:57.000+0000",
+        state: "Open",
+        concurrencyMode: "Parallel",
+        contentType: "CSV",
+        apiVersion: apiVersion,
+        contentUrl: `services/data/v${apiVersion}/jobs/ingest/${jobId}/batches`,
+        lineEnding: "LF",
+        columnDelimiter: "COMMA"
+      });
+
+    // Mock Upload Batch
+    mockSalesforce
+      .intercept({
+        path: `/services/data/v${apiVersion}/jobs/ingest/${jobId}/batches`,
+        method: "PUT",
+        headers: {
+          "Content-Type": "text/csv",
+          ...authHeaders
+        }
+      })
+      .reply(201, "");
+
+    // Mock Close Job
+    mockSalesforce
+      .intercept({
+        path: `/services/data/v${apiVersion}/jobs/ingest/${jobId}`,
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...authHeaders
+        },
+        body: JSON.stringify({
+          state: "UploadComplete"
+        })
+      })
+      .reply(200, {
+        id: jobId,
+        operation: "upsert",
+        object: "Account",
+        createdById: "0055e0000046G6VAAU",
+        createdDate: "2021-10-26T20:22:57.000+0000",
+        systemModstamp: "2021-10-26T20:22:57.000+0000",
+        state: "UploadComplete",
+        concurrencyMode: "Parallel",
+        contentType: "CSV",
+        apiVersion: apiVersion
+      });
+
     mockContext = {
       org: {
         dataApi: {
@@ -140,6 +140,8 @@ describe("Unit Tests", () => {
 
   afterEach(() => {
     sandbox.restore();
+    mockExternal.close();
+    mockSalesforce.close();
   });
 
   it("Invoke bulkingestjs", async () => {

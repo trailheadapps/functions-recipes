@@ -1,7 +1,7 @@
 import { request } from "undici";
 
 /**
- * Describe Bulkapijs here.
+ * Fetches an external CSV file and uses the Salesforce Bulk API v2.0 to ingest it.
  *
  * The exported method is the entry point for your code when the function is invoked.
  *
@@ -17,7 +17,7 @@ export default async function (event, context, logger) {
     `Invoking bulkingestjs with payload ${JSON.stringify(event.data || {})}`
   );
 
-  // Extract data Api information from context
+  // Extract dataApi information from context
   const { accessToken, baseUrl, apiVersion } = context.org.dataApi;
 
   // Setup Bulk API Authorization headers
@@ -30,7 +30,10 @@ export default async function (event, context, logger) {
 
   // Load CSV file from external site
   const { statusCode: statusCodeCsv, body: csvStream } = await request(
-    "https://external-accounts-site.herokuapp.com/accounts.csv"
+    "https://external-accounts-site.herokuapp.com/accounts.csv",
+    {
+      method: "GET"
+    }
   );
 
   if (statusCodeCsv !== 200) {
@@ -65,7 +68,7 @@ export default async function (event, context, logger) {
     throw new Error(`Create job failed`);
   }
 
-  logger.info(`Job created with ID: ${createJobResponse.id}`);
+  logger.info(`Job created. Id: ${createJobResponse.id}`);
 
   // Upload CSV file to Bulk API Job
   const { statusCode: statusCodeUpload } = await request(
@@ -84,7 +87,7 @@ export default async function (event, context, logger) {
     throw new Error(`Upload failed`);
   }
 
-  logger.info(`Upload complete with status code: ${statusCodeUpload}`);
+  logger.info(`Upload complete. Status code: ${statusCodeUpload}`);
 
   // Close Job
   const { statusCode, body } = await request(
@@ -107,6 +110,8 @@ export default async function (event, context, logger) {
     logger.error(JSON.stringify(result));
     throw new Error(`Close job failed`);
   }
+
+  logger.info(`Job closed. Status code: ${statusCode}`);
 
   return result;
 }
