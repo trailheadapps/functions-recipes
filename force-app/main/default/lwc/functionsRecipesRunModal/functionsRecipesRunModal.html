@@ -35,29 +35,31 @@
       </header>
       <div class="slds-modal__content" id="modal-content-id-1">
         <div class="slds-var-p-around_medium">
+          <template if:false={loading}>
+            <template if:true={selectedFunction.instructions}>
+              <span class="slds-assistive-text">info</span>
+              <div class="slds-box slds-m-around_large">
+                <div class="slds-inline_icon_text slds-grid">
+                  <lightning-icon
+                    class="slds-p-right_medium slds-align-middle"
+                    icon-name="utility:info"
+                    size="medium"
+                  ></lightning-icon>
+                  <div class="slds-col slds-align-middle">
+                    <lightning-formatted-rich-text
+                      value={selectedFunction.instructions}
+                    ></lightning-formatted-rich-text>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </template>
           <template if:true={loading}>
             <div class="spinner-container">
               <lightning-spinner
                 alternative-text="Loading"
                 size="medium"
               ></lightning-spinner>
-            </div>
-          </template>
-          <template if:true={selectedFunction.instructions}>
-            <span class="slds-assistive-text">info</span>
-            <div class="slds-box slds-m-around_large">
-              <div class="slds-inline_icon_text slds-grid">
-                <lightning-icon
-                  class="slds-p-right_medium slds-align-middle"
-                  icon-name="utility:info"
-                  size="medium"
-                ></lightning-icon>
-                <div class="slds-col slds-align-middle">
-                  <lightning-formatted-rich-text
-                    value={selectedFunction.instructions}
-                  ></lightning-formatted-rich-text>
-                </div>
-              </div>
             </div>
           </template>
           <template if:false={loading}>
