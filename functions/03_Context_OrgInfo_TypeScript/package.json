@@ -32,6 +32,6 @@
     "sf-fx-sdk-nodejs": "^3.0.0",
     "sinon": "^11.1.2",
     "ts-node": "^10.3.0",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.4"
   }
 }
