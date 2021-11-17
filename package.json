@@ -19,7 +19,7 @@
     "test:unit:coverage": "sfdx-lwc-jest --coverage --skipApiVersionCheck",
     "test:functions": "mocha functions/**/test/*.test.js",
     "prettier": "prettier --write \"**/*.{cls,cmp,component,css,html,js,ts,json,md,page,trigger,xml,yaml,yml}\"",
-    "prettier:verify": "prettier --list-different \"**/*.{cls,cmp,component,css,html,js,ts,json,md,page,trigger,xml,yaml,yml}\"",
+    "prettier:verify": "prettier --check \"**/*.{cls,cmp,component,css,html,js,ts,json,md,page,trigger,xml,yaml,yml}\"",
     "postinstall": "lerna exec -- npm install && lerna link && husky install",
     "precommit": "lint-staged && node scripts/generateFunctionDetails.js",
     "ci:postinstall": "lerna exec -- npm ci && lerna link"
