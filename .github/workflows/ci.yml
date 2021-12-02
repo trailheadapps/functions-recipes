@@ -17,6 +17,10 @@ jobs:
       - name: "Checkout source code"
         uses: actions/checkout@v2
 
+      # Install Volta to enforce proper node and package manager versions
+      - name: "Install Volta"
+        uses: volta-cli/action@v1
+
       # Install npm dependencies for Prettier and Jest
       - name: "Install npm dependencies"
         run: npm ci && npm run ci:postinstall
