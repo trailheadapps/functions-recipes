@@ -1,6 +1,8 @@
 import { expect } from "chai";
-import createSandbox from "sinon/lib/sinon/create-sandbox.js";
+import { createSandbox } from "sinon";
 import { readFileSync } from "fs";
+import execute from "../index.js";
+
 const testResponse = JSON.parse(
   readFileSync(new URL("../data/test-data.json", import.meta.url))
 );
@@ -10,7 +12,7 @@ const testPayload = JSON.parse(
 const testInvalidPayload = JSON.parse(
   readFileSync(new URL("../data/sample-invalid-payload.json", import.meta.url))
 );
-import execute from "../index.js";
+
 /**
  * salesforcesdkjs Function unit tests.
  */

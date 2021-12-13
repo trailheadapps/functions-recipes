@@ -114,6 +114,7 @@ public class FunctionTest {
                       .newRecordBuilder("Contact")
                       .withField("FirstName", input.getFirstName())
                       .withField("LastName", input.getLastName())
+                      .withField("AccountId", accountRefId)
                       .build())
                   .thenReturn(contactRecord);
 
