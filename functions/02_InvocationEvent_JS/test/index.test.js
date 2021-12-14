@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import createSandbox from "sinon/lib/sinon/create-sandbox.js";
+import { createSandbox } from "sinon";
 
 import execute from "../index.js";
 

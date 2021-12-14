@@ -1,10 +1,12 @@
 import { expect } from "chai";
-import createSandbox from "sinon/lib/sinon/create-sandbox.js";
+import { createSandbox } from "sinon";
 import { readFileSync } from "fs";
+import execute from "../index.js";
+
 const testPayload = JSON.parse(
   readFileSync(new URL("../data/sample-payload.json", import.meta.url))
 );
-import execute from "../index.js";
+
 /**
  * unitofworkjs Function unit tests.
  */

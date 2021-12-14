@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { readFileSync } from "fs";
-import createSandbox from "sinon/lib/sinon/create-sandbox.js";
+import { createSandbox } from "sinon";
 
 import execute from "../index.js";
 const payload = JSON.parse(

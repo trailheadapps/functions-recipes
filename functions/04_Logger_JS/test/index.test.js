@@ -1,8 +1,7 @@
 import { expect } from "chai";
-import createSandbox from "sinon/lib/sinon/create-sandbox.js";
-import { useFakeTimers } from "sinon/lib/sinon/util/fake-timers.js";
-
+import { useFakeTimers, createSandbox } from "sinon";
 import execute from "../index.js";
+
 /**
  * loggerjs unit tests.
  */
