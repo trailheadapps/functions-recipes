@@ -24,6 +24,6 @@
     "sinon": "^12.0.1"
   },
   "dependencies": {
-    "eslint-plugin-jest": "^25.3.0"
+    "eslint-plugin-jest": "^26.0.0"
   }
 }
