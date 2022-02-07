@@ -10,7 +10,7 @@
     "type": "git"
   },
   "engines": {
-    "node": "^16.0"
+    "node": "^14.0"
   },
   "scripts": {
     "build": "tsc",
