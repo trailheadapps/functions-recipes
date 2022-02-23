@@ -109,6 +109,8 @@ From there you'll be able to explore the source code and invoke the deployed fun
 
 Each individual function can be started and invoked locally using the Salesforce CLI, you can refer to each individual **README** for instructions on how to start and invoke each function locally.
 
+For Local Development you can use any DevHub enabled org, just make sure to create the scratch org without the `Functions` feature enabled and avoid the **Salesforce Functions Deployment** steps.
+
 ### Available Recipes
 
 1. Introduction to Functions
