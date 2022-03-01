@@ -61,8 +61,8 @@
                         "body": "package com.salesforce.functions.recipes;\n\nimport java.util.List;\n\npublic class FunctionOutput {\n  private final List<School> schools;\n\n  public FunctionOutput(List<School> schools) {\n    this.schools = schools;\n  }\n\n  public List<School> getSchools() {\n    return schools;\n  }\n}\n"
                     },
                     {
-                        "name": "JavaResponse.java",
-                        "label": "Java Response",
+                        "name": "JsonResponse.java",
+                        "label": "JSON Response",
                         "path": "/",
                         "body": "package com.salesforce.functions.recipes;\n\nimport java.util.List;\n\npublic class JsonResponse {\n  private List<School> schools;\n\n  public List<School> getSchools() {\n    return schools;\n  }\n\n  public void setSchools(List<School> schools) {\n    this.schools = schools;\n  }\n}\n"
                     },

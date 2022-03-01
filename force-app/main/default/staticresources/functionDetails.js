@@ -272,8 +272,8 @@ public class FunctionOutput {
 `
                 },
                 {
-                  name: "JavaResponse.java",
-                  label: "Java Response",
+                  name: "JsonResponse.java",
+                  label: "JSON Response",
                   path: "/",
                   body: `package com.salesforce.functions.recipes;
 
