@@ -53,8 +53,8 @@ window.functionData = (function () {
                   body: `{{{source.processLargeDataJava_Output}}}`
                 },
                 {
-                  name: "JavaResponse.java",
-                  label: "Java Response",
+                  name: "JsonResponse.java",
+                  label: "JSON Response",
                   path: "/",
                   body: `{{{source.processLargeDataJava_Response}}}`
                 },
