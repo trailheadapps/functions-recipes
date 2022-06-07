@@ -5,7 +5,7 @@
       "default": true
     }
   ],
-  "name": "functions_recipes",
+  "name": "functionsrecipes",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "54.0"
