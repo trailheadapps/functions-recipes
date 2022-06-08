@@ -37,6 +37,8 @@ describe("Unit Tests", () => {
     expect(results).to.be.not.undefined;
     expect(results).has.property("status");
     expect(results.status).match(/Generating 5 log messages/);
+
+    clock.restore();
   });
 
   it("Invoke loggerjs Function with specific amount", async () => {
@@ -55,5 +57,7 @@ describe("Unit Tests", () => {
     expect(results).to.be.not.undefined;
     expect(results).has.property("status");
     expect(results.status).match(/Generating 10 log messages/);
+
+    clock.restore();
   });
 });
