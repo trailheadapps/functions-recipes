@@ -66,7 +66,8 @@ const sourceMap = {
   ),
   unitOfWorkJava_Cases: loadJava("03_Context_UnitOfWork_Java", "Cases.java"),
   loggerJS_Function: loadJS("04_Logger_JS"),
-  environmentJS_Function: loadJS("05_Environment_JS")
+  environmentJS_Function: loadJS("05_Environment_JS"),
+  bulkIngestJS_Function: loadJS("06_SalesforceAPI_Bulk_v2_Ingest_JS")
 };
 
 function loadJS(name) {

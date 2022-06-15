@@ -313,6 +313,30 @@ window.functionData = (function () {
               ]
             }
           ]
+        },
+        {
+          name: "06_SalesforceAPI_Bulk_v2_Ingest_JS",
+          label: "Bulk API v2.0 Ingest",
+          subtitle: "Functions Recipes",
+          description:
+            "Fetches an external CSV file and uses the Salesforce Bulk API v2.0 to ingest it.",
+          instructions:
+            'Check results by running: <code>sfdx force:org:open -p "/lightning/setup/AsyncApiJobStatus/home"</code>',
+          functions: [
+            {
+              name: "06_SalesforceAPI_Bulk_v2_Ingest_JS",
+              label: "Salesforce APIs - Bulk v2.0 Ingest - JavaScript",
+              deployment: "functions_recipes.bulkingestjs",
+              language: "JavaScript",
+              files: [
+                {
+                  name: "index.js",
+                  label: "Index",
+                  body: `{{{source.bulkIngestJS_Function}}}`
+                }
+              ]
+            }
+          ]
         }
       ];
     }
