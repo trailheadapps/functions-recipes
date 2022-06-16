@@ -142,6 +142,7 @@
                 <isRequired>false</isRequired>
             </fields>
             <isRequired>false</isRequired>
+            <regionContainerType>SectionWithoutHeader</regionContainerType>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
