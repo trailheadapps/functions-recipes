@@ -1,5 +1,5 @@
-import crypto from "crypto";
-import { promisify } from "util";
+import crypto from "node:crypto";
+import { promisify } from "node:util";
 
 // Turn pbkdf2 function from callback based to Promises
 const pbkdf2 = promisify(crypto.pbkdf2);

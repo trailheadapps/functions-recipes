@@ -18,7 +18,7 @@ describe("Unit Tests", () => {
     mockContext = {
       org: {
         id: "00D2F00C00L0RG",
-        apiVersion: "55.0",
+        apiVersion: "56.0",
         baseUrl: "https://test.my.salesforce.com",
         domainUrl: "https://test.my.salesforce.com",
         user: {

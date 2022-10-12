@@ -24,7 +24,7 @@ window.functionData = (function () {
                   name: "index.js",
                   label: "Index",
                   path: "/",
-                  body: `import { readFileSync } from "fs";
+                  body: `import { readFileSync } from "node:fs";
 
 // Local Schools Database API by Code.org
 // License: CC BY-NC-SA 4.0
@@ -739,6 +739,7 @@ import com.salesforce.functions.jvm.sdk.SalesforceFunction;
 import com.salesforce.functions.jvm.sdk.data.DataApi;
 import com.salesforce.functions.jvm.sdk.data.Record;
 import com.salesforce.functions.jvm.sdk.data.RecordModificationResult;
+import com.salesforce.functions.jvm.sdk.data.RecordWithSubQueryResults;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -790,7 +791,7 @@ public class SalesforceSDKFunction implements SalesforceFunction<FunctionInput, 
     // Query Accounts using the SalesforceSDK DataApi to verify that our new Account was created.
     String queryString =
         String.format("SELECT Id, Name FROM Account WHERE Id = '%s'", createResult.getId());
-    List<Record> records = dataApi.query(queryString).getRecords();
+    List<RecordWithSubQueryResults> records = dataApi.query(queryString).getRecords();
 
     LOGGER.info("Function successfully queried {} account records!", records.size());
 
@@ -1323,8 +1324,8 @@ export default async function (event, context, logger) {
                 {
                   name: "index.js",
                   label: "Environment",
-                  body: `import crypto from "crypto";
-import { promisify } from "util";
+                  body: `import crypto from "node:crypto";
+import { promisify } from "node:util";
 
 // Turn pbkdf2 function from callback based to Promises
 const pbkdf2 = promisify(crypto.pbkdf2);

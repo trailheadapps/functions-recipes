@@ -10,10 +10,6 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
-                    <name>flowLayout</name>
-                    <value>twoColumn</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
                     <name>flowName</name>
                     <value>Find_Schools</value>
                 </componentInstanceProperties>

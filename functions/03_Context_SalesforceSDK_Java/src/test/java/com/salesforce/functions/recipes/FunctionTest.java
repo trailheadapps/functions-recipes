@@ -19,6 +19,7 @@ import com.salesforce.functions.jvm.sdk.Org;
 import com.salesforce.functions.jvm.sdk.data.Record;
 import com.salesforce.functions.jvm.sdk.data.RecordModificationResult;
 import com.salesforce.functions.jvm.sdk.data.RecordQueryResult;
+import com.salesforce.functions.jvm.sdk.data.RecordWithSubQueryResults;
 import com.salesforce.functions.jvm.sdk.data.error.DataApiError;
 import com.salesforce.functions.jvm.sdk.data.error.DataApiException;
 import java.text.SimpleDateFormat;
@@ -112,7 +113,7 @@ public class FunctionTest {
                       i2 -> {
                         RecordQueryResult mockResult = mock(RecordQueryResult.class);
 
-                        Record firstRecord = mock(Record.class);
+                        RecordWithSubQueryResults firstRecord = mock(RecordWithSubQueryResults.class);
                         when(firstRecord.getStringField("Id"))
                             .thenReturn(Optional.of("5003000000D8cuIQAA"));
                         when(firstRecord.getStringField("Name"))

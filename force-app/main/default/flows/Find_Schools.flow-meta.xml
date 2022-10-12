@@ -31,7 +31,7 @@
         </inputParameters>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </actionCalls>
-    <apiVersion>55.0</apiVersion>
+    <apiVersion>56.0</apiVersion>
     <description>Find a School close to a Specified Location</description>
     <interviewLabel>Find Schools {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Flow Example</label>
@@ -142,8 +142,8 @@
                 <isRequired>false</isRequired>
             </fields>
             <isRequired>false</isRequired>
+            <regionContainerType>SectionWithoutHeader</regionContainerType>
         </fields>
-        <regionContainerType>SectionWithoutHeader</regionContainerType>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
     </screens>

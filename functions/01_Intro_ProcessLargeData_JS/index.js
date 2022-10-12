@@ -1,4 +1,4 @@
-import { readFileSync } from "fs";
+import { readFileSync } from "node:fs";
 
 // Local Schools Database API by Code.org
 // License: CC BY-NC-SA 4.0

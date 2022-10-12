@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { readFileSync } from "fs";
+import { readFileSync } from "node:fs";
 import { createSandbox } from "sinon";
 
 import execute from "../index.js";
