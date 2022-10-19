@@ -28,22 +28,22 @@ For more information about how to configure your organization for Salesforce Fun
 
 1. If you haven't already done so, authorize with your org and provide it with an alias (**fnrecipesorg** in the command below):
 
-```
-sfdx auth:web:login -d -a fnrecipesorg
-```
+   ```sh
+   sfdx auth:web:login -d -a fnrecipesorg
+   ```
 
-2. Clone the functions-recipes repository:
+1. Clone the functions-recipes repository:
 
-```
-git clone https://github.com/trailheadapps/functions-recipes
-cd functions-recipes
-```
+   ```sh
+   git clone https://github.com/trailheadapps/functions-recipes
+   cd functions-recipes
+   ```
 
-3. Create a scratch org and provide it with an alias (**functions_recipes** in the command below):
+1. Create a scratch org and provide it with an alias (**functions_recipes** in the command below):
 
-```sh
-sfdx force:org:create -s -f config/project-scratch-def.json -a functions_recipes
-```
+   ```sh
+   sfdx force:org:create -s -f config/project-scratch-def.json -a functions_recipes
+   ```
 
 ## Salesforce Functions Deployment
 
@@ -51,51 +51,45 @@ For more information about how to deploy Functions to a Compute Environment and 
 
 1. Login to your Salesforce Functions account:
 
-```
-sf login functions
-```
+   ```sh
+   sf login functions
+   ```
 
-2. Create a **Compute Environment** to deploy the functions and connected it to your org:
+1. Create a **Compute Environment** to deploy the functions and connected it to your org:
 
-```sh
-sf env create compute --connected-org=functions_recipes --alias=recipes_env
-```
+   ```sh
+   sf env create compute --connected-org=functions_recipes --alias=recipes_env
+   ```
 
-3. Deploy the functions
+1. Deploy the functions
 
-```sh
-sf deploy functions --connected-org=functions_recipes
-```
+   ```sh
+   sf deploy functions --connected-org=functions_recipes
+   ```
 
-4. Push source app to the scratch org:
+1. Push source app to the scratch org:
 
-```sh
-sfdx force:source:push -f
-```
+   ```sh
+   sfdx force:source:push -f
+   ```
 
-5. Assign the **FunctionsRecipes** permission set to the default user:
+1. Assign the **FunctionsRecipes** and **Functions** permission sets to the default user:
 
-```sh
-sfdx force:user:permset:assign -n FunctionsRecipes
-```
+   ```sh
+   sfdx force:user:permset:assign -n FunctionsRecipes,Functions
+   ```
 
-6. Assign the **Functions** permission set to the default user:
+1. Open the **Functions Recipes** App
 
-```sh
-sfdx force:user:permset:assign -n Functions
-```
+   ```sh
+   sfdx force:org:open -p "/lightning/n/Functions"
+   ```
 
-7. Open the **Functions Recipes** App
+1. Activate the **Functions Recipes** Theme (Optional)
 
-```sh
-sfdx force:org:open -p "/lightning/n/Functions"
-```
-
-8. Activate the **Functions Recipes** Theme (Optional)
-
-```sh
-sfdx force:org:open -p "/lightning/setup/ThemingAndBranding/home"
-```
+   ```sh
+   sfdx force:org:open -p "/lightning/setup/ThemingAndBranding/home"
+   ```
 
 ## Functions Recipes App
 
