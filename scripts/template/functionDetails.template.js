@@ -313,6 +313,31 @@ window.functionData = (function () {
               ]
             }
           ]
+        },
+        {
+          name: "06_Data_Postgres_JS",
+          label: "Data - Postgres",
+          subtitle: "Functions Recipes",
+          description:
+            "Connects to a PostgreSQL instance, stores the invocation ID, and returns a list of previous invocations.",
+          instructions:
+            "Make sure you have attached the Heroku Postgres database to your compute environment.",
+          inputs: [{ label: "Limit", name: "limit", type: "number" }],
+          functions: [
+            {
+              name: "06_Data_Postgres_JS",
+              label: "Postgres - JavaScript",
+              deployment: "functions_recipes.postgresjs",
+              language: "JavaScript",
+              files: [
+                {
+                  name: "index.js",
+                  label: "Postgres",
+                  body: `{{{source.postgresJS_Function}}}`
+                }
+              ]
+            }
+          ]
         }
       ];
     }
