@@ -1,19 +1,25 @@
-import "dotenv/config";
 import pg from "pg";
 const { Client } = pg;
 
 /**
+ * Represents the options to create a PostgreSQL client.
+ * @typedef {Object} ClientOptions
+ * @property {string} url - The URL of the PostgreSQL instance
+ */
+
+/**
  * Connects to the PostgreSQL instance.
+ * @param {ClientOptions} input The options to create a PostgreSQL client
  * @returns {Client} A connected PostgreSQL client
  */
-export async function pgConnect() {
-  const DATABASE_URL = process.env.DATABASE_URL;
-  if (!DATABASE_URL) {
-    throw new Error("DATABASE_URL is not set");
+export async function pgConnect({ url }) {
+  if (!url) {
+    throw new Error("url is not set");
   }
+
   // Connect to PostgreSQL
   const client = new Client({
-    connectionString: DATABASE_URL,
+    connectionString: url,
     ssl: {
       rejectUnauthorized: false
     }

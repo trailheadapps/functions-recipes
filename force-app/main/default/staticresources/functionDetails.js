@@ -1375,13 +1375,13 @@ export default async function (event, context, logger) {
           ]
         },
         {
-          name: "06_Data_Postgres_JS",
+          name: "06_Data_Postgres",
           label: "Data - Postgres",
           subtitle: "Functions Recipes",
           description:
             "Connects to a PostgreSQL instance, stores the invocation ID, and returns a list of previous invocations.",
           instructions:
-            'Make sure you have attached the Heroku Postgres database to your compute environment.',
+            "Make sure you have attached the Heroku Postgres database to your compute environment.",
           inputs: [{ label: "Limit", name: "limit", type: "number" }],
           functions: [
             {
@@ -1393,7 +1393,8 @@ export default async function (event, context, logger) {
                 {
                   name: "index.js",
                   label: "Postgres",
-                  body: `import { pgConnect } from './lib/db.js'
+                  body: `import "dotenv/config";
+import { pgConnect } from "./lib/db.js";
 
 /**
  * Connects to a PostgreSQL instance and perform two operations:
@@ -1414,18 +1415,19 @@ export default async function (event, context, logger) {
     \`Invoking postgresjs with payload \${JSON.stringify(event.data || {})}\`
   );
 
-  // Get the number of invocations
+  // Get the number of invocations to return
   const limit = event.data.limit ?? 5;
 
   try {
     // Connect to PostgreSQL instance
-    const client = await pgConnect();
+    const client = await pgConnect({
+      url: process.env.DATABASE_URL
+    });
 
     // Insert a new invocation id into the database
-    await client.query(
-      \`INSERT INTO invocations (id) VALUES ($1)\`,
-      [context.id]
-    );
+    await client.query(\`INSERT INTO invocations (id) VALUES ($1)\`, [
+      context.id
+    ]);
 
     // Return all the invocation ids from the database
     const { rows: results } = await client.query(
@@ -1442,7 +1444,108 @@ export default async function (event, context, logger) {
     throw error;
   }
 }
+`
+                }
+              ]
+            }
+          ]
+        },
+        {
+          name: "06_Data_Redis",
+          label: "Data - Redis",
+          subtitle: "Functions Recipes",
+          description:
+            "Connects to a Redis instance, stores the invocation ID, and returns a list of previous invocations.",
+          instructions:
+            "Make sure you have attached the Heroku Redis database to your compute environment.",
+          inputs: [{ label: "Limit", name: "limit", type: "number" }],
+          functions: [
+            {
+              name: "06_Data_Redis_JS",
+              label: "Redis - JavaScript",
+              deployment: "functions_recipes.redisjs",
+              language: "JavaScript",
+              files: [
+                {
+                  name: "index.js",
+                  label: "Redis",
+                  body: `import "dotenv/config";
+import { redisConnect } from "./lib/db.js";
 
+/**
+ * Connects to a Redis instance and perform the following operations:
+ * 1. Stores the last invocation ID in Redis
+ * 2. Stores the last invocation time in Redis
+ * 3. Adds the invocation ID to a list in Redis
+ * 4. Returns the list of invocation IDs from Redis
+ *
+ * The exported method is the entry point for your code when the function is invoked.
+ *
+ * Following parameters are pre-configured and provided to your function on execution:
+ * @param event: represents the data associated with the occurrence of an event, and
+ *                 supporting metadata about the source of that occurrence.
+ * @param context: represents the connection to Functions and your Salesforce org.
+ * @param logger: logging handler used to capture application logs and trace specifically
+ *                 to a given execution of a function.
+ */
+
+// Expiration time for Redis keys
+const FIVE_MINUTES = 5 * 60;
+
+export default async function (event, context, logger) {
+  logger.info(
+    \`Invoking redisjs with payload \${JSON.stringify(event.data || {})}\`
+  );
+
+  // Get the number of invocations to return
+  const limit = event.data.limit ?? 5;
+
+  try {
+    // Connect to Redis instance
+    const client = await redisConnect({
+      url: process.env.REDIS_URL
+    });
+
+    // Set the last invocation id into the database with expiration set to 5 minutes
+    const lastInvocationId = context.id;
+    await client.set("lastInvocationId", lastInvocationId, "EX", FIVE_MINUTES);
+
+    // Set the last invocation time into the database with expiration set to 5 minutes
+    const lastInvocationTime = new Date().toISOString();
+    await client.set(
+      "lastInvocationTime",
+      lastInvocationTime,
+      "EX",
+      FIVE_MINUTES
+    );
+
+    // Add the invocation id to a list in the database
+    await client.lPush("invocations", context.id);
+
+    // If no expiration is set, set the expiration to 5 minutes
+    const ttl = await client.ttl("invocations");
+    if (ttl < 0) {
+      await client.expire("invocations", FIVE_MINUTES);
+    }
+
+    // Get the list of invocations
+    const invocations = await client.lRange("invocations", 0, limit - 1);
+
+    // Close the database connection
+    await client.quit();
+
+    // Return the results
+    const results = {
+      invocations,
+      lastInvocationId,
+      lastInvocationTime
+    };
+    return results;
+  } catch (error) {
+    logger.error(\`An error ocurred: \${error.message}\`);
+    throw error;
+  }
+}
 `
                 }
               ]

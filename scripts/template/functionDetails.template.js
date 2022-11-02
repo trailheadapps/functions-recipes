@@ -315,7 +315,7 @@ window.functionData = (function () {
           ]
         },
         {
-          name: "06_Data_Postgres_JS",
+          name: "06_Data_Postgres",
           label: "Data - Postgres",
           subtitle: "Functions Recipes",
           description:
@@ -334,6 +334,31 @@ window.functionData = (function () {
                   name: "index.js",
                   label: "Postgres",
                   body: `{{{source.postgresJS_Function}}}`
+                }
+              ]
+            }
+          ]
+        },
+        {
+          name: "06_Data_Redis",
+          label: "Data - Redis",
+          subtitle: "Functions Recipes",
+          description:
+            "Connects to a Redis instance, stores the invocation ID, and returns a list of previous invocations.",
+          instructions:
+            "Make sure you have attached the Heroku Redis database to your compute environment.",
+          inputs: [{ label: "Limit", name: "limit", type: "number" }],
+          functions: [
+            {
+              name: "06_Data_Redis_JS",
+              label: "Redis - JavaScript",
+              deployment: "functions_recipes.redisjs",
+              language: "JavaScript",
+              files: [
+                {
+                  name: "index.js",
+                  label: "Redis",
+                  body: `{{{source.redisJS_Function}}}`
                 }
               ]
             }

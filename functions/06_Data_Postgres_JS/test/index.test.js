@@ -1,11 +1,16 @@
-import { expect } from "chai";
+import chai from "chai";
+import chaiAsPromised from "chai-as-promised";
 import { createSandbox } from "sinon";
 import quibble from "quibble";
+
+chai.use(chaiAsPromised);
+const expect = chai.expect;
 
 /**
  * postgresjs unit tests.
  */
 describe("Unit Tests", () => {
+  const DATABASE_URL = "postgres://postgres:postgres@localhost:5432/postgres";
   let execute;
   let sandbox;
   let mockDb;
@@ -15,9 +20,12 @@ describe("Unit Tests", () => {
   let results;
 
   beforeEach(async () => {
+    process.env.DATABASE_URL = DATABASE_URL;
+
     mockContext = {
       id: "c4f3c4f3-c4f3-c4f3-c4f3-c0ff33c0ff33"
     };
+
     mockDb = {
       pgConnect: () => {}
     };
@@ -31,6 +39,7 @@ describe("Unit Tests", () => {
       info: () => {},
       error: () => {}
     };
+
     sandbox = createSandbox();
 
     sandbox.stub(mockLogger, "info");
@@ -42,21 +51,24 @@ describe("Unit Tests", () => {
     results = {
       rows: [
         {
-          id: "c4f3c4f3-c4f3-c4f3-c4f3-c0ff33c0ff33",
-          crated_at: "2022-10-24T19:26:40.629379+00"
+          id: mockContext.id,
+          created_at: "2022-11-24T05:00:00.000Z"
         },
         {
           id: "cd076488-1600-4fe2-99ba-36f872a3f185",
-          crated_at: "2022-10-24T19:26:48.23341+00"
+          created_at: "2022-11-24T05:10:00.000Z"
         },
         {
           id: "7e2b97ba-8950-4e83-90c9-441b04b30737",
-          crated_at: "2022-10-24T19:27:28.422286+00"
+          created_at: "2022-11-24T05:20:00.000Z"
         }
       ]
     };
 
-    mockDb.pgConnect.resolves(mockClient);
+    // Mock the pgConnect function with specific input parameters
+    mockDb.pgConnect.withArgs({ url: DATABASE_URL }).resolves(mockClient);
+    // Mock the pgConnect function without input parameters
+    mockDb.pgConnect.rejects(new Error("url is not set"));
 
     mockClient.query.onCall(0).callsFake(() => {
       return Promise.resolve();
@@ -80,7 +92,14 @@ describe("Unit Tests", () => {
     quibble.reset();
   });
 
-  it("Invoke postgresjs", async () => {
+  it("Invoke postgresjs without DATABASE_URL", async () => {
+    delete process.env.DATABASE_URL;
+    await expect(
+      execute({ data: {} }, mockContext, mockLogger)
+    ).to.be.rejectedWith("url is not set");
+  });
+
+  it("Invoke postgresjs with DATABASE_URL", async () => {
     const invocations = await execute({ data: {} }, mockContext, mockLogger);
 
     expect(mockClient.query.callCount, "Execute 2 queries").to.be.eql(2);

@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { pgConnect } from "./lib/db.js";
 
 /**
@@ -19,12 +20,14 @@ export default async function (event, context, logger) {
     `Invoking postgresjs with payload ${JSON.stringify(event.data || {})}`
   );
 
-  // Get the number of invocations
+  // Get the number of invocations to return
   const limit = event.data.limit ?? 5;
 
   try {
     // Connect to PostgreSQL instance
-    const client = await pgConnect();
+    const client = await pgConnect({
+      url: process.env.DATABASE_URL
+    });
 
     // Insert a new invocation id into the database
     await client.query(`INSERT INTO invocations (id) VALUES ($1)`, [

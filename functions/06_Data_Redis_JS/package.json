@@ -1,5 +1,5 @@
 {
-  "name": "postgres-js-function",
+  "name": "redis-js-function",
   "private": "true",
   "version": "1.0.0",
   "type": "module",
@@ -27,6 +27,6 @@
   },
   "dependencies": {
     "dotenv": "^16.0.3",
-    "pg": "^8.8.0"
+    "redis": "^4.4.0"
   }
 }
