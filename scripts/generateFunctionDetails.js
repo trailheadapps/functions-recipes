@@ -74,7 +74,7 @@ const sourceMap = {
   ),
   postgresJava_Input: loadJava("06_Data_Postgres_Java", "FunctionInput.java"),
   postgresJava_Output: loadJava("06_Data_Postgres_Java", "Invocations.java"),
-  PostgresJava_Invocation: loadJava("06_Data_Postgres_Java", "Invocation.java"),
+  postgresJava_Invocation: loadJava("06_Data_Postgres_Java", "Invocation.java"),
   redisJS_Function: loadJS("06_Data_Redis_JS")
 };
 

@@ -5,7 +5,7 @@ window.functionData = (function () {
         {
           name: "01_Intro_ProcessLargeData",
           label: "Process Large Data Volumes",
-          subtitle: "Process Large Data Volumes",
+          subtitle: "Introduction",
           description:
             "From a large JSON payload calculates the distance between a supplied point of origin cordinate and the data, sorts it, and returns the nearest x results.",
           inputs: [
@@ -16,14 +16,11 @@ window.functionData = (function () {
           functions: [
             {
               name: "01_Intro_ProcessLargeData_JS",
-              label: "Process Large Data - JavaScript",
               deployment: "functions_recipes.processlargedatajs",
               language: "JavaScript",
               files: [
                 {
                   name: "index.js",
-                  label: "Index",
-                  path: "/",
                   body: `import { readFileSync } from "node:fs";
 
 // Local Schools Database API by Code.org
@@ -119,14 +116,11 @@ function distance(latitudeSt, longitudeSt, latitudeSch, longitudeSch) {
             },
             {
               name: "01_Intro_ProcessLargeData_Java",
-              label: "Process Large Data - Java",
               deployment: "functions_recipes.processlargedatajava",
               language: "Java",
               files: [
                 {
                   name: "ProcessLargeDataFunction.java",
-                  label: "Process Large Data Function",
-                  path: "/",
                   body: `package com.salesforce.functions.recipes;
 
 import com.google.gson.Gson;
@@ -219,8 +213,6 @@ public class ProcessLargeDataFunction implements SalesforceFunction<FunctionInpu
                 },
                 {
                   name: "FunctionInput.java",
-                  label: "Function Input",
-                  path: "/",
                   body: `package com.salesforce.functions.recipes;
 
 public class FunctionInput {
@@ -252,8 +244,6 @@ public class FunctionInput {
                 },
                 {
                   name: "FunctionOutput.java",
-                  label: "Function Output",
-                  path: "/",
                   body: `package com.salesforce.functions.recipes;
 
 import java.util.List;
@@ -273,8 +263,6 @@ public class FunctionOutput {
                 },
                 {
                   name: "JsonResponse.java",
-                  label: "JSON Response",
-                  path: "/",
                   body: `package com.salesforce.functions.recipes;
 
 import java.util.List;
@@ -294,8 +282,6 @@ public class JsonResponse {
                 },
                 {
                   name: "School.java",
-                  label: "School",
-                  path: "/",
                   body: `package com.salesforce.functions.recipes;
 
 public class School {
@@ -444,7 +430,7 @@ public class School {
         {
           name: "02_InvocationEvent",
           label: "Invocation Event",
-          subtitle: "Functions Recipes",
+          subtitle: "Invocation Event",
           description: "Receives a payload and returns information about it.",
           inputs: [
             {
@@ -461,13 +447,11 @@ public class School {
           functions: [
             {
               name: "02_InvocationEvent_JS",
-              label: "Invocation Event - JavaScript",
               deployment: "functions_recipes.invocationeventjs",
               language: "JavaScript",
               files: [
                 {
                   name: "index.js",
-                  label: "Invocation Event",
                   body: `/**
  * Receives a payload and returns information about it.
  *
@@ -518,7 +502,7 @@ export default async function (event, context, logger) {
         {
           name: "03_Context_DataApiQuery",
           label: "Data API Query",
-          subtitle: "Functions Recipes",
+          subtitle: "Context",
           description: "Returns accounts and its contacts by keyword.",
           inputs: [{ label: "Keyword", name: "keyword", type: "text" }],
           functions: [
@@ -530,7 +514,6 @@ export default async function (event, context, logger) {
               files: [
                 {
                   name: "index.js",
-                  label: "Invocation Event",
                   body: `/**
  * Returns accounts and its contacts by keyword.
  *
@@ -570,19 +553,17 @@ export default async function (event, context, logger) {
         {
           name: "03_Context_OrgInfo",
           label: "OrgInfo",
-          subtitle: "Functions Recipes",
+          subtitle: "Context",
           description:
             "Returns the Salesforce Org information attached to the context.",
           functions: [
             {
               name: "03_Context_OrgInfo_TypeScript",
-              label: "Context - OrgInfo - TypeScript",
               deployment: "functions_recipes.orginfots",
               language: "TypeScript",
               files: [
                 {
                   name: "index.ts",
-                  label: "Index",
                   body: `import { InvocationEvent, Context, Logger, Org } from "sf-fx-sdk-nodejs";
 
 /**
@@ -643,7 +624,7 @@ export class OrgInfo {
         {
           name: "03_Context_SalesforceSDK",
           label: "SalesforceSDK",
-          subtitle: "Functions Recipes",
+          subtitle: "Context",
           description:
             "Receives a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.",
           inputs: [
@@ -656,13 +637,11 @@ export class OrgInfo {
           functions: [
             {
               name: "03_Context_SalesforceSDK_JS",
-              label: "Context - SalesforceSDK - JavaScript",
               deployment: "functions_recipes.salesforcesdkjs",
               language: "JavaScript",
               files: [
                 {
                   name: "index.js",
-                  label: "Salesforce SDK",
                   body: `/**
  * Receives a payload containing account details, and creates the record.
  * It then uses a SOQL query to return the newly created Account.
@@ -724,13 +703,11 @@ export default async function (event, context, logger) {
             },
             {
               name: "03_Context_SalesforceSDK_Java",
-              label: "Context - SalesforceSDK - Java",
               deployment: "functions_recipes.salesforcesdkjava",
               language: "Java",
               files: [
                 {
                   name: "SalesforceSDKFunction.java",
-                  label: "Salesforce SDK",
                   body: `package com.salesforce.functions.recipes;
 
 import com.salesforce.functions.jvm.sdk.Context;
@@ -809,7 +786,6 @@ public class SalesforceSDKFunction implements SalesforceFunction<FunctionInput, 
                 },
                 {
                   name: "Account.java",
-                  label: "Account",
                   body: `package com.salesforce.functions.recipes;
 
 public class Account {
@@ -833,7 +809,6 @@ public class Account {
                 },
                 {
                   name: "FunctionInput.java",
-                  label: "Function Input",
                   body: `package com.salesforce.functions.recipes;
 
 public class FunctionInput {
@@ -878,7 +853,6 @@ public class FunctionInput {
                 },
                 {
                   name: "FunctionOutput.java",
-                  label: "Function Output",
                   body: `package com.salesforce.functions.recipes;
 
 import java.util.List;
@@ -903,7 +877,7 @@ public class FunctionOutput {
         {
           name: "03_Context_UnitOfWork",
           label: "UnitOfWork",
-          subtitle: "Functions Recipes",
+          subtitle: "Context",
           description:
             "Receives a payload containing Account, Contact, and Case details and uses the Unit of Work pattern to assign the corresponding values to to its Record while maintaining the relationships. It then commits the unit of work and returns the Record Id's for each object.",
           inputs: [
@@ -917,13 +891,11 @@ public class FunctionOutput {
           functions: [
             {
               name: "03_Context_UnitOfWork_JS",
-              label: "Context - UnitOfWork - JavaScript",
               deployment: "functions_recipes.unitofworkjs",
               language: "JavaScript",
               files: [
                 {
                   name: "index.js",
-                  label: "UnitOfWork",
                   body: `/**
  * Receives a payload containing Account, Contact, and Case details and uses the
  * Unit of Work pattern to assign the corresponding values to to its Record
@@ -1034,13 +1006,11 @@ function validateField(field, value) {
             },
             {
               name: "03_Context_UnitOfWork_Java",
-              label: "UnitOfWork - Java",
               deployment: "functions_recipes.unitofworkjava",
               language: "Java",
               files: [
                 {
                   name: "UnitOfWorkFunction.java",
-                  label: "Unit Of Work",
                   body: `package com.salesforce.functions.recipes;
 
 import com.salesforce.functions.jvm.sdk.Context;
@@ -1138,7 +1108,6 @@ public class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, Fun
                 },
                 {
                   name: "FunctionInput.java",
-                  label: "Function Input",
                   body: `package com.salesforce.functions.recipes;
 
 public class FunctionInput {
@@ -1183,7 +1152,6 @@ public class FunctionInput {
                 },
                 {
                   name: "FunctionOutput.java",
-                  label: "Function Output",
                   body: `package com.salesforce.functions.recipes;
 
 public class FunctionOutput {
@@ -1213,7 +1181,6 @@ public class FunctionOutput {
                 },
                 {
                   name: "Cases.java",
-                  label: "Cases",
                   body: `package com.salesforce.functions.recipes;
 
 public class Cases {
@@ -1242,7 +1209,7 @@ public class Cases {
         {
           name: "04_Logger",
           label: "Logger",
-          subtitle: "Functions Recipes",
+          subtitle: "Logging",
           description:
             "Generates an amount of log messages every number of seconds.",
           instructions:
@@ -1254,14 +1221,12 @@ public class Cases {
           functions: [
             {
               name: "04_Logger_JS",
-              label: "Logger - JavaScript",
               deployment: "functions_recipes.loggerjs",
               language: "JavaScript",
 
               files: [
                 {
                   name: "index.js",
-                  label: "Logger",
                   body: `/**
  * Generates an amount of log messages every number of seconds.
  *
@@ -1308,7 +1273,7 @@ export default async function (event, context, logger) {
         {
           name: "05_Environment_JS",
           label: "Environment",
-          subtitle: "Functions Recipes",
+          subtitle: "Environment Variables",
           description:
             "Returns the derivate password hash using pbkdf2 getting the salt from the Environment.",
           instructions:
@@ -1317,13 +1282,11 @@ export default async function (event, context, logger) {
           functions: [
             {
               name: "05_Environment_JS",
-              label: "Environment",
               deployment: "functions_recipes.environmentjs",
               language: "JavaScript",
               files: [
                 {
                   name: "index.js",
-                  label: "Environment",
                   body: `import crypto from "node:crypto";
 import { promisify } from "node:util";
 
@@ -1376,8 +1339,8 @@ export default async function (event, context, logger) {
         },
         {
           name: "06_Data_Postgres",
-          label: "Data - Postgres",
-          subtitle: "Functions Recipes",
+          label: "Heroku Postgres",
+          subtitle: "Heroku Data",
           description:
             "Connects to a PostgreSQL instance, stores the invocation ID, and returns a list of previous invocations.",
           instructions:
@@ -1386,13 +1349,11 @@ export default async function (event, context, logger) {
           functions: [
             {
               name: "06_Data_Postgres_JS",
-              label: "Postgres - JavaScript",
               deployment: "functions_recipes.postgresjs",
               language: "JavaScript",
               files: [
                 {
                   name: "index.js",
-                  label: "Postgres",
                   body: `import "dotenv/config";
 import { pgConnect } from "./lib/db.js";
 
@@ -1450,13 +1411,11 @@ export default async function (event, context, logger) {
             },
             {
               name: "06_Data_Postgres_Java",
-              label: "Postgres - Java",
               deployment: "functions_recipes.postgresjava",
               language: "Java",
               files: [
                 {
                   name: "PostgresJavaFunction.java",
-                  label: "Postgres Java",
                   body: `package com.salesforce.functions.recipes;
 
 import com.salesforce.functions.jvm.sdk.Context;
@@ -1468,9 +1427,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Connects to a PostgreSQL instance and perform two operations: 1. Insert a new row into the
- * "invocations" table with an invocation ID 2. Query the "invocations" table for all the invocation
- * IDs
+ * Connects to a PostgreSQL instance and perform two operations:
+ * 1. Insert a new row into the "invocations" table with an invocation ID
+ * 2. Query the "invocations" table for all the invocation IDs
  */
 public class PostgresJavaFunction implements SalesforceFunction<FunctionInput, Invocations> {
   private static final Logger LOGGER = LoggerFactory.getLogger(PostgresJavaFunction.class);
@@ -1484,15 +1443,21 @@ public class PostgresJavaFunction implements SalesforceFunction<FunctionInput, I
 
     try {
       Integer limit = event.getData().getLimit();
+
+      // If invocationsManager isn't set, instantiate a new one (Useful for testing)
       if (invocationsManager == null) {
         invocationsManager = new InvocationsManager(Environment.getDatabaseUrl());
       }
 
+      // Insert a new row into the "invocations" table with an invocation ID
       invocationsManager.insertInvocation(context.getId());
+
+      // Query the "invocations" table for all the invocation IDs
       Invocations invocations = invocationsManager.selectInvocations(limit);
 
       LOGGER.info("Retrieved {} invocations from the database",
           invocations.getInvocations().size());
+
       return invocations;
     } catch (Exception e) {
       LOGGER.error("Error while connecting to the database", e);
@@ -1508,7 +1473,6 @@ public class PostgresJavaFunction implements SalesforceFunction<FunctionInput, I
                 },
                 {
                   name: "FunctionInput.java",
-                  label: "FunctionInput",
                   body: `package com.salesforce.functions.recipes;
 
 public class FunctionInput {
@@ -1526,7 +1490,6 @@ public class FunctionInput {
                 },
                 {
                   name: "Invocations.java",
-                  label: "Function Output",
                   body: `package com.salesforce.functions.recipes;
 
 import java.util.List;
@@ -1546,8 +1509,29 @@ public class Invocations {
                 },
                 {
                   name: "Invocation.java",
-                  label: "Invocation",
-                  body: ``
+                  body: `package com.salesforce.functions.recipes;
+
+import java.sql.Date;
+
+public class Invocation {
+
+  private String id;
+  private Date createdAt;
+
+  public Invocation(String id, Date date) {
+    this.id = id;
+    this.createdAt = date;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+}
+`
                 }
               ]
             }
@@ -1555,8 +1539,8 @@ public class Invocations {
         },
         {
           name: "06_Data_Redis",
-          label: "Data - Redis",
-          subtitle: "Functions Recipes",
+          label: "Heroku Data for Redis",
+          subtitle: "Heroku Data",
           description:
             "Connects to a Redis instance, stores the invocation ID, and returns a list of previous invocations.",
           instructions:
@@ -1565,13 +1549,11 @@ public class Invocations {
           functions: [
             {
               name: "06_Data_Redis_JS",
-              label: "Redis - JavaScript",
               deployment: "functions_recipes.redisjs",
               language: "JavaScript",
               files: [
                 {
                   name: "index.js",
-                  label: "Redis",
                   body: `import "dotenv/config";
 import { redisConnect } from "./lib/db.js";
 

@@ -12,12 +12,13 @@
   "scripts": {
     "clean": "lerna clean && rimraf node_modules **/node_modules",
     "lint": "eslint **/lwc/**/*.js",
-    "test": "npm run test:unit && npm run test:functions",
+    "test": "npm run test:unit && npm run test:functions:js",
     "test:unit": "sfdx-lwc-jest --skipApiVersionCheck",
     "test:unit:watch": "sfdx-lwc-jest --watch --skipApiVersionCheck",
     "test:unit:debug": "sfdx-lwc-jest --debug --skipApiVersionCheck",
     "test:unit:coverage": "sfdx-lwc-jest --coverage --skipApiVersionCheck",
-    "test:functions": "mocha --loader=quibble functions/**/test/*.test.js",
+    "test:functions:js": "mocha --loader=quibble functions/**/test/*.test.js",
+    "test:functions:java": "./mvnw test",
     "prettier": "prettier --write \"**/*.{cls,cmp,component,css,html,js,ts,json,md,page,trigger,xml,yaml,yml}\"",
     "prettier:verify": "prettier --check \"**/*.{cls,cmp,component,css,html,js,ts,json,md,page,trigger,xml,yaml,yml}\"",
     "postinstall": "lerna exec -- npm install && lerna link && husky install",
@@ -57,7 +58,7 @@
     ]
   },
   "volta": {
-    "node": "16.15.1",
-    "npm": "8.11.0"
+    "node": "16.18.0",
+    "npm": "8.19.2"
   }
 }
