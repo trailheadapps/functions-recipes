@@ -1,4 +1,4 @@
-# postgresjs Function
+# postgresjava Function
 
 Connects to a PostgreSQL instance and perform two operations:
 

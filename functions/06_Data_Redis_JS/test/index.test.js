@@ -72,7 +72,11 @@ describe("Unit Tests", () => {
     // Mock the pgConnect function with specific input parameters
     mockDb.redisConnect.withArgs({ url: REDIS_URL }).resolves(mockClient);
     // Mock the pgConnect function without input parameters
-    mockDb.redisConnect.rejects(new Error("url is not set"));
+    mockDb.redisConnect.rejects(
+      new Error(
+        "database url is not set, please set up the REDIS_URL environment variable"
+      )
+    );
 
     mockClient.set.onCall(0).callsFake(() => {
       return Promise.resolve();
@@ -123,7 +127,9 @@ describe("Unit Tests", () => {
     delete process.env.REDIS_URL;
     await expect(
       execute({ data: {} }, mockContext, mockLogger)
-    ).to.be.rejectedWith("url is not set");
+    ).to.be.rejectedWith(
+      /database url is not set, please set up the REDIS_URL environment variable/
+    );
   });
 
   it("Invoke redisjs with REDIS_URL", async () => {

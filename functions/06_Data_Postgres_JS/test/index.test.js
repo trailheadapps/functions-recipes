@@ -68,7 +68,11 @@ describe("Unit Tests", () => {
     // Mock the pgConnect function with specific input parameters
     mockDb.pgConnect.withArgs({ url: DATABASE_URL }).resolves(mockClient);
     // Mock the pgConnect function without input parameters
-    mockDb.pgConnect.rejects(new Error("url is not set"));
+    mockDb.pgConnect.rejects(
+      new Error(
+        "database url is not set, please set up the DATABASE_URL environment variable"
+      )
+    );
 
     mockClient.query.onCall(0).callsFake(() => {
       return Promise.resolve();
@@ -96,7 +100,9 @@ describe("Unit Tests", () => {
     delete process.env.DATABASE_URL;
     await expect(
       execute({ data: {} }, mockContext, mockLogger)
-    ).to.be.rejectedWith("url is not set");
+    ).to.be.rejectedWith(
+      /database url is not set, please set up the DATABASE_URL environment variable/
+    );
   });
 
   it("Invoke postgresjs with DATABASE_URL", async () => {

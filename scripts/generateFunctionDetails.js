@@ -68,6 +68,13 @@ const sourceMap = {
   loggerJS_Function: loadJS("04_Logger_JS"),
   environmentJS_Function: loadJS("05_Environment_JS"),
   postgresJS_Function: loadJS("06_Data_Postgres_JS"),
+  postgresJava_Function: loadJava(
+    "06_Data_Postgres_Java",
+    "PostgresJavaFunction.java"
+  ),
+  postgresJava_Input: loadJava("06_Data_Postgres_Java", "FunctionInput.java"),
+  postgresJava_Output: loadJava("06_Data_Postgres_Java", "Invocations.java"),
+  PostgresJava_Invocation: loadJava("06_Data_Postgres_Java", "Invocation.java"),
   redisJS_Function: loadJS("06_Data_Redis_JS")
 };
 

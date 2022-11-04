@@ -185,17 +185,17 @@ window.functionData = (function () {
                 },
                 {
                   name: "Account.java",
-                  label: "Salesforce SDK",
+                  label: "Account",
                   body: `{{{source.salesforceSDKJava_Account}}}`
                 },
                 {
                   name: "FunctionInput.java",
-                  label: "Salesforce SDK",
+                  label: "Function Input",
                   body: `{{{source.salesforceSDKJava_Input}}}`
                 },
                 {
                   name: "FunctionOutput.java",
-                  label: "Salesforce SDK",
+                  label: "Function Output",
                   body: `{{{source.salesforceSDKJava_Output}}}`
                 }
               ]
@@ -238,22 +238,22 @@ window.functionData = (function () {
               files: [
                 {
                   name: "UnitOfWorkFunction.java",
-                  label: "UnitOfWork",
+                  label: "Unit Of Work",
                   body: `{{{source.unitOfWorkJava_Function}}}`
                 },
                 {
                   name: "FunctionInput.java",
-                  label: "Salesforce SDK",
+                  label: "Function Input",
                   body: `{{{source.unitOfWorkJava_Input}}}`
                 },
                 {
                   name: "FunctionOutput.java",
-                  label: "UnitOfWork",
+                  label: "Function Output",
                   body: `{{{source.unitOfWorkJava_Output}}}`
                 },
                 {
                   name: "Cases.java",
-                  label: "UnitOfWork",
+                  label: "Cases",
                   body: `{{{source.unitOfWorkJava_Cases}}}`
                 }
               ]
@@ -336,6 +336,34 @@ window.functionData = (function () {
                   body: `{{{source.postgresJS_Function}}}`
                 }
               ]
+            },
+            {
+              name: "06_Data_Postgres_Java",
+              label: "Postgres - Java",
+              deployment: "functions_recipes.postgresjava",
+              language: "Java",
+              files: [
+                {
+                  name: "PostgresJavaFunction.java",
+                  label: "Postgres Java",
+                  body: `{{{source.postgresJava_Function}}}`
+                },
+                {
+                  name: "FunctionInput.java",
+                  label: "FunctionInput",
+                  body: `{{{source.postgresJava_Input}}}`
+                },
+                {
+                  name: "Invocations.java",
+                  label: "Function Output",
+                  body: `{{{source.postgresJava_Output}}}`
+                },
+                {
+                  name: "Invocation.java",
+                  label: "Invocation",
+                  body: `{{{source.postgresJava_Invocation}}}`
+                }
+              ]
             }
           ]
         },
@@ -346,7 +374,7 @@ window.functionData = (function () {
           description:
             "Connects to a Redis instance, stores the invocation ID, and returns a list of previous invocations.",
           instructions:
-            "Make sure you have attached the Heroku Redis database to your compute environment.",
+            "Make sure you have attached the Heroku Data for Redis instance to your compute environment.",
           inputs: [{ label: "Limit", name: "limit", type: "number" }],
           functions: [
             {

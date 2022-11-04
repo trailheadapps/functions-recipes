@@ -14,7 +14,9 @@ const { Client } = pg;
  */
 export async function pgConnect({ url }) {
   if (!url) {
-    throw new Error("url is not set");
+    throw new Error(
+      "database url is not set, please set up the DATABASE_URL environment variable"
+    );
   }
 
   // Connect to PostgreSQL

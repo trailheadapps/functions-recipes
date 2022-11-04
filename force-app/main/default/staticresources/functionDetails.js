@@ -809,7 +809,7 @@ public class SalesforceSDKFunction implements SalesforceFunction<FunctionInput, 
                 },
                 {
                   name: "Account.java",
-                  label: "Salesforce SDK",
+                  label: "Account",
                   body: `package com.salesforce.functions.recipes;
 
 public class Account {
@@ -833,7 +833,7 @@ public class Account {
                 },
                 {
                   name: "FunctionInput.java",
-                  label: "Salesforce SDK",
+                  label: "Function Input",
                   body: `package com.salesforce.functions.recipes;
 
 public class FunctionInput {
@@ -878,7 +878,7 @@ public class FunctionInput {
                 },
                 {
                   name: "FunctionOutput.java",
-                  label: "Salesforce SDK",
+                  label: "Function Output",
                   body: `package com.salesforce.functions.recipes;
 
 import java.util.List;
@@ -1040,7 +1040,7 @@ function validateField(field, value) {
               files: [
                 {
                   name: "UnitOfWorkFunction.java",
-                  label: "UnitOfWork",
+                  label: "Unit Of Work",
                   body: `package com.salesforce.functions.recipes;
 
 import com.salesforce.functions.jvm.sdk.Context;
@@ -1138,7 +1138,7 @@ public class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, Fun
                 },
                 {
                   name: "FunctionInput.java",
-                  label: "Salesforce SDK",
+                  label: "Function Input",
                   body: `package com.salesforce.functions.recipes;
 
 public class FunctionInput {
@@ -1183,7 +1183,7 @@ public class FunctionInput {
                 },
                 {
                   name: "FunctionOutput.java",
-                  label: "UnitOfWork",
+                  label: "Function Output",
                   body: `package com.salesforce.functions.recipes;
 
 public class FunctionOutput {
@@ -1213,7 +1213,7 @@ public class FunctionOutput {
                 },
                 {
                   name: "Cases.java",
-                  label: "UnitOfWork",
+                  label: "Cases",
                   body: `package com.salesforce.functions.recipes;
 
 public class Cases {
@@ -1447,6 +1447,109 @@ export default async function (event, context, logger) {
 `
                 }
               ]
+            },
+            {
+              name: "06_Data_Postgres_Java",
+              label: "Postgres - Java",
+              deployment: "functions_recipes.postgresjava",
+              language: "Java",
+              files: [
+                {
+                  name: "PostgresJavaFunction.java",
+                  label: "Postgres Java",
+                  body: `package com.salesforce.functions.recipes;
+
+import com.salesforce.functions.jvm.sdk.Context;
+import com.salesforce.functions.jvm.sdk.InvocationEvent;
+import com.salesforce.functions.jvm.sdk.SalesforceFunction;
+import com.salesforce.functions.recipes.db.InvocationsManager;
+import com.salesforce.functions.recipes.utils.Environment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Connects to a PostgreSQL instance and perform two operations: 1. Insert a new row into the
+ * "invocations" table with an invocation ID 2. Query the "invocations" table for all the invocation
+ * IDs
+ */
+public class PostgresJavaFunction implements SalesforceFunction<FunctionInput, Invocations> {
+  private static final Logger LOGGER = LoggerFactory.getLogger(PostgresJavaFunction.class);
+  private InvocationsManager invocationsManager;
+
+  @Override
+  public Invocations apply(InvocationEvent<FunctionInput> event, Context context)
+      throws Exception {
+
+    LOGGER.info("Invoked with input: {}", event.getData());
+
+    try {
+      Integer limit = event.getData().getLimit();
+      if (invocationsManager == null) {
+        invocationsManager = new InvocationsManager(Environment.getDatabaseUrl());
+      }
+
+      invocationsManager.insertInvocation(context.getId());
+      Invocations invocations = invocationsManager.selectInvocations(limit);
+
+      LOGGER.info("Retrieved {} invocations from the database",
+          invocations.getInvocations().size());
+      return invocations;
+    } catch (Exception e) {
+      LOGGER.error("Error while connecting to the database", e);
+      throw e;
+    }
+  }
+
+  public void setInvocationsManager(InvocationsManager invocationsManager) {
+    this.invocationsManager = invocationsManager;
+  }
+}
+`
+                },
+                {
+                  name: "FunctionInput.java",
+                  label: "FunctionInput",
+                  body: `package com.salesforce.functions.recipes;
+
+public class FunctionInput {
+  private Integer limit = 5;
+
+  public Integer getLimit() {
+    return limit;
+  }
+
+  public void setLimit(Integer limit) {
+    this.limit = limit;
+  }
+}
+`
+                },
+                {
+                  name: "Invocations.java",
+                  label: "Function Output",
+                  body: `package com.salesforce.functions.recipes;
+
+import java.util.List;
+
+public class Invocations {
+    private List<Invocation> invocations;
+
+    public Invocations(List<Invocation> invocations) {
+        this.invocations = invocations;
+    }
+
+    public List<Invocation> getInvocations() {
+        return invocations;
+    }
+}
+`
+                },
+                {
+                  name: "Invocation.java",
+                  label: "Invocation",
+                  body: ``
+                }
+              ]
             }
           ]
         },
@@ -1457,7 +1560,7 @@ export default async function (event, context, logger) {
           description:
             "Connects to a Redis instance, stores the invocation ID, and returns a list of previous invocations.",
           instructions:
-            "Make sure you have attached the Heroku Redis database to your compute environment.",
+            "Make sure you have attached the Heroku Data for Redis instance to your compute environment.",
           inputs: [{ label: "Limit", name: "limit", type: "number" }],
           functions: [
             {

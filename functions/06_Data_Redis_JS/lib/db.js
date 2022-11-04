@@ -13,7 +13,9 @@ import { createClient } from "redis";
  */
 export async function redisConnect({ url }) {
   if (!url) {
-    throw new Error(`url is not set`);
+    throw new Error(
+      `database url is not set, please set up the REDIS_URL environment variable`
+    );
   }
 
   // Connect to Redis
