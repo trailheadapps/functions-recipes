@@ -1,27 +1,26 @@
-window.functionData = (function () {
-  return {
-    getData: function () {
-      return [
-        {
-          name: "01_Intro_ProcessLargeData",
-          label: "Process Large Data Volumes",
-          subtitle: "Introduction",
-          description:
-            "From a large JSON payload calculates the distance between a supplied point of origin cordinate and the data, sorts it, and returns the nearest x results.",
-          inputs: [
-            { label: "Latitude", name: "latitude", type: "text" },
-            { label: "Longitude", name: "longitude", type: "text" },
-            { label: "Length", name: "length", type: "text" }
-          ],
-          functions: [
-            {
-              name: "01_Intro_ProcessLargeData_JS",
-              deployment: "functions_recipes.processlargedatajs",
-              language: "JavaScript",
-              files: [
-                {
-                  name: "index.js",
-                  body: `import { readFileSync } from "node:fs";
+window.functionData = {
+  getData: function () {
+    return [
+      {
+        name: "01_Intro_ProcessLargeData",
+        label: "Process Large Data Volumes",
+        subtitle: "Introduction",
+        description:
+          "From a large JSON payload calculates the distance between a supplied point of origin cordinate and the data, sorts it, and returns the nearest x results.",
+        inputs: [
+          { label: "Latitude", name: "latitude", type: "text" },
+          { label: "Longitude", name: "longitude", type: "text" },
+          { label: "Length", name: "length", type: "text" }
+        ],
+        functions: [
+          {
+            name: "01_Intro_ProcessLargeData_JS",
+            deployment: "functions_recipes.processlargedatajs",
+            language: "JavaScript",
+            files: [
+              {
+                name: "index.js",
+                body: `import { readFileSync } from "node:fs";
 
 // Local Schools Database API by Code.org
 // License: CC BY-NC-SA 4.0
@@ -111,10 +110,10 @@ function distance(latitudeSt, longitudeSt, latitudeSch, longitudeSch) {
   }
 }
 `
-                },
-                {
-                  name: "index.test.js",
-                  body: `import { expect } from "chai";
+              },
+              {
+                name: "index.test.js",
+                body: `import { expect } from "chai";
 import { readFileSync } from "node:fs";
 import { createSandbox } from "sinon";
 
@@ -170,17 +169,17 @@ describe("Unit Tests", () => {
   });
 });
 `
-                }
-              ]
-            },
-            {
-              name: "01_Intro_ProcessLargeData_Java",
-              deployment: "functions_recipes.processlargedatajava",
-              language: "Java",
-              files: [
-                {
-                  name: "ProcessLargeDataFunction.java",
-                  body: `package com.salesforce.functions.recipes;
+              }
+            ]
+          },
+          {
+            name: "01_Intro_ProcessLargeData_Java",
+            deployment: "functions_recipes.processlargedatajava",
+            language: "Java",
+            files: [
+              {
+                name: "ProcessLargeDataFunction.java",
+                body: `package com.salesforce.functions.recipes;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
@@ -269,10 +268,10 @@ public class ProcessLargeDataFunction implements SalesforceFunction<FunctionInpu
   }
 }
 `
-                },
-                {
-                  name: "FunctionInput.java",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "FunctionInput.java",
+                body: `package com.salesforce.functions.recipes;
 
 public class FunctionInput {
   private double latitude;
@@ -300,10 +299,10 @@ public class FunctionInput {
   }
 }
 `
-                },
-                {
-                  name: "FunctionOutput.java",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "FunctionOutput.java",
+                body: `package com.salesforce.functions.recipes;
 
 import java.util.List;
 
@@ -319,10 +318,10 @@ public class FunctionOutput {
   }
 }
 `
-                },
-                {
-                  name: "JsonResponse.java",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "JsonResponse.java",
+                body: `package com.salesforce.functions.recipes;
 
 import java.util.List;
 
@@ -338,10 +337,10 @@ public class JsonResponse {
   }
 }
 `
-                },
-                {
-                  name: "School.java",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "School.java",
+                body: `package com.salesforce.functions.recipes;
 
 public class School {
   private String name;
@@ -481,10 +480,10 @@ public class School {
   }
 }
 `
-                },
-                {
-                  name: "FunctionTest.java",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "FunctionTest.java",
+                body: `package com.salesforce.functions.recipes;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -533,37 +532,37 @@ public class FunctionTest {
   }
 }
 `
-                }
-              ]
-            }
-          ]
-        },
-        {
-          name: "02_InvocationEvent",
-          label: "Invocation Event",
-          subtitle: "Invocation Event",
-          description: "Receives a payload and returns information about it.",
-          inputs: [
-            {
-              type: "text",
-              name: "name",
-              label: "Name"
-            },
-            {
-              type: "number",
-              name: "year",
-              label: "Year"
-            }
-          ],
-          functions: [
-            {
-              name: "02_InvocationEvent_JS",
-              deployment: "functions_recipes.invocationeventjs",
-              language: "JavaScript",
-              files: [
-                {
-                  name: "index.js",
-                  body: `/**
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "02_InvocationEvent",
+        label: "Invocation Event",
+        subtitle: "Invocation Event",
+        description: "Receives a payload and returns information about it.",
+        inputs: [
+          {
+            type: "text",
+            name: "name",
+            label: "Name"
+          },
+          {
+            type: "number",
+            name: "year",
+            label: "Year"
+          }
+        ],
+        functions: [
+          {
+            name: "02_InvocationEvent_JS",
+            deployment: "functions_recipes.invocationeventjs",
+            language: "JavaScript",
+            files: [
+              {
+                name: "index.js",
+                body: `/**
  * Receives a payload and returns information about it.
  *
  * The exported method is the entry point for your code when the function is invoked.
@@ -605,10 +604,10 @@ export default async function (event, context, logger) {
   return results;
 }
 `
-                },
-                {
-                  name: "index.test.js",
-                  body: `import { expect } from "chai";
+              },
+              {
+                name: "index.test.js",
+                body: `import { expect } from "chai";
 import { createSandbox } from "sinon";
 
 import execute from "../index.js";
@@ -685,27 +684,27 @@ describe("Unit Tests", () => {
   });
 });
 `
-                }
-              ]
-            }
-          ]
-        },
-        {
-          name: "03_Context_DataApiQuery",
-          label: "Data API Query",
-          subtitle: "Context",
-          description: "Returns accounts and its contacts by keyword.",
-          inputs: [{ label: "Keyword", name: "keyword", type: "text" }],
-          functions: [
-            {
-              name: "03_Context_DataApiQuery_JS",
-              label: "Context - Data API Query - JavaScript",
-              deployment: "functions_recipes.dataapiqueryjs",
-              language: "JavaScript",
-              files: [
-                {
-                  name: "index.js",
-                  body: `/**
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "03_Context_DataApiQuery",
+        label: "Data API Query",
+        subtitle: "Context",
+        description: "Returns accounts and its contacts by keyword.",
+        inputs: [{ label: "Keyword", name: "keyword", type: "text" }],
+        functions: [
+          {
+            name: "03_Context_DataApiQuery_JS",
+            label: "Context - Data API Query - JavaScript",
+            deployment: "functions_recipes.dataapiqueryjs",
+            language: "JavaScript",
+            files: [
+              {
+                name: "index.js",
+                body: `/**
  * Returns accounts and its contacts by keyword.
  *
  * The exported method is the entry point for your code when the function is invoked.
@@ -736,10 +735,10 @@ export default async function (event, context, logger) {
   return results;
 }
 `
-                },
-                {
-                  name: "index.test.js",
-                  body: `import { expect } from "chai";
+              },
+              {
+                name: "index.test.js",
+                body: `import { expect } from "chai";
 import { createSandbox } from "sinon";
 
 import execute from "../index.js";
@@ -837,26 +836,26 @@ describe("Unit Tests", () => {
   });
 });
 `
-                }
-              ]
-            }
-          ]
-        },
-        {
-          name: "03_Context_OrgInfo",
-          label: "OrgInfo",
-          subtitle: "Context",
-          description:
-            "Returns the Salesforce Org information attached to the context.",
-          functions: [
-            {
-              name: "03_Context_OrgInfo_TypeScript",
-              deployment: "functions_recipes.orginfots",
-              language: "TypeScript",
-              files: [
-                {
-                  name: "index.ts",
-                  body: `import { InvocationEvent, Context, Logger, Org } from "sf-fx-sdk-nodejs";
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "03_Context_OrgInfo",
+        label: "OrgInfo",
+        subtitle: "Context",
+        description:
+          "Returns the Salesforce Org information attached to the context.",
+        functions: [
+          {
+            name: "03_Context_OrgInfo_TypeScript",
+            deployment: "functions_recipes.orginfots",
+            language: "TypeScript",
+            files: [
+              {
+                name: "index.ts",
+                body: `import { InvocationEvent, Context, Logger, Org } from "sf-fx-sdk-nodejs";
 
 /**
  * Returns the Salesforce Org information attached to the context.
@@ -908,10 +907,10 @@ export class OrgInfo {
   }
 }
 `
-                },
-                {
-                  name: "index.test.ts",
-                  body: `import "mocha";
+              },
+              {
+                name: "index.test.ts",
+                body: `import "mocha";
 import { expect } from "chai";
 import { createSandbox, SinonSandbox } from "sinon";
 
@@ -983,33 +982,33 @@ describe("Unit Tests", () => {
   });
 });
 `
-                }
-              ]
-            }
-          ]
-        },
-        {
-          name: "03_Context_SalesforceSDK",
-          label: "SalesforceSDK",
-          subtitle: "Context",
-          description:
-            "Receives a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.",
-          inputs: [
-            { label: "Name", name: "name", type: "text" },
-            { label: "Account Number", name: "accountNumber", type: "text" },
-            { label: "Industry", name: "industry", type: "text" },
-            { label: "Type", name: "type", type: "text" },
-            { label: "Website", name: "website", type: "text" }
-          ],
-          functions: [
-            {
-              name: "03_Context_SalesforceSDK_JS",
-              deployment: "functions_recipes.salesforcesdkjs",
-              language: "JavaScript",
-              files: [
-                {
-                  name: "index.js",
-                  body: `/**
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "03_Context_SalesforceSDK",
+        label: "SalesforceSDK",
+        subtitle: "Context",
+        description:
+          "Receives a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.",
+        inputs: [
+          { label: "Name", name: "name", type: "text" },
+          { label: "Account Number", name: "accountNumber", type: "text" },
+          { label: "Industry", name: "industry", type: "text" },
+          { label: "Type", name: "type", type: "text" },
+          { label: "Website", name: "website", type: "text" }
+        ],
+        functions: [
+          {
+            name: "03_Context_SalesforceSDK_JS",
+            deployment: "functions_recipes.salesforcesdkjs",
+            language: "JavaScript",
+            files: [
+              {
+                name: "index.js",
+                body: `/**
  * Receives a payload containing account details, and creates the record.
  * It then uses a SOQL query to return the newly created Account.
  *
@@ -1065,10 +1064,10 @@ export default async function (event, context, logger) {
   }
 }
 `
-                },
-                {
-                  name: "index.test.js",
-                  body: `import { expect } from "chai";
+              },
+              {
+                name: "index.test.js",
+                body: `import { expect } from "chai";
 import { createSandbox } from "sinon";
 import { readFileSync } from "fs";
 import execute from "../index.js";
@@ -1169,17 +1168,17 @@ describe("Unit Tests", () => {
   });
 });
 `
-                }
-              ]
-            },
-            {
-              name: "03_Context_SalesforceSDK_Java",
-              deployment: "functions_recipes.salesforcesdkjava",
-              language: "Java",
-              files: [
-                {
-                  name: "SalesforceSDKFunction.java",
-                  body: `package com.salesforce.functions.recipes;
+              }
+            ]
+          },
+          {
+            name: "03_Context_SalesforceSDK_Java",
+            deployment: "functions_recipes.salesforcesdkjava",
+            language: "Java",
+            files: [
+              {
+                name: "SalesforceSDKFunction.java",
+                body: `package com.salesforce.functions.recipes;
 
 import com.salesforce.functions.jvm.sdk.Context;
 import com.salesforce.functions.jvm.sdk.InvocationEvent;
@@ -1254,10 +1253,10 @@ public class SalesforceSDKFunction implements SalesforceFunction<FunctionInput, 
   }
 }
 `
-                },
-                {
-                  name: "Account.java",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "Account.java",
+                body: `package com.salesforce.functions.recipes;
 
 public class Account {
   private final String id;
@@ -1277,10 +1276,10 @@ public class Account {
   }
 }
 `
-                },
-                {
-                  name: "FunctionInput.java",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "FunctionInput.java",
+                body: `package com.salesforce.functions.recipes;
 
 public class FunctionInput {
   private String name;
@@ -1321,10 +1320,10 @@ public class FunctionInput {
   }
 }
 `
-                },
-                {
-                  name: "FunctionOutput.java",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "FunctionOutput.java",
+                body: `package com.salesforce.functions.recipes;
 
 import java.util.List;
 
@@ -1340,10 +1339,10 @@ public class FunctionOutput {
   }
 }
 `
-                },
-                {
-                  name: "FunctionTest.java",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "FunctionTest.java",
+                body: `package com.salesforce.functions.recipes;
 
 import static com.spotify.hamcrest.pojo.IsPojo.pojo;
 import static org.hamcrest.CoreMatchers.is;
@@ -1591,34 +1590,34 @@ public class FunctionTest {
   }
 }
 `
-                }
-              ]
-            }
-          ]
-        },
-        {
-          name: "03_Context_UnitOfWork",
-          label: "UnitOfWork",
-          subtitle: "Context",
-          description:
-            "Receives a payload containing Account, Contact, and Case details and uses the Unit of Work pattern to assign the corresponding values to to its Record while maintaining the relationships. It then commits the unit of work and returns the Record Id's for each object.",
-          inputs: [
-            { label: "First Name", name: "firstName", type: "text" },
-            { label: "Last Name", name: "lastName", type: "text" },
-            { label: "Account Name", name: "accountName", type: "text" },
-            { label: "Website", name: "website", type: "text" },
-            { label: "Subject", name: "subject", type: "text" },
-            { label: "Description", name: "description", type: "text" }
-          ],
-          functions: [
-            {
-              name: "03_Context_UnitOfWork_JS",
-              deployment: "functions_recipes.unitofworkjs",
-              language: "JavaScript",
-              files: [
-                {
-                  name: "index.js",
-                  body: `/**
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "03_Context_UnitOfWork",
+        label: "UnitOfWork",
+        subtitle: "Context",
+        description:
+          "Receives a payload containing Account, Contact, and Case details and uses the Unit of Work pattern to assign the corresponding values to to its Record while maintaining the relationships. It then commits the unit of work and returns the Record Id's for each object.",
+        inputs: [
+          { label: "First Name", name: "firstName", type: "text" },
+          { label: "Last Name", name: "lastName", type: "text" },
+          { label: "Account Name", name: "accountName", type: "text" },
+          { label: "Website", name: "website", type: "text" },
+          { label: "Subject", name: "subject", type: "text" },
+          { label: "Description", name: "description", type: "text" }
+        ],
+        functions: [
+          {
+            name: "03_Context_UnitOfWork_JS",
+            deployment: "functions_recipes.unitofworkjs",
+            language: "JavaScript",
+            files: [
+              {
+                name: "index.js",
+                body: `/**
  * Receives a payload containing Account, Contact, and Case details and uses the
  * Unit of Work pattern to assign the corresponding values to to its Record
  * while maintaining the relationships. It then commits the unit of work and
@@ -1723,10 +1722,10 @@ function validateField(field, value) {
   if (!value) throw new Error(\`Please provide \${field}\`);
 }
 `
-                },
-                {
-                  name: "index.test.js",
-                  body: `import { expect } from "chai";
+              },
+              {
+                name: "index.test.js",
+                body: `import { expect } from "chai";
 import { createSandbox } from "sinon";
 import { readFileSync } from "fs";
 import execute from "../index.js";
@@ -1818,17 +1817,17 @@ describe("Unit Tests", () => {
   });
 });
 `
-                }
-              ]
-            },
-            {
-              name: "03_Context_UnitOfWork_Java",
-              deployment: "functions_recipes.unitofworkjava",
-              language: "Java",
-              files: [
-                {
-                  name: "UnitOfWorkFunction.java",
-                  body: `package com.salesforce.functions.recipes;
+              }
+            ]
+          },
+          {
+            name: "03_Context_UnitOfWork_Java",
+            deployment: "functions_recipes.unitofworkjava",
+            language: "Java",
+            files: [
+              {
+                name: "UnitOfWorkFunction.java",
+                body: `package com.salesforce.functions.recipes;
 
 import com.salesforce.functions.jvm.sdk.Context;
 import com.salesforce.functions.jvm.sdk.InvocationEvent;
@@ -1922,10 +1921,10 @@ public class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, Fun
   }
 }
 `
-                },
-                {
-                  name: "FunctionInput.java",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "FunctionInput.java",
+                body: `package com.salesforce.functions.recipes;
 
 public class FunctionInput {
   private String accountName;
@@ -1966,10 +1965,10 @@ public class FunctionInput {
   }
 }
 `
-                },
-                {
-                  name: "FunctionOutput.java",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "FunctionOutput.java",
+                body: `package com.salesforce.functions.recipes;
 
 public class FunctionOutput {
   private final String accountId;
@@ -1995,10 +1994,10 @@ public class FunctionOutput {
   }
 }
 `
-                },
-                {
-                  name: "Cases.java",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "Cases.java",
+                body: `package com.salesforce.functions.recipes;
 
 public class Cases {
   private final String serviceCaseId;
@@ -2018,10 +2017,10 @@ public class Cases {
   }
 }
 `
-                },
-                {
-                  name: "FunctionTest.java",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "FunctionTest.java",
+                body: `package com.salesforce.functions.recipes;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -2448,32 +2447,32 @@ public class FunctionTest {
   }
 }
 `
-                }
-              ]
-            }
-          ]
-        },
-        {
-          name: "04_Logger",
-          label: "Logger",
-          subtitle: "Logging",
-          description:
-            "Generates an amount of log messages every number of seconds.",
-          instructions:
-            "Run: <code>sf env log tail -e compute-env-alias</code> to retrieve logs after invoking the function.",
-          inputs: [
-            { label: "Amount", name: "amount", type: "number" },
-            { label: "Timeout", name: "timeout", type: "number" }
-          ],
-          functions: [
-            {
-              name: "04_Logger_JS",
-              deployment: "functions_recipes.loggerjs",
-              language: "JavaScript",
-              files: [
-                {
-                  name: "index.js",
-                  body: `/**
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "04_Logger",
+        label: "Logger",
+        subtitle: "Logging",
+        description:
+          "Generates an amount of log messages every number of seconds.",
+        instructions:
+          "Run: <code>sf env log tail -e compute-env-alias</code> to retrieve logs after invoking the function.",
+        inputs: [
+          { label: "Amount", name: "amount", type: "number" },
+          { label: "Timeout", name: "timeout", type: "number" }
+        ],
+        functions: [
+          {
+            name: "04_Logger_JS",
+            deployment: "functions_recipes.loggerjs",
+            language: "JavaScript",
+            files: [
+              {
+                name: "index.js",
+                body: `/**
  * Generates an amount of log messages every number of seconds.
  *
  * The exported method is the entry point for your code when the function is invoked.
@@ -2511,10 +2510,10 @@ export default async function (event, context, logger) {
   };
 }
 `
-                },
-                {
-                  name: "index.test.js",
-                  body: `import { expect } from "chai";
+              },
+              {
+                name: "index.test.js",
+                body: `import { expect } from "chai";
 import { useFakeTimers, createSandbox } from "sinon";
 import execute from "../index.js";
 
@@ -2578,29 +2577,29 @@ describe("Unit Tests", () => {
   });
 });
 `
-                }
-              ]
-            }
-          ]
-        },
-        {
-          name: "05_Environment_JS",
-          label: "Environment",
-          subtitle: "Environment Variables",
-          description:
-            "Returns the derivate password hash using pbkdf2 getting the salt from the Environment.",
-          instructions:
-            'Run: <code>sf env var set PASSWORD_SALT="a random passphrase" -e compute-env-alias</code> to set the necessary configuration value.',
-          inputs: [{ label: "Password", name: "password", type: "text" }],
-          functions: [
-            {
-              name: "05_Environment_JS",
-              deployment: "functions_recipes.environmentjs",
-              language: "JavaScript",
-              files: [
-                {
-                  name: "index.js",
-                  body: `import crypto from "node:crypto";
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "05_Environment_JS",
+        label: "Environment",
+        subtitle: "Environment Variables",
+        description:
+          "Returns the derivate password hash using pbkdf2 getting the salt from the Environment.",
+        instructions:
+          'Run: <code>sf env var set PASSWORD_SALT="a random passphrase" -e compute-env-alias</code> to set the necessary configuration value.',
+        inputs: [{ label: "Password", name: "password", type: "text" }],
+        functions: [
+          {
+            name: "05_Environment_JS",
+            deployment: "functions_recipes.environmentjs",
+            language: "JavaScript",
+            files: [
+              {
+                name: "index.js",
+                body: `import crypto from "node:crypto";
 import { promisify } from "node:util";
 
 // Turn pbkdf2 function from callback based to Promises
@@ -2645,10 +2644,10 @@ export default async function (event, context, logger) {
   return results.toString("hex");
 }
 `
-                },
-                {
-                  name: "index.test.js",
-                  body: `import { expect } from "chai";
+              },
+              {
+                name: "index.test.js",
+                body: `import { expect } from "chai";
 import { createSandbox } from "sinon";
 import execute from "../index.js";
 
@@ -2721,29 +2720,29 @@ describe("Unit Tests", () => {
   });
 });
 `
-                }
-              ]
-            }
-          ]
-        },
-        {
-          name: "06_Data_Postgres",
-          label: "Heroku Postgres",
-          subtitle: "Heroku Data",
-          description:
-            "Connects to a PostgreSQL instance, stores the invocation ID, and returns a list of previous invocations.",
-          instructions:
-            "Make sure you have attached the Heroku Postgres database to your compute environment.",
-          inputs: [{ label: "Limit", name: "limit", type: "number" }],
-          functions: [
-            {
-              name: "06_Data_Postgres_JS",
-              deployment: "functions_recipes.postgresjs",
-              language: "JavaScript",
-              files: [
-                {
-                  name: "index.js",
-                  body: `import "dotenv/config";
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "06_Data_Postgres",
+        label: "Heroku Postgres",
+        subtitle: "Heroku Data",
+        description:
+          "Connects to a PostgreSQL instance, stores the invocation ID, and returns a list of previous invocations.",
+        instructions:
+          "Make sure you have attached the Heroku Postgres database to your compute environment.",
+        inputs: [{ label: "Limit", name: "limit", type: "number" }],
+        functions: [
+          {
+            name: "06_Data_Postgres_JS",
+            deployment: "functions_recipes.postgresjs",
+            language: "JavaScript",
+            files: [
+              {
+                name: "index.js",
+                body: `import "dotenv/config";
 import { pgConnect } from "./lib/db.js";
 
 /**
@@ -2795,10 +2794,10 @@ export default async function (event, context, logger) {
   }
 }
 `
-                },
-                {
-                  name: "db.js",
-                  body: `import pg from "pg";
+              },
+              {
+                name: "db.js",
+                body: `import pg from "pg";
 const { Client } = pg;
 
 /**
@@ -2842,10 +2841,10 @@ export async function pgConnect({ url }) {
   return client;
 }
 `
-                },
-                {
-                  name: "index.test.js",
-                  body: `import chai from "chai";
+              },
+              {
+                name: "index.test.js",
+                body: `import chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 import { createSandbox } from "sinon";
 import quibble from "quibble";
@@ -2965,17 +2964,17 @@ describe("Unit Tests", () => {
   });
 });
 `
-                }
-              ]
-            },
-            {
-              name: "06_Data_Postgres_Java",
-              deployment: "functions_recipes.postgresjava",
-              language: "Java",
-              files: [
-                {
-                  name: "PostgresJavaFunction.java",
-                  body: `package com.salesforce.functions.recipes;
+              }
+            ]
+          },
+          {
+            name: "06_Data_Postgres_Java",
+            deployment: "functions_recipes.postgresjava",
+            language: "Java",
+            files: [
+              {
+                name: "PostgresJavaFunction.java",
+                body: `package com.salesforce.functions.recipes;
 
 import com.salesforce.functions.jvm.sdk.Context;
 import com.salesforce.functions.jvm.sdk.InvocationEvent;
@@ -3029,10 +3028,10 @@ public class PostgresJavaFunction implements SalesforceFunction<FunctionInput, I
   }
 }
 `
-                },
-                {
-                  name: "FunctionInput.java",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "FunctionInput.java",
+                body: `package com.salesforce.functions.recipes;
 
 public class FunctionInput {
   private Integer limit = 5;
@@ -3046,10 +3045,10 @@ public class FunctionInput {
   }
 }
 `
-                },
-                {
-                  name: "Invocations.java",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "Invocations.java",
+                body: `package com.salesforce.functions.recipes;
 
 import java.util.List;
 
@@ -3065,10 +3064,10 @@ public class Invocations {
     }
 }
 `
-                },
-                {
-                  name: "Invocation.java",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "Invocation.java",
+                body: `package com.salesforce.functions.recipes;
 
 import java.sql.Date;
 
@@ -3091,10 +3090,10 @@ public class Invocation {
   }
 }
 `
-                },
-                {
-                  name: "InvocationsManager.java",
-                  body: `package com.salesforce.functions.recipes.db;
+              },
+              {
+                name: "InvocationsManager.java",
+                body: `package com.salesforce.functions.recipes.db;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -3173,10 +3172,10 @@ public class InvocationsManager {
   }
 }
 `
-                },
-                {
-                  name: "Environment.java",
-                  body: `package com.salesforce.functions.recipes.utils;
+              },
+              {
+                name: "Environment.java",
+                body: `package com.salesforce.functions.recipes.utils;
 
 public class Environment {
 
@@ -3189,10 +3188,10 @@ public class Environment {
   }
 }
 `
-                },
-                {
-                  name: "FunctionTest.java",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "FunctionTest.java",
+                body: `package com.salesforce.functions.recipes;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -3303,29 +3302,29 @@ public class FunctionTest {
   }
 }
 `
-                }
-              ]
-            }
-          ]
-        },
-        {
-          name: "06_Data_Redis",
-          label: "Heroku Data for Redis",
-          subtitle: "Heroku Data",
-          description:
-            "Connects to a Redis instance, stores the invocation ID, and returns a list of previous invocations.",
-          instructions:
-            "Make sure you have attached the Heroku Data for Redis instance to your compute environment.",
-          inputs: [{ label: "Limit", name: "limit", type: "number" }],
-          functions: [
-            {
-              name: "06_Data_Redis_JS",
-              deployment: "functions_recipes.redisjs",
-              language: "JavaScript",
-              files: [
-                {
-                  name: "index.js",
-                  body: `import "dotenv/config";
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "06_Data_Redis",
+        label: "Heroku Data for Redis",
+        subtitle: "Heroku Data",
+        description:
+          "Connects to a Redis instance, stores the invocation ID, and returns a list of previous invocations.",
+        instructions:
+          "Make sure you have attached the Heroku Data for Redis instance to your compute environment.",
+        inputs: [{ label: "Limit", name: "limit", type: "number" }],
+        functions: [
+          {
+            name: "06_Data_Redis_JS",
+            deployment: "functions_recipes.redisjs",
+            language: "JavaScript",
+            files: [
+              {
+                name: "index.js",
+                body: `import "dotenv/config";
 import { redisConnect } from "./lib/db.js";
 
 /**
@@ -3403,10 +3402,10 @@ export default async function (event, context, logger) {
   }
 }
 `
-                },
-                {
-                  name: "db.js",
-                  body: `import { createClient } from "redis";
+              },
+              {
+                name: "db.js",
+                body: `import { createClient } from "redis";
 
 /**
  * Represents the options to create a Redis client.
@@ -3438,10 +3437,10 @@ export async function redisConnect({ url }) {
   return redisClient;
 }
 `
-                },
-                {
-                  name: "index.test.js",
-                  body: `import chai from "chai";
+              },
+              {
+                name: "index.test.js",
+                body: `import chai from "chai";
 import sinon from "sinon";
 import chaiAsPromised from "chai-as-promised";
 import { createSandbox } from "sinon";
@@ -3594,17 +3593,17 @@ describe("Unit Tests", () => {
   });
 });
 `
-                }
-              ]
-            },
-            {
-              name: "06_Data_Redis_Java",
-              deployment: "functions_recipes.redisjava",
-              language: "Java",
-              files: [
-                {
-                  name: "RedisJavaFunction.java",
-                  body: `package com.salesforce.functions.recipes;
+              }
+            ]
+          },
+          {
+            name: "06_Data_Redis_Java",
+            deployment: "functions_recipes.redisjava",
+            language: "Java",
+            files: [
+              {
+                name: "RedisJavaFunction.java",
+                body: `package com.salesforce.functions.recipes;
 
 import com.salesforce.functions.jvm.sdk.Context;
 import com.salesforce.functions.jvm.sdk.InvocationEvent;
@@ -3649,10 +3648,10 @@ public class RedisJavaFunction implements SalesforceFunction<FunctionInput, Invo
   }
 }
 `
-                },
-                {
-                  name: "FunctionInput.java",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "FunctionInput.java",
+                body: `package com.salesforce.functions.recipes;
 
 public class FunctionInput {
   private Integer limit = 5;
@@ -3666,10 +3665,10 @@ public class FunctionInput {
   }
 }
 `
-                },
-                {
-                  name: "Invocations.java",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "Invocations.java",
+                body: `package com.salesforce.functions.recipes;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -3704,10 +3703,10 @@ public class Invocations {
     }
 }
 `
-                },
-                {
-                  name: "InvocationsManager.java",
-                  body: `package com.salesforce.functions.recipes.db;
+              },
+              {
+                name: "InvocationsManager.java",
+                body: `package com.salesforce.functions.recipes.db;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -3791,10 +3790,10 @@ public class InvocationsManager {
   }
 }
 `
-                },
-                {
-                  name: "Environment.java",
-                  body: `package com.salesforce.functions.recipes.utils;
+              },
+              {
+                name: "Environment.java",
+                body: `package com.salesforce.functions.recipes.utils;
 
 public class Environment {
 
@@ -3806,10 +3805,10 @@ public class Environment {
     return databaseUrl;
   }
 }`
-                },
-                {
-                  name: "FunctionTest.java",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "FunctionTest.java",
+                body: `package com.salesforce.functions.recipes;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -3918,12 +3917,11 @@ public class FunctionTest {
   }
 }
 `
-                }
-              ]
-            }
-          ]
-        }
-      ];
-    }
-  };
-})();
+              }
+            ]
+          }
+        ]
+      }
+    ];
+  }
+};
