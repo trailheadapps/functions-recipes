@@ -7,8 +7,6 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import java.sql.Date;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,13 +20,12 @@ import com.salesforce.functions.recipes.utils.Environment;
 public class FunctionTest {
 
   private final String INVOCATION_ID = "c4f3c4f3-c4f3-c4f3-c4f3-c0ff33c0ff33";
-  private final List<Invocation> INVOCATIONS = new ArrayList<Invocation>(
-      Arrays.asList(new Invocation(INVOCATION_ID, Date.valueOf("2022-11-24")),
-          new Invocation("7e2b97ba-8950-4e83-90c9-441b04b30737", Date.valueOf("2022-11-25"))));
+  private final List<String> INVOCATIONS =
+      new ArrayList<String>(Arrays.asList(INVOCATION_ID, "7e2b97ba-8950-4e83-90c9-441b04b30737"));
 
   @Test
   public void testSuccess() throws Exception {
-    PostgresJavaFunction function = new PostgresJavaFunction();
+    RedisJavaFunction function = new RedisJavaFunction();
 
     // Create a mock of the InvocationsManager
     InvocationsManager invocationsManager = createInvocationsManagerMock();
@@ -40,13 +37,13 @@ public class FunctionTest {
     Invocations invocations = function.apply(createEventMock(input), createContextMock());
     verify(invocationsManager, times(1)).addInvocation(INVOCATION_ID);
     assertEquals(invocations.getInvocations().size(), 2);
-    assertEquals(invocations.getInvocations().get(0).getId(), INVOCATION_ID);
+    assertEquals(invocations.getInvocations().get(0), INVOCATION_ID);
     assertEquals(invocations.getInvocations(), INVOCATIONS);
   }
 
   @Test
   public void testNoUrl() throws Exception {
-    PostgresJavaFunction function = new PostgresJavaFunction();
+    RedisJavaFunction function = new RedisJavaFunction();
 
     // It should fail when the Environment class returns an empty URL
     assertThrows(IllegalStateException.class, () -> {
@@ -57,8 +54,8 @@ public class FunctionTest {
   @Test
   public void testEnvironmentSuccess() throws Exception {
     try (MockedStatic<Environment> mockEnvironment = mockStatic(Environment.class)) {
-      mockEnvironment.when(Environment::getDatabaseUrl).thenReturn("jdbc:postgresql://localhost:5432/postgres");
-      assertEquals(Environment.getDatabaseUrl(), "jdbc:postgresql://localhost:5432/postgres");
+      mockEnvironment.when(Environment::getDatabaseUrl).thenReturn("redis://localhost:6379");
+      assertEquals(Environment.getDatabaseUrl(), "redis://localhost:6379");
     }
   }
 
@@ -96,15 +93,16 @@ public class FunctionTest {
 
   /**
    * Creates a mock for InvocationsManager
+   *
    * @return InvocationsManager
    */
   private InvocationsManager createInvocationsManagerMock() {
     InvocationsManager mockInvocationsManager = mock(InvocationsManager.class);
-    try {
-      when(mockInvocationsManager.getInvocations(2)).thenReturn(new Invocations(INVOCATIONS));
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
-    }
+    Invocations invocations = new Invocations();
+    invocations.setInvocations(INVOCATIONS);
+    invocations.setLastInvocationId(INVOCATION_ID);
+    invocations.setLastInvocationTime("2022-11-24 00:00:00");
+    when(mockInvocationsManager.getInvocations(2)).thenReturn(invocations);
     return mockInvocationsManager;
   }
 }

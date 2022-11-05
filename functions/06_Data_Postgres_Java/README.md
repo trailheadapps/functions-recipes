@@ -13,28 +13,23 @@ Make sure you have the `DATABASE_URL` connection string in the `.env` file of th
 
 ```
 heroku config -a <app_name> --shell > .env
+source .env
 ```
 
-2. Install dependencies with
+2. Run tests with
 
 ```
-npm install
+./mvnw test
 ```
 
-3. Run tests with
-
-```
-npm test
-```
-
-4. Start your function locally
+3. Start your function locally
 
 ```
 sf run function start --verbose
 ```
 
-5. Invoke your function locally
+4. Invoke your function locally
 
 ```
-sf run function --function-url=http://localhost:8080 --payload='{}'
+sf run function --function-url=http://localhost:8080 --payload='{"limit": 5}'
 ```

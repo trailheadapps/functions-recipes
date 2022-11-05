@@ -127,3 +127,4 @@ For Local Development you can use any DevHub enabled org, just make sure to crea
    - [PostgreSQL (Node.js)](functions/06_Data_Postgres_JS/)
    - [PostgreSQL (Java)](functions/06_Data_Postgres_Java/)
    - [Redis (Node.js)](functions/06_Data_Redis_JS/)
+   - [Redis (Java)](functions/06_Data_Redis_Java/)

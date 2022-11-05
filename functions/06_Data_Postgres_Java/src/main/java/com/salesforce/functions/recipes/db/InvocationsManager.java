@@ -27,14 +27,14 @@ public class InvocationsManager {
     this.url = url;
   }
 
-  public void insertInvocation(String id) throws SQLException {
+  public void addInvocation(String id) throws SQLException {
     Connection connection = getConnection();
     PreparedStatement stmt = connection.prepareStatement(INSERT_INVOCATION);
     stmt.setString(1, id);
     stmt.executeUpdate();
   }
 
-  public Invocations selectInvocations(int limit) throws SQLException {
+  public Invocations getInvocations(int limit) throws SQLException {
     Connection connection = getConnection();
 
     // Select Invocations from the database
@@ -71,9 +71,7 @@ public class InvocationsManager {
       connection.createStatement().execute(CREATE_INVOCATIONS_TABLE);
 
       return connection;
-    } catch (URISyntaxException e) {
-      throw new RuntimeException(e);
-    } catch (ClassNotFoundException e) {
+    } catch (URISyntaxException | ClassNotFoundException e) {
       throw new RuntimeException(e);
     }
   }

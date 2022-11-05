@@ -22,6 +22,10 @@ window.functionData = (function () {
                 {
                   name: "index.js",
                   body: `{{{source.processLargeDataJS_Function}}}`
+                },
+                {
+                  name: "index.test.js",
+                  body: `{{{source.processLargeDataJS_Test}}}`
                 }
               ]
             },
@@ -49,6 +53,10 @@ window.functionData = (function () {
                 {
                   name: "School.java",
                   body: `{{{source.processLargeDataJava_School}}}`
+                },
+                {
+                  name: "FunctionTest.java",
+                  body: `{{{source.processLargeDataJava_Test}}}`
                 }
               ]
             }
@@ -80,6 +88,10 @@ window.functionData = (function () {
                 {
                   name: "index.js",
                   body: `{{{source.invocationEventJS_Function}}}`
+                },
+                {
+                  name: "index.test.js",
+                  body: `{{{source.invocationEventJS_Test}}}`
                 }
               ]
             }
@@ -101,6 +113,10 @@ window.functionData = (function () {
                 {
                   name: "index.js",
                   body: `{{{source.dataApiQueryJS_Function}}}`
+                },
+                {
+                  name: "index.test.js",
+                  body: `{{{source.dataApiQueryJS_Test}}}`
                 }
               ]
             }
@@ -121,6 +137,10 @@ window.functionData = (function () {
                 {
                   name: "index.ts",
                   body: `{{{source.orgInfoTS_Function}}}`
+                },
+                {
+                  name: "index.test.ts",
+                  body: `{{{source.orgInfoTS_Test}}}`
                 }
               ]
             }
@@ -148,6 +168,10 @@ window.functionData = (function () {
                 {
                   name: "index.js",
                   body: `{{{source.salesforceSDKJS_Function}}}`
+                },
+                {
+                  name: "index.test.js",
+                  body: `{{{source.salesforceSDKJS_Test}}}`
                 }
               ]
             },
@@ -171,6 +195,10 @@ window.functionData = (function () {
                 {
                   name: "FunctionOutput.java",
                   body: `{{{source.salesforceSDKJava_Output}}}`
+                },
+                {
+                  name: "FunctionTest.java",
+                  body: `{{{source.salesforceSDKJava_Test}}}`
                 }
               ]
             }
@@ -199,6 +227,10 @@ window.functionData = (function () {
                 {
                   name: "index.js",
                   body: `{{{source.unitOfWorkJS_Function}}}`
+                },
+                {
+                  name: "index.test.js",
+                  body: `{{{source.unitOfWorkJS_Test}}}`
                 }
               ]
             },
@@ -222,6 +254,10 @@ window.functionData = (function () {
                 {
                   name: "Cases.java",
                   body: `{{{source.unitOfWorkJava_Cases}}}`
+                },
+                {
+                  name: "FunctionTest.java",
+                  body: `{{{source.unitOfWorkJava_Test}}}`
                 }
               ]
             }
@@ -244,11 +280,14 @@ window.functionData = (function () {
               name: "04_Logger_JS",
               deployment: "functions_recipes.loggerjs",
               language: "JavaScript",
-
               files: [
                 {
                   name: "index.js",
                   body: `{{{source.loggerJS_Function}}}`
+                },
+                {
+                  name: "index.test.js",
+                  body: `{{{source.loggerJS_Test}}}`
                 }
               ]
             }
@@ -272,6 +311,10 @@ window.functionData = (function () {
                 {
                   name: "index.js",
                   body: `{{{source.environmentJS_Function}}}`
+                },
+                {
+                  name: "index.test.js",
+                  body: `{{{source.environmentJS_Test}}}`
                 }
               ]
             }
@@ -295,6 +338,14 @@ window.functionData = (function () {
                 {
                   name: "index.js",
                   body: `{{{source.postgresJS_Function}}}`
+                },
+                {
+                  name: "db.js",
+                  body: `{{{source.postgresJS_DB}}}`
+                },
+                {
+                  name: "index.test.js",
+                  body: `{{{source.postgresJS_Test}}}`
                 }
               ]
             },
@@ -318,6 +369,18 @@ window.functionData = (function () {
                 {
                   name: "Invocation.java",
                   body: `{{{source.postgresJava_Invocation}}}`
+                },
+                {
+                  name: "InvocationsManager.java",
+                  body: `{{{source.postgresJava_Manager}}}`
+                },
+                {
+                  name: "Environment.java",
+                  body: `{{{source.postgresJava_Environment}}}`
+                },
+                {
+                  name: "FunctionTest.java",
+                  body: `{{{source.postgresJava_Test}}}`
                 }
               ]
             }
@@ -341,6 +404,45 @@ window.functionData = (function () {
                 {
                   name: "index.js",
                   body: `{{{source.redisJS_Function}}}`
+                },
+                {
+                  name: "db.js",
+                  body: `{{{source.redisJS_DB}}}`
+                },
+                {
+                  name: "index.test.js",
+                  body: `{{{source.redisJS_Test}}}`
+                }
+              ]
+            },
+            {
+              name: "06_Data_Redis_Java",
+              deployment: "functions_recipes.redisjava",
+              language: "Java",
+              files: [
+                {
+                  name: "RedisJavaFunction.java",
+                  body: `{{{source.redisJava_Function}}}`
+                },
+                {
+                  name: "FunctionInput.java",
+                  body: `{{{source.redisJava_Input}}}`
+                },
+                {
+                  name: "Invocations.java",
+                  body: `{{{source.redisJava_Output}}}`
+                },
+                {
+                  name: "InvocationsManager.java",
+                  body: `{{{source.redisJava_Manager}}}`
+                },
+                {
+                  name: "Environment.java",
+                  body: `{{{source.redisJava_Environment}}}`
+                },
+                {
+                  name: "FunctionTest.java",
+                  body: `{{{source.redisJava_Test}}}`
                 }
               ]
             }
