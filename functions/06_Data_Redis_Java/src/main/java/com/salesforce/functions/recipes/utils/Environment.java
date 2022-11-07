@@ -1,7 +1,14 @@
 package com.salesforce.functions.recipes.utils;
 
+/**
+ * This class contains the environment variables used by the Function.
+ */
 public class Environment {
 
+  /**
+   * The URL of the Redis instance.
+   * @return String
+   */
   public static String getDatabaseUrl() {
     String databaseUrl = System.getenv("REDIS_URL");
     if (databaseUrl == null) {

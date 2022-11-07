@@ -47,6 +47,10 @@ public class PostgresJavaFunction implements SalesforceFunction<FunctionInput, I
     }
   }
 
+  /**
+   * This method is used for testing purposes only.
+   * @param invocationsManager
+   */
   public void setInvocationsManager(InvocationsManager invocationsManager) {
     this.invocationsManager = invocationsManager;
   }

@@ -9,13 +9,15 @@ import java.net.URI;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.params.SetParams;
 
+/**
+ * This class manages the invocations stored in a Redis database.
+ */
 public class InvocationsManager {
   private final static long FIVE_MINUTES = 5 * 60;
   private final String url;
@@ -24,6 +26,10 @@ public class InvocationsManager {
     this.url = url;
   }
 
+  /**
+   * Add an invocation to the database.
+   * @param id The invocation ID.
+   */
   public void addInvocation(String id) {
     Jedis jedis = getConnection();
 
@@ -41,6 +47,11 @@ public class InvocationsManager {
     }
   }
 
+  /**
+   * Get the last invocations from the database.
+   * @param limit The maximum number of invocations to return.
+   * @return Invocations
+   */
   public Invocations getInvocations(Integer limit) {
     Jedis jedis = getConnection();
     List<String> ids = jedis.lrange("invocations", 0, limit - 1);
@@ -55,6 +66,10 @@ public class InvocationsManager {
     return invocations;
   }
 
+  /**
+   * Get a connection to the Redis database.
+   * @return Jedis
+   */
   private Jedis getConnection() {
     try {
       TrustManager bogusTrustManager = new X509TrustManager() {

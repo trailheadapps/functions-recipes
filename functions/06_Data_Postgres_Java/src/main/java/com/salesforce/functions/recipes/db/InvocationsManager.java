@@ -12,6 +12,9 @@ import java.util.List;
 import com.salesforce.functions.recipes.Invocation;
 import com.salesforce.functions.recipes.Invocations;
 
+/**
+ * This class manages the invocations stored in a PostgreSQL database.
+ */
 public class InvocationsManager {
   private final String NEW_LINE = System.getProperty("line.separator");
   private final String CREATE_INVOCATIONS_TABLE = String.join(NEW_LINE,
@@ -27,6 +30,11 @@ public class InvocationsManager {
     this.url = url;
   }
 
+  /**
+   * Add an invocation to the database.
+   * @param id
+   * @throws SQLException
+   */
   public void addInvocation(String id) throws SQLException {
     Connection connection = getConnection();
     PreparedStatement stmt = connection.prepareStatement(INSERT_INVOCATION);
@@ -34,6 +42,12 @@ public class InvocationsManager {
     stmt.executeUpdate();
   }
 
+  /**
+   * Get the last invocations from the database.
+   * @param limit The maximum number of invocations to return.
+   * @return Invocations
+   * @throws SQLException
+   */
   public Invocations getInvocations(int limit) throws SQLException {
     Connection connection = getConnection();
 
@@ -51,6 +65,11 @@ public class InvocationsManager {
     return new Invocations(invocations);
   }
 
+  /**
+   * Get a connection to the database.
+   * @return Connection
+   * @throws SQLException
+   */
   public Connection getConnection() throws SQLException {
     try {
       Class.forName("org.postgresql.Driver");
@@ -67,7 +86,9 @@ public class InvocationsManager {
       // Connect to PostgreSQL instance
       Connection connection = DriverManager.getConnection(dbUrl, username, password);
 
-      // Try to create table
+      // Create a invocations table if it doesn't exist
+      // Note: It is recommended to create this table outside the function execution
+      // using a provision script or a migration tool. This is just for demo purposes.
       connection.createStatement().execute(CREATE_INVOCATIONS_TABLE);
 
       return connection;
