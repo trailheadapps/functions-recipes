@@ -28,9 +28,9 @@ For more information about how to configure your organization for Salesforce Fun
 
 1. If you haven't already done so, authorize with your org and provide it with an alias (**fnrecipesorg** in the command below):
 
-```
-sf login org -d -v -a fnrecipesorg
-```
+   ```
+   sf login org -d -v -a fnrecipesorg
+   ```
 
 1. Clone the functions-recipes repository:
 
@@ -41,9 +41,9 @@ sf login org -d -v -a fnrecipesorg
 
 1. Create a scratch org and provide it with an alias (**functions_recipes** in the command below):
 
-```sh
-sf env create scratch -f config/project-scratch-def.json -a functions_recipes -d
-```
+   ```sh
+   sf env create scratch -f config/project-scratch-def.json -a functions_recipes -d
+   ```
 
 ## Salesforce Functions Deployment
 
@@ -69,9 +69,9 @@ For more information about how to deploy Functions to a Compute Environment and 
 
 1. Push source app to the scratch org:
 
-```sh
-sf deploy metadata --ignore-conflicts
-```
+   ```sh
+   sf deploy metadata --ignore-conflicts
+   ```
 
 1. Assign the **FunctionsRecipes** and **Functions** permission sets to the default user:
 
@@ -81,15 +81,15 @@ sf deploy metadata --ignore-conflicts
 
 1. Open the **Functions Recipes** App
 
-```sh
-sf env open -p "/lightning/n/Functions"
-```
+   ```sh
+   sf env open -p "/lightning/n/Functions"
+   ```
 
 1. Activate the **Functions Recipes** Theme (Optional)
 
-```sh
-sf env open -p "/lightning/setup/ThemingAndBranding/home"
-```
+   ```sh
+   sf env open -p "/lightning/setup/ThemingAndBranding/home"
+   ```
 
 ## Functions Recipes App
 
