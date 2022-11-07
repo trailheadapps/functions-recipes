@@ -3023,6 +3023,10 @@ public class PostgresJavaFunction implements SalesforceFunction<FunctionInput, I
     }
   }
 
+  /**
+   * This method is used for testing purposes only.
+   * @param invocationsManager
+   */
   public void setInvocationsManager(InvocationsManager invocationsManager) {
     this.invocationsManager = invocationsManager;
   }
@@ -3107,6 +3111,9 @@ import java.util.List;
 import com.salesforce.functions.recipes.Invocation;
 import com.salesforce.functions.recipes.Invocations;
 
+/**
+ * This class manages the invocations stored in a PostgreSQL database.
+ */
 public class InvocationsManager {
   private final String NEW_LINE = System.getProperty("line.separator");
   private final String CREATE_INVOCATIONS_TABLE = String.join(NEW_LINE,
@@ -3122,6 +3129,11 @@ public class InvocationsManager {
     this.url = url;
   }
 
+  /**
+   * Add an invocation to the database.
+   * @param id
+   * @throws SQLException
+   */
   public void addInvocation(String id) throws SQLException {
     Connection connection = getConnection();
     PreparedStatement stmt = connection.prepareStatement(INSERT_INVOCATION);
@@ -3129,6 +3141,12 @@ public class InvocationsManager {
     stmt.executeUpdate();
   }
 
+  /**
+   * Get the last invocations from the database.
+   * @param limit The maximum number of invocations to return.
+   * @return Invocations
+   * @throws SQLException
+   */
   public Invocations getInvocations(int limit) throws SQLException {
     Connection connection = getConnection();
 
@@ -3146,6 +3164,11 @@ public class InvocationsManager {
     return new Invocations(invocations);
   }
 
+  /**
+   * Get a connection to the database.
+   * @return Connection
+   * @throws SQLException
+   */
   public Connection getConnection() throws SQLException {
     try {
       Class.forName("org.postgresql.Driver");
@@ -3162,7 +3185,9 @@ public class InvocationsManager {
       // Connect to PostgreSQL instance
       Connection connection = DriverManager.getConnection(dbUrl, username, password);
 
-      // Try to create table
+      // Create a invocations table if it doesn't exist
+      // Note: It is recommended to create this table outside the function execution
+      // using a provision script or a migration tool. This is just for demo purposes.
       connection.createStatement().execute(CREATE_INVOCATIONS_TABLE);
 
       return connection;
@@ -3177,8 +3202,15 @@ public class InvocationsManager {
                 name: "Environment.java",
                 body: `package com.salesforce.functions.recipes.utils;
 
+/**
+ * This class contains the environment variables used by the Function.
+ */
 public class Environment {
 
+  /**
+   * The URL of the PostgreSQL instance.
+   * @return String
+   */
   public static String getDatabaseUrl() {
     String databaseUrl = System.getenv("DATABASE_URL");
     if (databaseUrl == null) {
@@ -3633,8 +3665,11 @@ public class RedisJavaFunction implements SalesforceFunction<FunctionInput, Invo
         invocationsManager = new InvocationsManager(Environment.getDatabaseUrl());
       }
 
+      // Insert a new invocation to the "invocations" list
+      // Also set the last invocation ID and last invocation time
       invocationsManager.addInvocation(context.getId());
 
+      // Query the "invocations" list for all the invocation IDs
       Invocations invocations = invocationsManager.getInvocations(limit);
       return invocations;
     } catch (Exception e) {
@@ -3643,6 +3678,10 @@ public class RedisJavaFunction implements SalesforceFunction<FunctionInput, Invo
     }
   }
 
+  /**
+   * This method is used for testing purposes only.
+   * @param invocationsManager
+   */
   public void setInvocationsManager(InvocationsManager invocationsManager) {
     this.invocationsManager = invocationsManager;
   }
@@ -3670,7 +3709,6 @@ public class FunctionInput {
                 name: "Invocations.java",
                 body: `package com.salesforce.functions.recipes;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public class Invocations {
@@ -3717,13 +3755,15 @@ import java.net.URI;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.params.SetParams;
 
+/**
+ * This class manages the invocations stored in a Redis database.
+ */
 public class InvocationsManager {
   private final static long FIVE_MINUTES = 5 * 60;
   private final String url;
@@ -3732,6 +3772,10 @@ public class InvocationsManager {
     this.url = url;
   }
 
+  /**
+   * Add an invocation to the database.
+   * @param id The invocation ID.
+   */
   public void addInvocation(String id) {
     Jedis jedis = getConnection();
 
@@ -3749,6 +3793,11 @@ public class InvocationsManager {
     }
   }
 
+  /**
+   * Get the last invocations from the database.
+   * @param limit The maximum number of invocations to return.
+   * @return Invocations
+   */
   public Invocations getInvocations(Integer limit) {
     Jedis jedis = getConnection();
     List<String> ids = jedis.lrange("invocations", 0, limit - 1);
@@ -3763,6 +3812,10 @@ public class InvocationsManager {
     return invocations;
   }
 
+  /**
+   * Get a connection to the Redis database.
+   * @return Jedis
+   */
   private Jedis getConnection() {
     try {
       TrustManager bogusTrustManager = new X509TrustManager() {
@@ -3795,8 +3848,15 @@ public class InvocationsManager {
                 name: "Environment.java",
                 body: `package com.salesforce.functions.recipes.utils;
 
+/**
+ * This class contains the environment variables used by the Function.
+ */
 public class Environment {
 
+  /**
+   * The URL of the Redis instance.
+   * @return String
+   */
   public static String getDatabaseUrl() {
     String databaseUrl = System.getenv("REDIS_URL");
     if (databaseUrl == null) {
