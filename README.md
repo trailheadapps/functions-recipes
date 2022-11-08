@@ -28,7 +28,7 @@ For more information about how to configure your organization for Salesforce Fun
 
 1. If you haven't already done so, authorize with your org and provide it with an alias (**fnrecipesorg** in the command below):
 
-   ```
+   ```sh
    sf login org -d -v -a fnrecipesorg
    ```
 
