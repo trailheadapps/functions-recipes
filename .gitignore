@@ -44,3 +44,7 @@ $RECYCLE.BIN/
 # Java
 **/target
 **/.classpath
+
+# Environment
+.env
+**/functions/.env
