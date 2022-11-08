@@ -7,8 +7,8 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,8 +23,8 @@ public class FunctionTest {
 
   private final String INVOCATION_ID = "c4f3c4f3-c4f3-c4f3-c4f3-c0ff33c0ff33";
   private final List<Invocation> INVOCATIONS = new ArrayList<Invocation>(
-      Arrays.asList(new Invocation(INVOCATION_ID, Date.valueOf("2022-11-24")),
-          new Invocation("7e2b97ba-8950-4e83-90c9-441b04b30737", Date.valueOf("2022-11-25"))));
+      Arrays.asList(new Invocation(INVOCATION_ID, Timestamp.valueOf("2022-11-24 12:30:00")),
+          new Invocation("7e2b97ba-8950-4e83-90c9-441b04b30737", Timestamp.valueOf("2022-11-25 11:11:00"))));
 
   @Test
   public void testSuccess() throws Exception {

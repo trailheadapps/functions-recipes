@@ -10,4 +10,9 @@ public class FunctionInput {
   public void setLimit(Integer limit) {
     this.limit = limit;
   }
+
+  @Override
+  public String toString() {
+    return "FunctionInput [limit=" + limit + "]";
+  }
 }

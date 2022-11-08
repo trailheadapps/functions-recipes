@@ -18,7 +18,7 @@ import com.salesforce.functions.recipes.Invocations;
 public class InvocationsManager {
   // Database queries
   private final String CREATE_INVOCATIONS_TABLE =
-      "CREATE TABLE IF NOT EXISTS invocations (id VARCHAR(255) PRIMARY KEY,created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP";
+      "CREATE TABLE IF NOT EXISTS invocations (id VARCHAR(255) PRIMARY KEY, created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP)";
   private final String INSERT_INVOCATION = "INSERT INTO invocations (id) VALUES (?)";
   private final String SELECT_INVOCATIONS =
       "SELECT id, created_at FROM invocations ORDER BY created_at DESC LIMIT ?";
@@ -52,14 +52,16 @@ public class InvocationsManager {
    */
   public Invocations getInvocations(int limit) throws SQLException {
     try (Connection connection = getConnection();
-        PreparedStatement stmt = connection.prepareStatement(SELECT_INVOCATIONS);
-        ResultSet rs = stmt.executeQuery()) {
+        PreparedStatement stmt = connection.prepareStatement(SELECT_INVOCATIONS);) {
       stmt.setInt(1, limit);
       List<Invocation> invocations = new ArrayList<>();
 
-      while (rs.next()) {
-        Invocation inv = new Invocation(rs.getString("id"), rs.getDate("created_at"));
-        invocations.add(inv);
+      try (ResultSet rs = stmt.executeQuery()) {
+
+        while (rs.next()) {
+          Invocation inv = new Invocation(rs.getString("id"), rs.getTimestamp("created_at"));
+          invocations.add(inv);
+        }
       }
       return new Invocations(invocations);
     }

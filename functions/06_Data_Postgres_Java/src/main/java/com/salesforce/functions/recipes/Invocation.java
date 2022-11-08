@@ -1,13 +1,14 @@
 package com.salesforce.functions.recipes;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Invocation {
 
   private String id;
-  private Date createdAt;
+  private Timestamp createdAt;
 
-  public Invocation(String id, Date date) {
+  public Invocation(String id, Timestamp date) {
     this.id = id;
     this.createdAt = date;
   }
@@ -16,7 +17,7 @@ public class Invocation {
     return id;
   }
 
-  public Date getCreatedAt() {
+  public Timestamp getCreatedAt() {
     return createdAt;
   }
 }
