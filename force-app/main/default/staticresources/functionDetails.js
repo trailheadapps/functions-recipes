@@ -3166,7 +3166,6 @@ public class InvocationsManager implements AutoCloseable {
       List<Invocation> invocations = new ArrayList<>();
 
       try (ResultSet rs = stmt.executeQuery()) {
-
         while (rs.next()) {
           Invocation inv = new Invocation(rs.getString("id"), rs.getTimestamp("created_at"));
           invocations.add(inv);
