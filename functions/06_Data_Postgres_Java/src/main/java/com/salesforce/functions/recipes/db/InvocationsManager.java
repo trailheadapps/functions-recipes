@@ -15,7 +15,7 @@ import com.salesforce.functions.recipes.Invocations;
 /**
  * This class manages the invocations stored in a PostgreSQL database.
  */
-public class InvocationsManager {
+public class InvocationsManager implements AutoCloseable {
   // Database queries
   private final String CREATE_INVOCATIONS_TABLE =
       "CREATE TABLE IF NOT EXISTS invocations (id VARCHAR(255) PRIMARY KEY, created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP)";
@@ -24,9 +24,11 @@ public class InvocationsManager {
       "SELECT id, created_at FROM invocations ORDER BY created_at DESC LIMIT ?";
 
   private final String url;
+  private Connection connection;
 
-  public InvocationsManager(String url) {
+  public InvocationsManager(String url) throws SQLException {
     this.url = url;
+    this.connection = getConnection();
   }
 
   /**
@@ -36,8 +38,7 @@ public class InvocationsManager {
    * @throws SQLException
    */
   public void addInvocation(String id) throws SQLException {
-    try (Connection connection = getConnection();
-        PreparedStatement stmt = connection.prepareStatement(INSERT_INVOCATION);) {
+    try (PreparedStatement stmt = connection.prepareStatement(INSERT_INVOCATION);) {
       stmt.setString(1, id);
       stmt.executeUpdate();
     }
@@ -51,8 +52,7 @@ public class InvocationsManager {
    * @throws SQLException
    */
   public Invocations getInvocations(int limit) throws SQLException {
-    try (Connection connection = getConnection();
-        PreparedStatement stmt = connection.prepareStatement(SELECT_INVOCATIONS);) {
+    try (PreparedStatement stmt = connection.prepareStatement(SELECT_INVOCATIONS);) {
       stmt.setInt(1, limit);
       List<Invocation> invocations = new ArrayList<>();
 
@@ -73,7 +73,12 @@ public class InvocationsManager {
    * @return Connection
    * @throws SQLException
    */
-  public Connection getConnection() throws SQLException {
+  protected Connection getConnection() throws SQLException {
+    // If there is already a connection reuse it
+    if (connection != null && !connection.isClosed()) {
+      return connection;
+    }
+
     try {
       Class.forName("org.postgresql.Driver");
       URI dbUri = new URI(this.url);
@@ -87,7 +92,7 @@ public class InvocationsManager {
           "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
 
       // Connect to PostgreSQL instance
-      Connection connection = DriverManager.getConnection(dbUrl, username, password);
+      connection = DriverManager.getConnection(dbUrl, username, password);
 
       // Create a invocations table if it doesn't exist
       // Note: It is recommended to create this table outside the function execution
@@ -97,6 +102,13 @@ public class InvocationsManager {
       return connection;
     } catch (URISyntaxException | ClassNotFoundException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public void close() throws Exception {
+    if (connection != null) {
+      connection.close();
     }
   }
 }

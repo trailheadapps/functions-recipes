@@ -297,6 +297,12 @@ public class FunctionInput {
   public int getLength() {
     return length;
   }
+
+  @Override
+  public String toString() {
+    return "FunctionInput [latitude=" + latitude + ", longitude=" + longitude + ", length=" + length
+        + "]";
+  }
 }
 `
               },
@@ -1289,8 +1295,8 @@ public class FunctionInput {
 
   public FunctionInput() {}
 
-  public FunctionInput(
-      String name, String accountNumber, String industry, String type, String website) {
+  public FunctionInput(String name, String accountNumber, String industry, String type,
+      String website) {
     this.name = name;
     this.accountNumber = accountNumber;
     this.industry = industry;
@@ -1316,6 +1322,12 @@ public class FunctionInput {
 
   public String getWebsite() {
     return this.website;
+  }
+
+  @Override
+  public String toString() {
+    return "FunctionInput [name=" + this.name + ", accountNumber=" + this.accountNumber
+        + ", industry=" + this.industry + ", type=" + this.type + ", website=" + this.website + "]";
   }
 }
 `
@@ -1933,8 +1945,8 @@ public class FunctionInput {
 
   public FunctionInput() {}
 
-  public FunctionInput(
-      String accountName, String firstName, String lastName, String subject, String description) {
+  public FunctionInput(String accountName, String firstName, String lastName, String subject,
+      String description) {
     this.accountName = accountName;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -1960,6 +1972,13 @@ public class FunctionInput {
 
   public String getDescription() {
     return this.description;
+  }
+
+  @Override
+  public String toString() {
+    return "FunctionInput [accountName=" + this.accountName + ", firstName=" + this.firstName
+        + ", lastName=" + this.lastName + ", subject=" + this.subject + ", description="
+        + this.description + "]";
   }
 }
 `
@@ -2984,27 +3003,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Connects to a PostgreSQL instance and perform two operations:
- * 1. Insert a new row into the "invocations" table with an invocation ID
- * 2. Query the "invocations" table for all the invocation IDs
+ * Connects to a PostgreSQL instance and perform two operations: 1. Insert a new row into the
+ * "invocations" table with an invocation ID 2. Query the "invocations" table for all the invocation
+ * IDs
  */
 public class PostgresJavaFunction implements SalesforceFunction<FunctionInput, Invocations> {
   private static final Logger LOGGER = LoggerFactory.getLogger(PostgresJavaFunction.class);
-  private InvocationsManager invocationsManager;
 
   @Override
-  public Invocations apply(InvocationEvent<FunctionInput> event, Context context)
-      throws Exception {
+  public Invocations apply(InvocationEvent<FunctionInput> event, Context context) throws Exception {
 
     LOGGER.info("Invoked with input: {}", event.getData());
 
-    try {
-      Integer limit = event.getData().getLimit();
+    try (InvocationsManager invocationsManager =
+        new InvocationsManager(Environment.getDatabaseUrl())) {
 
-      // If invocationsManager isn't set, instantiate a new one (Useful for testing)
-      if (invocationsManager == null) {
-        invocationsManager = new InvocationsManager(Environment.getDatabaseUrl());
-      }
+      Integer limit = event.getData().getLimit();
 
       // Insert a new row into the "invocations" table with an invocation ID
       invocationsManager.addInvocation(context.getId());
@@ -3020,14 +3034,6 @@ public class PostgresJavaFunction implements SalesforceFunction<FunctionInput, I
       LOGGER.error("Error while connecting to the database", e);
       throw e;
     }
-  }
-
-  /**
-   * This method is used for testing purposes only.
-   * @param invocationsManager
-   */
-  public void setInvocationsManager(InvocationsManager invocationsManager) {
-    this.invocationsManager = invocationsManager;
   }
 }
 `
@@ -3045,6 +3051,11 @@ public class FunctionInput {
 
   public void setLimit(Integer limit) {
     this.limit = limit;
+  }
+
+  @Override
+  public String toString() {
+    return "FunctionInput [limit=" + limit + "]";
   }
 }
 `
@@ -3072,14 +3083,14 @@ public class Invocations {
                 name: "Invocation.java",
                 body: `package com.salesforce.functions.recipes;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Invocation {
 
   private String id;
-  private Date createdAt;
+  private Timestamp createdAt;
 
-  public Invocation(String id, Date date) {
+  public Invocation(String id, Timestamp date) {
     this.id = id;
     this.createdAt = date;
   }
@@ -3088,7 +3099,7 @@ public class Invocation {
     return id;
   }
 
-  public Date getCreatedAt() {
+  public Timestamp getCreatedAt() {
     return createdAt;
   }
 }
@@ -3113,18 +3124,20 @@ import com.salesforce.functions.recipes.Invocations;
 /**
  * This class manages the invocations stored in a PostgreSQL database.
  */
-public class InvocationsManager {
+public class InvocationsManager implements AutoCloseable {
   // Database queries
   private final String CREATE_INVOCATIONS_TABLE =
-      "CREATE TABLE IF NOT EXISTS invocations (id VARCHAR(255) PRIMARY KEY,created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP";
+      "CREATE TABLE IF NOT EXISTS invocations (id VARCHAR(255) PRIMARY KEY, created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP)";
   private final String INSERT_INVOCATION = "INSERT INTO invocations (id) VALUES (?)";
   private final String SELECT_INVOCATIONS =
       "SELECT id, created_at FROM invocations ORDER BY created_at DESC LIMIT ?";
 
   private final String url;
+  private Connection connection;
 
-  public InvocationsManager(String url) {
+  public InvocationsManager(String url) throws SQLException {
     this.url = url;
+    this.connection = getConnection();
   }
 
   /**
@@ -3134,8 +3147,7 @@ public class InvocationsManager {
    * @throws SQLException
    */
   public void addInvocation(String id) throws SQLException {
-    try (Connection connection = getConnection();
-        PreparedStatement stmt = connection.prepareStatement(INSERT_INVOCATION);) {
+    try (PreparedStatement stmt = connection.prepareStatement(INSERT_INVOCATION);) {
       stmt.setString(1, id);
       stmt.executeUpdate();
     }
@@ -3149,15 +3161,16 @@ public class InvocationsManager {
    * @throws SQLException
    */
   public Invocations getInvocations(int limit) throws SQLException {
-    try (Connection connection = getConnection();
-        PreparedStatement stmt = connection.prepareStatement(SELECT_INVOCATIONS);
-        ResultSet rs = stmt.executeQuery()) {
+    try (PreparedStatement stmt = connection.prepareStatement(SELECT_INVOCATIONS);) {
       stmt.setInt(1, limit);
       List<Invocation> invocations = new ArrayList<>();
 
-      while (rs.next()) {
-        Invocation inv = new Invocation(rs.getString("id"), rs.getDate("created_at"));
-        invocations.add(inv);
+      try (ResultSet rs = stmt.executeQuery()) {
+
+        while (rs.next()) {
+          Invocation inv = new Invocation(rs.getString("id"), rs.getTimestamp("created_at"));
+          invocations.add(inv);
+        }
       }
       return new Invocations(invocations);
     }
@@ -3169,7 +3182,12 @@ public class InvocationsManager {
    * @return Connection
    * @throws SQLException
    */
-  public Connection getConnection() throws SQLException {
+  protected Connection getConnection() throws SQLException {
+    // If there is already a connection reuse it
+    if (connection != null && !connection.isClosed()) {
+      return connection;
+    }
+
     try {
       Class.forName("org.postgresql.Driver");
       URI dbUri = new URI(this.url);
@@ -3183,7 +3201,7 @@ public class InvocationsManager {
           "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
 
       // Connect to PostgreSQL instance
-      Connection connection = DriverManager.getConnection(dbUrl, username, password);
+      connection = DriverManager.getConnection(dbUrl, username, password);
 
       // Create a invocations table if it doesn't exist
       // Note: It is recommended to create this table outside the function execution
@@ -3193,6 +3211,13 @@ public class InvocationsManager {
       return connection;
     } catch (URISyntaxException | ClassNotFoundException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public void close() throws Exception {
+    if (connection != null) {
+      connection.close();
     }
   }
 }
@@ -3228,16 +3253,17 @@ public class Environment {
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import java.sql.Date;
-import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Test;
+import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import com.salesforce.functions.jvm.sdk.Context;
 import com.salesforce.functions.jvm.sdk.InvocationEvent;
@@ -3248,51 +3274,76 @@ public class FunctionTest {
 
   private final String INVOCATION_ID = "c4f3c4f3-c4f3-c4f3-c4f3-c0ff33c0ff33";
   private final List<Invocation> INVOCATIONS = new ArrayList<Invocation>(
-      Arrays.asList(new Invocation(INVOCATION_ID, Date.valueOf("2022-11-24")),
-          new Invocation("7e2b97ba-8950-4e83-90c9-441b04b30737", Date.valueOf("2022-11-25"))));
+      Arrays.asList(new Invocation(INVOCATION_ID, Timestamp.valueOf("2022-11-24 12:30:00")),
+          new Invocation("7e2b97ba-8950-4e83-90c9-441b04b30737",
+              Timestamp.valueOf("2022-11-25 11:11:00"))));
 
   @Test
   public void testSuccess() throws Exception {
     PostgresJavaFunction function = new PostgresJavaFunction();
-
-    // Create a mock of the InvocationsManager
-    InvocationsManager invocationsManager = createInvocationsManagerMock();
-    function.setInvocationsManager(invocationsManager);
-
     FunctionInput input = new FunctionInput();
     input.setLimit(2);
 
-    Invocations invocations = function.apply(createEventMock(input), createContextMock());
-    verify(invocationsManager, times(1)).addInvocation(INVOCATION_ID);
-    assertEquals(invocations.getInvocations().size(), 2);
-    assertEquals(invocations.getInvocations().get(0).getId(), INVOCATION_ID);
-    assertEquals(invocations.getInvocations(), INVOCATIONS);
+    // Create a mock of the InvocationsManager
+    try (MockedConstruction<InvocationsManager> mocked =
+        mockConstruction(InvocationsManager.class, (mock, context) -> {
+          context.arguments().forEach(arg -> {
+            if (arg instanceof String) {
+              mockStatic(Environment.class).when(Environment::getDatabaseUrl)
+                  .thenReturn("postgres://localhost:5432");
+            }
+          });
+
+          verify(mock, times(1)).addInvocation(INVOCATION_ID);
+          verify(mock, times(1)).getInvocations(input.getLimit());
+          when(mock.getInvocations(2)).thenReturn(new Invocations(INVOCATIONS));
+          Invocations invocations = function.apply(createEventMock(input), createContextMock());
+          assertEquals(invocations.getInvocations().size(), 2);
+          assertEquals(invocations.getInvocations().get(0).getId(), INVOCATION_ID);
+          assertEquals(invocations.getInvocations(), INVOCATIONS);
+        });) {
+    }
   }
 
   @Test
-  public void testNoUrl() throws Exception {
+  public void testNoUrl() {
     PostgresJavaFunction function = new PostgresJavaFunction();
 
-    // It should fail when the Environment class returns an empty URL
-    assertThrows(IllegalStateException.class, () -> {
-      function.apply(createEventMock(new FunctionInput()), createContextMock());
-    });
+    // Create a mock of the InvocationsManager
+    try (MockedConstruction<InvocationsManager> mocked =
+        mockConstruction(InvocationsManager.class, (mock, context) -> {
+          context.arguments().forEach(arg -> {
+            if (arg instanceof String) {
+              // It should throw an exception if the URL is not set
+              mockStatic(Environment.class).when(Environment::getDatabaseUrl)
+                  .thenThrow(IllegalStateException.class);
+            }
+          });
+          // It should fail when the Environment class returns an empty URL
+          assertThrows(IllegalStateException.class, () -> {
+            function.apply(createEventMock(new FunctionInput()), createContextMock());
+          });
+        })) {}
   }
 
   @Test
-  public void testEnvironmentSuccess() throws Exception {
+  public void testEnvironmentSuccess() {
     try (MockedStatic<Environment> mockEnvironment = mockStatic(Environment.class)) {
-      mockEnvironment.when(Environment::getDatabaseUrl).thenReturn("jdbc:postgresql://localhost:5432/postgres");
+      mockEnvironment.when(Environment::getDatabaseUrl)
+          .thenReturn("jdbc:postgresql://localhost:5432/postgres");
       assertEquals(Environment.getDatabaseUrl(), "jdbc:postgresql://localhost:5432/postgres");
     }
   }
 
   @Test
   public void testEnvironmentFail() {
-    // It should fail when the Environment class returns an empty URL
-    assertThrows(IllegalStateException.class, () -> {
-      Environment.getDatabaseUrl();
-    });
+    // It should fail when the Environment class throws an exception
+    try (MockedStatic<Environment> mockEnvironment = mockStatic(Environment.class)) {
+      mockEnvironment.when(Environment::getDatabaseUrl).thenThrow(IllegalStateException.class);
+      assertThrows(IllegalStateException.class, () -> {
+        Environment.getDatabaseUrl();
+      });
+    }
   }
 
   /**
@@ -3317,20 +3368,6 @@ public class FunctionTest {
     InvocationEvent<FunctionInput> mockEvent = mock(InvocationEvent.class);
     when(mockEvent.getData()).thenReturn(input);
     return mockEvent;
-  }
-
-  /**
-   * Creates a mock for InvocationsManager
-   * @return InvocationsManager
-   */
-  private InvocationsManager createInvocationsManagerMock() {
-    InvocationsManager mockInvocationsManager = mock(InvocationsManager.class);
-    try {
-      when(mockInvocationsManager.getInvocations(2)).thenReturn(new Invocations(INVOCATIONS));
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
-    }
-    return mockInvocationsManager;
   }
 }
 `
@@ -3702,6 +3739,11 @@ public class FunctionInput {
 
   public void setLimit(Integer limit) {
     this.limit = limit;
+  }
+
+  @Override
+  public String toString() {
+    return "FunctionInput [limit=" + limit + "]";
   }
 }
 `

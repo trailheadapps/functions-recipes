@@ -1,6 +1,5 @@
 package com.salesforce.functions.recipes;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 public class Invocation {
