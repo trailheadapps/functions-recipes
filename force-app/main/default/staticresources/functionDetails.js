@@ -3689,19 +3689,14 @@ import org.slf4j.LoggerFactory;
  */
 public class RedisJavaFunction implements SalesforceFunction<FunctionInput, Invocations> {
   private static final Logger LOGGER = LoggerFactory.getLogger(RedisJavaFunction.class);
-  private InvocationsManager invocationsManager;
 
   @Override
   public Invocations apply(InvocationEvent<FunctionInput> event, Context context) throws Exception {
 
     LOGGER.info("Invoked with input: {}", event.getData());
 
-    try {
+    try (InvocationsManager invocationsManager = new InvocationsManager(Environment.getDatabaseUrl())) {
       Integer limit = event.getData().getLimit();
-
-      if (invocationsManager == null) {
-        invocationsManager = new InvocationsManager(Environment.getDatabaseUrl());
-      }
 
       // Insert a new invocation to the "invocations" list
       // Also set the last invocation ID and last invocation time
@@ -3714,14 +3709,6 @@ public class RedisJavaFunction implements SalesforceFunction<FunctionInput, Invo
       LOGGER.error("Error while connecting to the database", e);
       throw e;
     }
-  }
-
-  /**
-   * This method is used for testing purposes only.
-   * @param invocationsManager
-   */
-  public void setInvocationsManager(InvocationsManager invocationsManager) {
-    this.invocationsManager = invocationsManager;
   }
 }
 `
@@ -3807,12 +3794,14 @@ import redis.clients.jedis.params.SetParams;
 /**
  * This class manages the invocations stored in a Redis database.
  */
-public class InvocationsManager {
+public class InvocationsManager implements AutoCloseable {
   private final static long FIVE_MINUTES = 5 * 60;
   private final String url;
+  private Jedis connection;
 
   public InvocationsManager(String url) {
     this.url = url;
+    this.connection = getConnection();
   }
 
   /**
@@ -3821,20 +3810,18 @@ public class InvocationsManager {
    * @param id The invocation ID.
    */
   public void addInvocation(String id) {
-    try (Jedis jedis = getConnection()) {
-      jedis.set("lastInvocationId", id, new SetParams().ex(FIVE_MINUTES));
-      LocalDateTime now = LocalDateTime.now();
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-      String formattedDateTime = now.format(formatter);
-      jedis.set("lastInvocationTime", formattedDateTime, new SetParams().ex(FIVE_MINUTES));
+    connection.set("lastInvocationId", id, new SetParams().ex(FIVE_MINUTES));
+    LocalDateTime now = LocalDateTime.now();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    String formattedDateTime = now.format(formatter);
+    connection.set("lastInvocationTime", formattedDateTime, new SetParams().ex(FIVE_MINUTES));
 
-      jedis.lpush("invocations", id);
+    connection.lpush("invocations", id);
 
-      long ttl = jedis.ttl("invocations");
-      if (ttl < 0) {
-        jedis.expire("invocations", FIVE_MINUTES);
+    long ttl = connection.ttl("invocations");
+    if (ttl < 0) {
+      connection.expire("invocations", FIVE_MINUTES);
 
-      }
     }
   }
 
@@ -3845,18 +3832,16 @@ public class InvocationsManager {
    * @return Invocations
    */
   public Invocations getInvocations(Integer limit) {
-    try (Jedis jedis = getConnection()) {
-      List<String> ids = jedis.lrange("invocations", 0, limit - 1);
-      Invocations invocations = new Invocations();
-      invocations.setInvocations(ids);
+    List<String> ids = connection.lrange("invocations", 0, limit - 1);
+    Invocations invocations = new Invocations();
+    invocations.setInvocations(ids);
 
-      String lastInvocationId = jedis.get("lastInvocationId");
-      String lastInvocationTime = jedis.get("lastInvocationTime");
+    String lastInvocationId = connection.get("lastInvocationId");
+    String lastInvocationTime = connection.get("lastInvocationTime");
 
-      invocations.setLastInvocationId(lastInvocationId);
-      invocations.setLastInvocationTime(lastInvocationTime);
-      return invocations;
-    }
+    invocations.setLastInvocationId(lastInvocationId);
+    invocations.setLastInvocationTime(lastInvocationTime);
+    return invocations;
   }
 
   /**
@@ -3864,7 +3849,11 @@ public class InvocationsManager {
    *
    * @return Jedis
    */
-  private Jedis getConnection() {
+  protected Jedis getConnection() {
+    if (connection != null && connection.isConnected()) {
+      return connection;
+    }
+
     try {
       TrustManager bogusTrustManager = new X509TrustManager() {
         public X509Certificate[] getAcceptedIssuers() {
@@ -3882,11 +3871,18 @@ public class InvocationsManager {
 
       HostnameVerifier bogusHostnameVerifier = (hostname, session) -> true;
 
-      return new Jedis(URI.create(this.url), sslContext.getSocketFactory(),
+      connection = new Jedis(URI.create(this.url), sslContext.getSocketFactory(),
           sslContext.getDefaultSSLParameters(), bogusHostnameVerifier);
-
+      return connection;
     } catch (NoSuchAlgorithmException | KeyManagementException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public void close() {
+    if (connection != null) {
+      connection.close();
     }
   }
 }
@@ -3921,6 +3917,7 @@ public class Environment {
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -3929,6 +3926,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Test;
+import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import com.salesforce.functions.jvm.sdk.Context;
 import com.salesforce.functions.jvm.sdk.InvocationEvent;
@@ -3944,29 +3942,58 @@ public class FunctionTest {
   @Test
   public void testSuccess() throws Exception {
     RedisJavaFunction function = new RedisJavaFunction();
-
-    // Create a mock of the InvocationsManager
-    InvocationsManager invocationsManager = createInvocationsManagerMock();
-    function.setInvocationsManager(invocationsManager);
-
     FunctionInput input = new FunctionInput();
     input.setLimit(2);
 
-    Invocations invocations = function.apply(createEventMock(input), createContextMock());
-    verify(invocationsManager, times(1)).addInvocation(INVOCATION_ID);
-    assertEquals(invocations.getInvocations().size(), 2);
-    assertEquals(invocations.getInvocations().get(0), INVOCATION_ID);
-    assertEquals(invocations.getInvocations(), INVOCATIONS);
+    // Create a mock of the InvocationsManager
+    try (MockedConstruction<InvocationsManager> mocked =
+        mockConstruction(InvocationsManager.class, (mock, context) -> {
+          context.arguments().forEach(arg -> {
+            if (arg instanceof String) {
+              mockStatic(Environment.class).when(Environment::getDatabaseUrl)
+                  .thenReturn("redis://localhost:6379");
+            }
+          });
+
+          verify(mock, times(1)).addInvocation(INVOCATION_ID);
+          verify(mock, times(1)).getInvocations(input.getLimit());
+
+          // Setup getInvocations Mock
+          Invocations invocations = new Invocations();
+          invocations.setInvocations(INVOCATIONS);
+          invocations.setLastInvocationId(INVOCATION_ID);
+          invocations.setLastInvocationTime("2022-11-24 00:00:00");
+          when(mock.getInvocations(2)).thenReturn(invocations);
+
+          // Invoke Function
+          Invocations result = function.apply(createEventMock(input), createContextMock());
+          assertEquals(result.getInvocations().size(), 2);
+          assertEquals(result.getInvocations().get(0), INVOCATION_ID);
+          assertEquals(result.getInvocations(), INVOCATIONS);
+        });) {
+    }
   }
 
   @Test
-  public void testNoUrl() throws Exception {
+  public void testNoUrl() {
     RedisJavaFunction function = new RedisJavaFunction();
 
-    // It should fail when the Environment class returns an empty URL
-    assertThrows(IllegalStateException.class, () -> {
-      function.apply(createEventMock(new FunctionInput()), createContextMock());
-    });
+    // Create a mock of the InvocationsManager
+    try (MockedConstruction<InvocationsManager> mocked =
+        mockConstruction(InvocationsManager.class, (mock, context) -> {
+          context.arguments().forEach(arg -> {
+            if (arg instanceof String) {
+              // It should throw an exception if the URL is not set
+              mockStatic(Environment.class).when(Environment::getDatabaseUrl)
+                  .thenThrow(IllegalStateException.class);
+            }
+          });
+          // It should fail when the Environment class returns an empty URL
+          assertThrows(IllegalStateException.class, () -> {
+            function.apply(createEventMock(new FunctionInput()), createContextMock());
+          });
+        })) {
+    }
   }
 
   @Test
@@ -4007,21 +4034,6 @@ public class FunctionTest {
     InvocationEvent<FunctionInput> mockEvent = mock(InvocationEvent.class);
     when(mockEvent.getData()).thenReturn(input);
     return mockEvent;
-  }
-
-  /**
-   * Creates a mock for InvocationsManager
-   *
-   * @return InvocationsManager
-   */
-  private InvocationsManager createInvocationsManagerMock() {
-    InvocationsManager mockInvocationsManager = mock(InvocationsManager.class);
-    Invocations invocations = new Invocations();
-    invocations.setInvocations(INVOCATIONS);
-    invocations.setLastInvocationId(INVOCATION_ID);
-    invocations.setLastInvocationTime("2022-11-24 00:00:00");
-    when(mockInvocationsManager.getInvocations(2)).thenReturn(invocations);
-    return mockInvocationsManager;
   }
 }
 `
