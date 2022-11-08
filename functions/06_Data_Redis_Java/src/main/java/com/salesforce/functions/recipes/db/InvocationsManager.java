@@ -28,46 +28,51 @@ public class InvocationsManager {
 
   /**
    * Add an invocation to the database.
+   *
    * @param id The invocation ID.
    */
   public void addInvocation(String id) {
-    Jedis jedis = getConnection();
+    try (Jedis jedis = getConnection()) {
+      jedis.set("lastInvocationId", id, new SetParams().ex(FIVE_MINUTES));
+      LocalDateTime now = LocalDateTime.now();
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+      String formattedDateTime = now.format(formatter);
+      jedis.set("lastInvocationTime", formattedDateTime, new SetParams().ex(FIVE_MINUTES));
 
-    jedis.set("lastInvocationId", id, new SetParams().ex(FIVE_MINUTES));
-    LocalDateTime now = LocalDateTime.now();
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    String formattedDateTime = now.format(formatter);
-    jedis.set("lastInvocationTime", formattedDateTime, new SetParams().ex(FIVE_MINUTES));
+      jedis.lpush("invocations", id);
 
-    jedis.lpush("invocations", id);
+      long ttl = jedis.ttl("invocations");
+      if (ttl < 0) {
+        jedis.expire("invocations", FIVE_MINUTES);
 
-    long ttl = jedis.ttl("invocations");
-    if (ttl < 0) {
-      jedis.expire("invocations", FIVE_MINUTES);
+      }
     }
   }
 
   /**
    * Get the last invocations from the database.
+   *
    * @param limit The maximum number of invocations to return.
    * @return Invocations
    */
   public Invocations getInvocations(Integer limit) {
-    Jedis jedis = getConnection();
-    List<String> ids = jedis.lrange("invocations", 0, limit - 1);
-    Invocations invocations = new Invocations();
-    invocations.setInvocations(ids);
+    try (Jedis jedis = getConnection()) {
+      List<String> ids = jedis.lrange("invocations", 0, limit - 1);
+      Invocations invocations = new Invocations();
+      invocations.setInvocations(ids);
 
-    String lastInvocationId = jedis.get("lastInvocationId");
-    String lastInvocationTime = jedis.get("lastInvocationTime");
+      String lastInvocationId = jedis.get("lastInvocationId");
+      String lastInvocationTime = jedis.get("lastInvocationTime");
 
-    invocations.setLastInvocationId(lastInvocationId);
-    invocations.setLastInvocationTime(lastInvocationTime);
-    return invocations;
+      invocations.setLastInvocationId(lastInvocationId);
+      invocations.setLastInvocationTime(lastInvocationTime);
+      return invocations;
+    }
   }
 
   /**
    * Get a connection to the Redis database.
+   *
    * @return Jedis
    */
   private Jedis getConnection() {

@@ -47,4 +47,3 @@ $RECYCLE.BIN/
 
 # Environment
 .env
-**/functions/.env
