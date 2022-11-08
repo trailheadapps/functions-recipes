@@ -1,10 +1,10 @@
 {
   "name": "redis-js-function",
-  "private": "true",
+  "private": true,
   "version": "1.0.0",
   "type": "module",
   "author": "salesforce.com",
-  "description": "TODO",
+  "description": "Connects to a Redis instance, stores the invocation ID, and returns a list of previous invocations.",
   "license": "CC0-1.0",
   "main": "index.js",
   "repository": {
