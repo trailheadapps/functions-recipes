@@ -2767,9 +2767,10 @@ export default async function (event, context, logger) {
   // Get the number of invocations to return
   const limit = event.data.limit ?? 5;
 
+  let client;
   try {
     // Connect to PostgreSQL instance
-    const client = await pgConnect({
+    client = await pgConnect({
       url: process.env.DATABASE_URL
     });
 
@@ -2784,13 +2785,13 @@ export default async function (event, context, logger) {
       [limit]
     );
 
-    // Close the database connection
-    await client.end();
-
     return results;
   } catch (error) {
     logger.error(\`An error ocurred: \${error.message}\`);
     throw error;
+  } finally {
+    // Close the database connection if the client exists
+    if (client) await client.end();
   }
 }
 `
@@ -3387,9 +3388,10 @@ export default async function (event, context, logger) {
   // Get the number of invocations to return
   const limit = event.data.limit ?? 5;
 
+  let client;
   try {
     // Connect to Redis instance
-    const client = await redisConnect({
+    client = await redisConnect({
       url: process.env.REDIS_URL
     });
 
@@ -3418,8 +3420,7 @@ export default async function (event, context, logger) {
     // Get the list of invocations
     const invocations = await client.lRange("invocations", 0, limit - 1);
 
-    // Close the database connection
-    await client.quit();
+
 
     // Return the results
     const results = {
@@ -3431,6 +3432,9 @@ export default async function (event, context, logger) {
   } catch (error) {
     logger.error(\`An error ocurred: \${error.message}\`);
     throw error;
+  } finally {
+    // Close the database connection if the client exists
+    if (client) await client.quit();
   }
 }
 `

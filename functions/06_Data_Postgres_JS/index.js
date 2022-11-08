@@ -23,9 +23,10 @@ export default async function (event, context, logger) {
   // Get the number of invocations to return
   const limit = event.data.limit ?? 5;
 
+  let client;
   try {
     // Connect to PostgreSQL instance
-    const client = await pgConnect({
+    client = await pgConnect({
       url: process.env.DATABASE_URL
     });
 
@@ -40,12 +41,12 @@ export default async function (event, context, logger) {
       [limit]
     );
 
-    // Close the database connection
-    await client.end();
-
     return results;
   } catch (error) {
     logger.error(`An error ocurred: ${error.message}`);
     throw error;
+  } finally {
+    // Close the database connection if the client exists
+    if (client) await client.end();
   }
 }
