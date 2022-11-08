@@ -3,6 +3,7 @@ package com.salesforce.functions.recipes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Test;
+import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import com.salesforce.functions.jvm.sdk.Context;
 import com.salesforce.functions.jvm.sdk.InvocationEvent;
@@ -26,29 +28,58 @@ public class FunctionTest {
   @Test
   public void testSuccess() throws Exception {
     RedisJavaFunction function = new RedisJavaFunction();
-
-    // Create a mock of the InvocationsManager
-    InvocationsManager invocationsManager = createInvocationsManagerMock();
-    function.setInvocationsManager(invocationsManager);
-
     FunctionInput input = new FunctionInput();
     input.setLimit(2);
 
-    Invocations invocations = function.apply(createEventMock(input), createContextMock());
-    verify(invocationsManager, times(1)).addInvocation(INVOCATION_ID);
-    assertEquals(invocations.getInvocations().size(), 2);
-    assertEquals(invocations.getInvocations().get(0), INVOCATION_ID);
-    assertEquals(invocations.getInvocations(), INVOCATIONS);
+    // Create a mock of the InvocationsManager
+    try (MockedConstruction<InvocationsManager> mocked =
+        mockConstruction(InvocationsManager.class, (mock, context) -> {
+          context.arguments().forEach(arg -> {
+            if (arg instanceof String) {
+              mockStatic(Environment.class).when(Environment::getDatabaseUrl)
+                  .thenReturn("redis://localhost:6379");
+            }
+          });
+
+          verify(mock, times(1)).addInvocation(INVOCATION_ID);
+          verify(mock, times(1)).getInvocations(input.getLimit());
+
+          // Setup getInvocations Mock
+          Invocations invocations = new Invocations();
+          invocations.setInvocations(INVOCATIONS);
+          invocations.setLastInvocationId(INVOCATION_ID);
+          invocations.setLastInvocationTime("2022-11-24 00:00:00");
+          when(mock.getInvocations(2)).thenReturn(invocations);
+
+          // Invoke Function
+          Invocations result = function.apply(createEventMock(input), createContextMock());
+          assertEquals(result.getInvocations().size(), 2);
+          assertEquals(result.getInvocations().get(0), INVOCATION_ID);
+          assertEquals(result.getInvocations(), INVOCATIONS);
+        });) {
+    }
   }
 
   @Test
-  public void testNoUrl() throws Exception {
+  public void testNoUrl() {
     RedisJavaFunction function = new RedisJavaFunction();
 
-    // It should fail when the Environment class returns an empty URL
-    assertThrows(IllegalStateException.class, () -> {
-      function.apply(createEventMock(new FunctionInput()), createContextMock());
-    });
+    // Create a mock of the InvocationsManager
+    try (MockedConstruction<InvocationsManager> mocked =
+        mockConstruction(InvocationsManager.class, (mock, context) -> {
+          context.arguments().forEach(arg -> {
+            if (arg instanceof String) {
+              // It should throw an exception if the URL is not set
+              mockStatic(Environment.class).when(Environment::getDatabaseUrl)
+                  .thenThrow(IllegalStateException.class);
+            }
+          });
+          // It should fail when the Environment class returns an empty URL
+          assertThrows(IllegalStateException.class, () -> {
+            function.apply(createEventMock(new FunctionInput()), createContextMock());
+          });
+        })) {
+    }
   }
 
   @Test
@@ -89,20 +120,5 @@ public class FunctionTest {
     InvocationEvent<FunctionInput> mockEvent = mock(InvocationEvent.class);
     when(mockEvent.getData()).thenReturn(input);
     return mockEvent;
-  }
-
-  /**
-   * Creates a mock for InvocationsManager
-   *
-   * @return InvocationsManager
-   */
-  private InvocationsManager createInvocationsManagerMock() {
-    InvocationsManager mockInvocationsManager = mock(InvocationsManager.class);
-    Invocations invocations = new Invocations();
-    invocations.setInvocations(INVOCATIONS);
-    invocations.setLastInvocationId(INVOCATION_ID);
-    invocations.setLastInvocationTime("2022-11-24 00:00:00");
-    when(mockInvocationsManager.getInvocations(2)).thenReturn(invocations);
-    return mockInvocationsManager;
   }
 }

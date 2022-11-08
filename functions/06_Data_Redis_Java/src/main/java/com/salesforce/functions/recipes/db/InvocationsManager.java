@@ -18,12 +18,14 @@ import redis.clients.jedis.params.SetParams;
 /**
  * This class manages the invocations stored in a Redis database.
  */
-public class InvocationsManager {
+public class InvocationsManager implements AutoCloseable {
   private final static long FIVE_MINUTES = 5 * 60;
   private final String url;
+  private Jedis connection;
 
   public InvocationsManager(String url) {
     this.url = url;
+    this.connection = getConnection();
   }
 
   /**
@@ -32,20 +34,18 @@ public class InvocationsManager {
    * @param id The invocation ID.
    */
   public void addInvocation(String id) {
-    try (Jedis jedis = getConnection()) {
-      jedis.set("lastInvocationId", id, new SetParams().ex(FIVE_MINUTES));
-      LocalDateTime now = LocalDateTime.now();
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-      String formattedDateTime = now.format(formatter);
-      jedis.set("lastInvocationTime", formattedDateTime, new SetParams().ex(FIVE_MINUTES));
+    connection.set("lastInvocationId", id, new SetParams().ex(FIVE_MINUTES));
+    LocalDateTime now = LocalDateTime.now();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    String formattedDateTime = now.format(formatter);
+    connection.set("lastInvocationTime", formattedDateTime, new SetParams().ex(FIVE_MINUTES));
 
-      jedis.lpush("invocations", id);
+    connection.lpush("invocations", id);
 
-      long ttl = jedis.ttl("invocations");
-      if (ttl < 0) {
-        jedis.expire("invocations", FIVE_MINUTES);
+    long ttl = connection.ttl("invocations");
+    if (ttl < 0) {
+      connection.expire("invocations", FIVE_MINUTES);
 
-      }
     }
   }
 
@@ -56,18 +56,16 @@ public class InvocationsManager {
    * @return Invocations
    */
   public Invocations getInvocations(Integer limit) {
-    try (Jedis jedis = getConnection()) {
-      List<String> ids = jedis.lrange("invocations", 0, limit - 1);
-      Invocations invocations = new Invocations();
-      invocations.setInvocations(ids);
+    List<String> ids = connection.lrange("invocations", 0, limit - 1);
+    Invocations invocations = new Invocations();
+    invocations.setInvocations(ids);
 
-      String lastInvocationId = jedis.get("lastInvocationId");
-      String lastInvocationTime = jedis.get("lastInvocationTime");
+    String lastInvocationId = connection.get("lastInvocationId");
+    String lastInvocationTime = connection.get("lastInvocationTime");
 
-      invocations.setLastInvocationId(lastInvocationId);
-      invocations.setLastInvocationTime(lastInvocationTime);
-      return invocations;
-    }
+    invocations.setLastInvocationId(lastInvocationId);
+    invocations.setLastInvocationTime(lastInvocationTime);
+    return invocations;
   }
 
   /**
@@ -75,7 +73,11 @@ public class InvocationsManager {
    *
    * @return Jedis
    */
-  private Jedis getConnection() {
+  protected Jedis getConnection() {
+    if (connection != null && connection.isConnected()) {
+      return connection;
+    }
+
     try {
       TrustManager bogusTrustManager = new X509TrustManager() {
         public X509Certificate[] getAcceptedIssuers() {
@@ -93,11 +95,18 @@ public class InvocationsManager {
 
       HostnameVerifier bogusHostnameVerifier = (hostname, session) -> true;
 
-      return new Jedis(URI.create(this.url), sslContext.getSocketFactory(),
+      connection = new Jedis(URI.create(this.url), sslContext.getSocketFactory(),
           sslContext.getDefaultSSLParameters(), bogusHostnameVerifier);
-
+      return connection;
     } catch (NoSuchAlgorithmException | KeyManagementException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public void close() {
+    if (connection != null) {
+      connection.close();
     }
   }
 }

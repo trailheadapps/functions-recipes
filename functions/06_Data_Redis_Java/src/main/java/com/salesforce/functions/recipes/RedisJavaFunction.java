@@ -14,19 +14,14 @@ import org.slf4j.LoggerFactory;
  */
 public class RedisJavaFunction implements SalesforceFunction<FunctionInput, Invocations> {
   private static final Logger LOGGER = LoggerFactory.getLogger(RedisJavaFunction.class);
-  private InvocationsManager invocationsManager;
 
   @Override
   public Invocations apply(InvocationEvent<FunctionInput> event, Context context) throws Exception {
 
     LOGGER.info("Invoked with input: {}", event.getData());
 
-    try {
+    try (InvocationsManager invocationsManager = new InvocationsManager(Environment.getDatabaseUrl())) {
       Integer limit = event.getData().getLimit();
-
-      if (invocationsManager == null) {
-        invocationsManager = new InvocationsManager(Environment.getDatabaseUrl());
-      }
 
       // Insert a new invocation to the "invocations" list
       // Also set the last invocation ID and last invocation time
@@ -39,13 +34,5 @@ public class RedisJavaFunction implements SalesforceFunction<FunctionInput, Invo
       LOGGER.error("Error while connecting to the database", e);
       throw e;
     }
-  }
-
-  /**
-   * This method is used for testing purposes only.
-   * @param invocationsManager
-   */
-  public void setInvocationsManager(InvocationsManager invocationsManager) {
-    this.invocationsManager = invocationsManager;
   }
 }
