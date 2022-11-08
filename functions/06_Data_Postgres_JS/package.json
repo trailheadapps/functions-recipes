@@ -14,7 +14,7 @@
     "node": "^16.9"
   },
   "scripts": {
-    "lint": "eslint . --ext .js --config .eslintrc",
+    "lint": "eslint . --ext .js",
     "test": "mocha --loader=quibble"
   },
   "devDependencies": {

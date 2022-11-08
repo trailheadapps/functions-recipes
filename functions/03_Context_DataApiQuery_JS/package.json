@@ -13,7 +13,7 @@
     "node": "^16.0"
   },
   "scripts": {
-    "lint": "eslint . --ext .js --config .eslintrc",
+    "lint": "eslint . --ext .js",
     "test": "mocha"
   },
   "devDependencies": {
