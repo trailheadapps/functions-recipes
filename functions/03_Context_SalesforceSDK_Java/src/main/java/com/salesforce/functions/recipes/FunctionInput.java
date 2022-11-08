@@ -9,8 +9,8 @@ public class FunctionInput {
 
   public FunctionInput() {}
 
-  public FunctionInput(
-      String name, String accountNumber, String industry, String type, String website) {
+  public FunctionInput(String name, String accountNumber, String industry, String type,
+      String website) {
     this.name = name;
     this.accountNumber = accountNumber;
     this.industry = industry;
@@ -36,5 +36,11 @@ public class FunctionInput {
 
   public String getWebsite() {
     return this.website;
+  }
+
+  @Override
+  public String toString() {
+    return "FunctionInput [name=" + this.name + ", accountNumber=" + this.accountNumber
+        + ", industry=" + this.industry + ", type=" + this.type + ", website=" + this.website + "]";
   }
 }

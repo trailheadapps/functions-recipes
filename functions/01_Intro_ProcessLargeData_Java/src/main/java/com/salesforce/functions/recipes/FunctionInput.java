@@ -24,4 +24,10 @@ public class FunctionInput {
   public int getLength() {
     return length;
   }
+
+  @Override
+  public String toString() {
+    return "FunctionInput [latitude=" + latitude + ", longitude=" + longitude + ", length=" + length
+        + "]";
+  }
 }
