@@ -106,7 +106,7 @@ public class InvocationsManager implements AutoCloseable {
 
   @Override
   public void close() throws Exception {
-    if (connection != null) {
+    if (connection != null && !connection.isClosed()) {
       connection.close();
     }
   }

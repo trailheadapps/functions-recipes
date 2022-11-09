@@ -9,9 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Connects to a PostgreSQL instance and perform two operations: 1. Insert a new row into the
- * "invocations" table with an invocation ID 2. Query the "invocations" table for all the invocation
- * IDs
+ * Connects to a PostgreSQL instance and perform two operations:
+ * 1. Insert a new row into the "invocations" table with an invocation ID
+ * 2. Query the "invocations" table for all the invocation IDs
  */
 public class PostgresJavaFunction implements SalesforceFunction<FunctionInput, Invocations> {
   private static final Logger LOGGER = LoggerFactory.getLogger(PostgresJavaFunction.class);

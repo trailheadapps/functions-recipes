@@ -10,7 +10,11 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * Describe RedisjavaFunction here.
+ * Connects to a Redis instance and perform the following operations:
+ * 1. Stores the last invocation ID in Redis
+ * 2. Stores the last invocation time in Redis
+ * 3. Adds the invocation ID to a list in Redis
+ * 4. Returns the list of invocation IDs from Redis
  */
 public class RedisJavaFunction implements SalesforceFunction<FunctionInput, Invocations> {
   private static final Logger LOGGER = LoggerFactory.getLogger(RedisJavaFunction.class);
@@ -29,6 +33,7 @@ public class RedisJavaFunction implements SalesforceFunction<FunctionInput, Invo
 
       // Query the "invocations" list for all the invocation IDs
       Invocations invocations = invocationsManager.getInvocations(limit);
+      LOGGER.info("Retrieved {} invocations from the database", invocations.getInvocations().size());
       return invocations;
     } catch (Exception e) {
       LOGGER.error("Error while connecting to the database", e);
