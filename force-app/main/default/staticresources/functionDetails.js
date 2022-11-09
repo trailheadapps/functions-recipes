@@ -1,30 +1,26 @@
-window.functionData = (function () {
-  return {
-    getData: function () {
-      return [
-        {
-          name: "01_Intro_ProcessLargeData",
-          label: "Process Large Data Volumes",
-          subtitle: "Process Large Data Volumes",
-          description:
-            "From a large JSON payload calculates the distance between a supplied point of origin cordinate and the data, sorts it, and returns the nearest x results.",
-          inputs: [
-            { label: "Latitude", name: "latitude", type: "text" },
-            { label: "Longitude", name: "longitude", type: "text" },
-            { label: "Length", name: "length", type: "text" }
-          ],
-          functions: [
-            {
-              name: "01_Intro_ProcessLargeData_JS",
-              label: "Process Large Data - JavaScript",
-              deployment: "functions_recipes.processlargedatajs",
-              language: "JavaScript",
-              files: [
-                {
-                  name: "index.js",
-                  label: "Index",
-                  path: "/",
-                  body: `import { readFileSync } from "node:fs";
+window.functionData = {
+  getData: function () {
+    return [
+      {
+        name: "01_Intro_ProcessLargeData",
+        label: "Process Large Data Volumes",
+        subtitle: "Introduction",
+        description:
+          "From a large JSON payload calculates the distance between a supplied point of origin cordinate and the data, sorts it, and returns the nearest x results.",
+        inputs: [
+          { label: "Latitude", name: "latitude", type: "text" },
+          { label: "Longitude", name: "longitude", type: "text" },
+          { label: "Length", name: "length", type: "text" }
+        ],
+        functions: [
+          {
+            name: "01_Intro_ProcessLargeData_JS",
+            deployment: "functions_recipes.processlargedatajs",
+            language: "JavaScript",
+            files: [
+              {
+                name: "index.js",
+                body: `import { readFileSync } from "node:fs";
 
 // Local Schools Database API by Code.org
 // License: CC BY-NC-SA 4.0
@@ -114,20 +110,76 @@ function distance(latitudeSt, longitudeSt, latitudeSch, longitudeSch) {
   }
 }
 `
-                }
-              ]
-            },
-            {
-              name: "01_Intro_ProcessLargeData_Java",
-              label: "Process Large Data - Java",
-              deployment: "functions_recipes.processlargedatajava",
-              language: "Java",
-              files: [
-                {
-                  name: "ProcessLargeDataFunction.java",
-                  label: "Process Large Data Function",
-                  path: "/",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "index.test.js",
+                body: `import { expect } from "chai";
+import { readFileSync } from "node:fs";
+import { createSandbox } from "sinon";
+
+import execute from "../index.js";
+const payload = JSON.parse(
+  readFileSync(new URL("../data/sample-payload.json", import.meta.url))
+);
+
+/**
+ * processlargedatajs Function unit tests.
+ */
+describe("Unit Tests", () => {
+  let sandbox;
+  let mockContext;
+  let mockLogger;
+
+  beforeEach(() => {
+    mockContext = {
+      logger: { info: () => {} }
+    };
+
+    mockLogger = mockContext.logger;
+    sandbox = createSandbox();
+
+    sandbox.stub(mockLogger, "info");
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
+  it("Invoke ProcessLargeData with valid data", async () => {
+    // Invoke function
+    const results = await execute({ data: payload }, mockContext, mockLogger);
+
+    // Validate
+    expect(results).to.be.not.undefined;
+    expect(results.schools).to.be.an("array");
+    expect(results.schools.length).to.be.eql(payload.length);
+  });
+
+  it("Invoke ProcessLargeData with missing coordinates", async () => {
+    try {
+      // Invoke function with missing coordinates
+      await execute({ data: {} }, mockContext, mockLogger);
+    } catch (err) {
+      expect(mockLogger.info.callCount).to.be.eql(1);
+      expect(err.message).to.match(/provide latitude and longitude/);
+      return;
+    }
+
+    expect(false, "function must throw").to.be.ok;
+  });
+});
+`
+              }
+            ]
+          },
+          {
+            name: "01_Intro_ProcessLargeData_Java",
+            deployment: "functions_recipes.processlargedatajava",
+            language: "Java",
+            files: [
+              {
+                name: "ProcessLargeDataFunction.java",
+                body: `package com.salesforce.functions.recipes;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
@@ -216,12 +268,10 @@ public class ProcessLargeDataFunction implements SalesforceFunction<FunctionInpu
   }
 }
 `
-                },
-                {
-                  name: "FunctionInput.java",
-                  label: "Function Input",
-                  path: "/",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "FunctionInput.java",
+                body: `package com.salesforce.functions.recipes;
 
 public class FunctionInput {
   private double latitude;
@@ -247,14 +297,18 @@ public class FunctionInput {
   public int getLength() {
     return length;
   }
+
+  @Override
+  public String toString() {
+    return "FunctionInput [latitude=" + latitude + ", longitude=" + longitude + ", length=" + length
+        + "]";
+  }
 }
 `
-                },
-                {
-                  name: "FunctionOutput.java",
-                  label: "Function Output",
-                  path: "/",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "FunctionOutput.java",
+                body: `package com.salesforce.functions.recipes;
 
 import java.util.List;
 
@@ -270,12 +324,10 @@ public class FunctionOutput {
   }
 }
 `
-                },
-                {
-                  name: "JsonResponse.java",
-                  label: "JSON Response",
-                  path: "/",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "JsonResponse.java",
+                body: `package com.salesforce.functions.recipes;
 
 import java.util.List;
 
@@ -291,12 +343,10 @@ public class JsonResponse {
   }
 }
 `
-                },
-                {
-                  name: "School.java",
-                  label: "School",
-                  path: "/",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "School.java",
+                body: `package com.salesforce.functions.recipes;
 
 public class School {
   private String name;
@@ -436,39 +486,89 @@ public class School {
   }
 }
 `
-                }
-              ]
-            }
-          ]
-        },
-        {
-          name: "02_InvocationEvent",
-          label: "Invocation Event",
-          subtitle: "Functions Recipes",
-          description: "Receives a payload and returns information about it.",
-          inputs: [
-            {
-              type: "text",
-              name: "name",
-              label: "Name"
-            },
-            {
-              type: "number",
-              name: "year",
-              label: "Year"
-            }
-          ],
-          functions: [
-            {
-              name: "02_InvocationEvent_JS",
-              label: "Invocation Event - JavaScript",
-              deployment: "functions_recipes.invocationeventjs",
-              language: "JavaScript",
-              files: [
-                {
-                  name: "index.js",
-                  label: "Invocation Event",
-                  body: `/**
+              },
+              {
+                name: "FunctionTest.java",
+                body: `package com.salesforce.functions.recipes;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import com.salesforce.functions.jvm.sdk.Context;
+import com.salesforce.functions.jvm.sdk.InvocationEvent;
+import org.junit.Test;
+
+public class FunctionTest {
+
+  @Test
+  public void testSuccess() throws Exception {
+    ProcessLargeDataFunction function = new ProcessLargeDataFunction();
+    InvocationEvent<FunctionInput> eventMock = createEventMock(36.169090, -115.140579, 5);
+    int length = eventMock.getData().getLength();
+    FunctionOutput functionOutput = function.apply(eventMock, createContextMock());
+    assertEquals(functionOutput.getSchools().size(), length);
+  }
+
+  @Test
+  public void testNoParams() throws Exception {
+    ProcessLargeDataFunction function = new ProcessLargeDataFunction();
+    InvocationEvent<FunctionInput> eventMock = createEventMock();
+    FunctionOutput functionOutput = function.apply(eventMock, createContextMock());
+    assertEquals(functionOutput.getSchools().size(), 0);
+  }
+
+  private Context createContextMock() {
+    return mock(Context.class);
+  }
+
+  @SuppressWarnings("unchecked")
+  private InvocationEvent<FunctionInput> createEventMock(
+      double latitude, double longitude, int length) {
+    InvocationEvent<FunctionInput> eventMock = mock(InvocationEvent.class);
+    when(eventMock.getData()).thenReturn(new FunctionInput(latitude, longitude, length));
+    return eventMock;
+  }
+
+  @SuppressWarnings("unchecked")
+  private InvocationEvent<FunctionInput> createEventMock() {
+    InvocationEvent<FunctionInput> eventMock = mock(InvocationEvent.class);
+    when(eventMock.getData()).thenReturn(new FunctionInput());
+    return eventMock;
+  }
+}
+`
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "02_InvocationEvent",
+        label: "Invocation Event",
+        subtitle: "Invocation Event",
+        description: "Receives a payload and returns information about it.",
+        inputs: [
+          {
+            type: "text",
+            name: "name",
+            label: "Name"
+          },
+          {
+            type: "number",
+            name: "year",
+            label: "Year"
+          }
+        ],
+        functions: [
+          {
+            name: "02_InvocationEvent_JS",
+            deployment: "functions_recipes.invocationeventjs",
+            language: "JavaScript",
+            files: [
+              {
+                name: "index.js",
+                body: `/**
  * Receives a payload and returns information about it.
  *
  * The exported method is the entry point for your code when the function is invoked.
@@ -510,28 +610,107 @@ export default async function (event, context, logger) {
   return results;
 }
 `
-                }
-              ]
-            }
-          ]
-        },
-        {
-          name: "03_Context_DataApiQuery",
-          label: "Data API Query",
-          subtitle: "Functions Recipes",
-          description: "Returns accounts and its contacts by keyword.",
-          inputs: [{ label: "Keyword", name: "keyword", type: "text" }],
-          functions: [
-            {
-              name: "03_Context_DataApiQuery_JS",
-              label: "Context - Data API Query - JavaScript",
-              deployment: "functions_recipes.dataapiqueryjs",
-              language: "JavaScript",
-              files: [
-                {
-                  name: "index.js",
-                  label: "Invocation Event",
-                  body: `/**
+              },
+              {
+                name: "index.test.js",
+                body: `import { expect } from "chai";
+import { createSandbox } from "sinon";
+
+import execute from "../index.js";
+
+/**
+ * invocationeventjs Function unit tests.
+ */
+describe("Unit Tests", () => {
+  let time = Date.now();
+  const event = {
+    id: "c0ffee-00000-00000-00000000",
+    dataContentType: "application/json; charset=utf-8",
+    source: "urn:event:from:test",
+    type: "com.evergreen.functions.test",
+    time
+  };
+
+  let sandbox;
+  let mockContext;
+  let mockLogger;
+  let mockEvent;
+
+  beforeEach(() => {
+    mockEvent = event;
+    mockContext = {
+      logger: { info: () => {} }
+    };
+
+    mockLogger = mockContext.logger;
+    sandbox = createSandbox();
+
+    sandbox.stub(mockLogger, "info");
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
+  it("Invoke InvocationEvent with an object", async () => {
+    // Invoke function
+    mockEvent.data = {
+      name: "payload",
+      is: "object"
+    };
+    const results = await execute(mockEvent, mockContext, mockLogger);
+
+    // Validate CloudEvent
+    expect(mockLogger.info.callCount).to.be.eql(2);
+    expect(results).to.be.not.undefined;
+    expect(results.id).to.be.eql(event.id);
+    expect(results.dataContentType).to.be.eql(event.dataContentType);
+    expect(results.source).to.eql(event.source);
+    expect(results.type).to.eql(event.type);
+    expect(results.time).to.eql(event.time);
+
+    // Validate payload info
+    expect(results.payloadInfo).has.property("keys");
+    expect(results.payloadInfo.keys).to.be.deep.eql(["name", "is"]);
+    expect(results.payloadInfo.type).to.be.eql("object");
+  });
+
+  it("Invoke InvocationEvent with a number (invalid data)", async () => {
+    try {
+      // Invoke function with invalid input
+      mockEvent.data = 42;
+      await execute(mockEvent, mockContext, mockLogger);
+    } catch (err) {
+      expect(err).to.be.not.null;
+      expect(err.message).to.match(/not supported/);
+      return;
+    }
+
+    expect(false, "function must throw").to.be.ok;
+  });
+});
+`
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "03_Context_DataApiQuery",
+        label: "Data API Query",
+        subtitle: "Context",
+        description: "Returns accounts and its contacts by keyword.",
+        inputs: [{ label: "Keyword", name: "keyword", type: "text" }],
+        functions: [
+          {
+            name: "03_Context_DataApiQuery_JS",
+            label: "Context - Data API Query - JavaScript",
+            deployment: "functions_recipes.dataapiqueryjs",
+            language: "JavaScript",
+            files: [
+              {
+                name: "index.js",
+                body: `/**
  * Returns accounts and its contacts by keyword.
  *
  * The exported method is the entry point for your code when the function is invoked.
@@ -562,28 +741,127 @@ export default async function (event, context, logger) {
   return results;
 }
 `
-                }
-              ]
-            }
-          ]
-        },
+              },
+              {
+                name: "index.test.js",
+                body: `import { expect } from "chai";
+import { createSandbox } from "sinon";
+
+import execute from "../index.js";
+
+/**
+ * dataapiqueryjs Function unit tests.
+ */
+describe("Unit Tests", () => {
+  let sandbox;
+  let mockContext;
+  let mockLogger;
+
+  beforeEach(() => {
+    mockContext = {
+      org: {
+        dataApi: { query: () => {} }
+      },
+      logger: { info: () => {} }
+    };
+
+    mockLogger = mockContext.logger;
+    sandbox = createSandbox();
+
+    sandbox.stub(mockContext.org.dataApi, "query");
+    sandbox.stub(mockLogger, "info");
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
+  it("Invoke dataapiqueryjs Function with keyword", async () => {
+    // Mock Accounts query
+    const accounts = {
+      totalSize: 1,
+      done: true,
+      records: [
         {
-          name: "03_Context_OrgInfo",
-          label: "OrgInfo",
-          subtitle: "Functions Recipes",
-          description:
-            "Returns the Salesforce Org information attached to the context.",
-          functions: [
-            {
-              name: "03_Context_OrgInfo_TypeScript",
-              label: "Context - OrgInfo - TypeScript",
-              deployment: "functions_recipes.orginfots",
-              language: "TypeScript",
-              files: [
-                {
-                  name: "index.ts",
-                  label: "Index",
-                  body: `import { InvocationEvent, Context, Logger, Org } from "sf-fx-sdk-nodejs";
+          attributes: {
+            type: "Account",
+            url: "/services/data/v56.0/sobjects/Account/0018A00000bmUOkQAM"
+          },
+          Id: "0018A00000bmUOkQAM",
+          Name: "Burlington Textiles Corp of America",
+          Contacts: {
+            totalSize: 1,
+            done: true,
+            records: [
+              {
+                attributes: {
+                  type: "Contact",
+                  url: "/services/data/v56.0/sobjects/Contact/0038A00000YJqSvQAL"
+                },
+                Name: "Jack Rogers",
+                Email: "jrogers@burlington.com"
+              }
+            ]
+          }
+        }
+      ]
+    };
+
+    mockContext.org.dataApi.query.callsFake(() => {
+      return Promise.resolve(accounts);
+    });
+
+    // Invoke function
+    const results = await execute(
+      { data: { keyword: "america" } },
+      mockContext,
+      mockLogger
+    );
+
+    // Validate
+    expect(mockContext.org.dataApi.query.callCount).to.be.eql(1);
+    expect(mockLogger.info.callCount).to.be.eql(2);
+    expect(results).to.be.not.undefined;
+    expect(results).has.property("totalSize");
+    expect(results.totalSize).to.be.eql(accounts.totalSize);
+  });
+
+  it("Invoke dataapiqueryjs Function without keyword", async () => {
+    try {
+      // Invoke function without keyword
+      await execute({ data: {} }, mockContext, mockLogger);
+    } catch (err) {
+      expect(mockContext.org.dataApi.query.callCount).to.be.eql(0);
+      expect(mockLogger.info.callCount).to.be.eql(1);
+      expect(err).to.be.not.null;
+      expect(err.message).to.match(/specify a keyword/);
+      return;
+    }
+
+    expect(false, "function must throw").to.be.ok;
+  });
+});
+`
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "03_Context_OrgInfo",
+        label: "OrgInfo",
+        subtitle: "Context",
+        description:
+          "Returns the Salesforce Org information attached to the context.",
+        functions: [
+          {
+            name: "03_Context_OrgInfo_TypeScript",
+            deployment: "functions_recipes.orginfots",
+            language: "TypeScript",
+            files: [
+              {
+                name: "index.ts",
+                body: `import { InvocationEvent, Context, Logger, Org } from "sf-fx-sdk-nodejs";
 
 /**
  * Returns the Salesforce Org information attached to the context.
@@ -635,35 +913,108 @@ export class OrgInfo {
   }
 }
 `
-                }
-              ]
-            }
-          ]
+              },
+              {
+                name: "index.test.ts",
+                body: `import "mocha";
+import { expect } from "chai";
+import { createSandbox, SinonSandbox } from "sinon";
+
+import execute from "../index";
+import { OrgInfo } from "../dist";
+
+/**
+ * orginfots Function unit tests.
+ */
+describe("Unit Tests", () => {
+  let sandbox: SinonSandbox;
+  let mockContext;
+  let mockLogger;
+
+  beforeEach(() => {
+    sandbox = createSandbox();
+    mockContext = {
+      org: {
+        id: "00D2F00C00L0RG",
+        apiVersion: "56.0",
+        baseUrl: "https://test.my.salesforce.com",
+        domainUrl: "https://test.my.salesforce.com",
+        user: {
+          id: "",
+          username: "test@salesforce.com",
+          onBehalfOfUserId: ""
         },
-        {
-          name: "03_Context_SalesforceSDK",
-          label: "SalesforceSDK",
-          subtitle: "Functions Recipes",
-          description:
-            "Receives a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.",
-          inputs: [
-            { label: "Name", name: "name", type: "text" },
-            { label: "Account Number", name: "accountNumber", type: "text" },
-            { label: "Industry", name: "industry", type: "text" },
-            { label: "Type", name: "type", type: "text" },
-            { label: "Website", name: "website", type: "text" }
-          ],
-          functions: [
-            {
-              name: "03_Context_SalesforceSDK_JS",
-              label: "Context - SalesforceSDK - JavaScript",
-              deployment: "functions_recipes.salesforcesdkjs",
-              language: "JavaScript",
-              files: [
-                {
-                  name: "index.js",
-                  label: "Salesforce SDK",
-                  body: `/**
+        dataApi: { query: () => undefined }
+      },
+      logger: { info: () => undefined }
+    };
+    mockLogger = mockContext.logger;
+    sandbox.stub(mockContext.org.dataApi, "query");
+    sandbox.stub(mockLogger, "info");
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
+  it("Invoke OrgInfo Function without an org", async () => {
+    try {
+      // Invoke function without a bind Org
+      mockContext.org = null;
+      await execute({ data: {} } as any, mockContext, mockLogger);
+    } catch (err) {
+      expect(err).to.be.not.null;
+      expect(err.message).to.match(/isn't bind to any organization/);
+      return;
+    }
+
+    expect(false, "function must throw").to.be.ok;
+  });
+
+  it("Invoke OrgInfo Function with an org", async () => {
+    // Invoke function with a bind Org
+    const result: OrgInfo = await execute(
+      { data: {} } as any,
+      mockContext,
+      mockLogger
+    );
+
+    expect(result).to.not.be.undefined;
+    expect(result.id).to.be.eq(mockContext.org.id);
+    expect(result.apiVersion).to.be.eq(mockContext.org.apiVersion);
+    expect(result.baseUrl).to.be.eq(mockContext.org.baseUrl);
+    expect(result.domainUrl).to.be.eq(mockContext.org.domainUrl);
+    expect(result.user).to.be.deep.equal(mockContext.org.user);
+  });
+});
+`
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "03_Context_SalesforceSDK",
+        label: "SalesforceSDK",
+        subtitle: "Context",
+        description:
+          "Receives a payload containing account details, and creates the record. It then uses a SOQL query to return the newly created Account.",
+        inputs: [
+          { label: "Name", name: "name", type: "text" },
+          { label: "Account Number", name: "accountNumber", type: "text" },
+          { label: "Industry", name: "industry", type: "text" },
+          { label: "Type", name: "type", type: "text" },
+          { label: "Website", name: "website", type: "text" }
+        ],
+        functions: [
+          {
+            name: "03_Context_SalesforceSDK_JS",
+            deployment: "functions_recipes.salesforcesdkjs",
+            language: "JavaScript",
+            files: [
+              {
+                name: "index.js",
+                body: `/**
  * Receives a payload containing account details, and creates the record.
  * It then uses a SOQL query to return the newly created Account.
  *
@@ -719,19 +1070,121 @@ export default async function (event, context, logger) {
   }
 }
 `
-                }
-              ]
-            },
-            {
-              name: "03_Context_SalesforceSDK_Java",
-              label: "Context - SalesforceSDK - Java",
-              deployment: "functions_recipes.salesforcesdkjava",
-              language: "Java",
-              files: [
-                {
-                  name: "SalesforceSDKFunction.java",
-                  label: "Salesforce SDK",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "index.test.js",
+                body: `import { expect } from "chai";
+import { createSandbox } from "sinon";
+import { readFileSync } from "fs";
+import execute from "../index.js";
+
+const testResponse = JSON.parse(
+  readFileSync(new URL("../data/test-data.json", import.meta.url))
+);
+const testPayload = JSON.parse(
+  readFileSync(new URL("../data/sample-payload.json", import.meta.url))
+);
+const testInvalidPayload = JSON.parse(
+  readFileSync(new URL("../data/sample-invalid-payload.json", import.meta.url))
+);
+
+/**
+ * salesforcesdkjs Function unit tests.
+ */
+describe("Unit Tests", () => {
+  let sandbox;
+  let mockContext;
+  let mockLogger;
+
+  beforeEach(() => {
+    mockContext = {
+      org: {
+        dataApi: { query: () => {}, create: () => {} }
+      },
+      logger: { info: () => {}, error: () => {} }
+    };
+
+    mockLogger = mockContext.logger;
+    sandbox = createSandbox();
+
+    sandbox.stub(mockContext.org.dataApi, "query");
+    sandbox.stub(mockContext.org.dataApi, "create");
+    sandbox.stub(mockLogger, "info");
+    sandbox.stub(mockLogger, "error");
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
+  it("Invoke salesforcesdkjs Function with correct data", async () => {
+    const accounts = testResponse;
+    const payload = testPayload;
+
+    mockContext.org.dataApi.create.callsFake(() => {
+      return Promise.resolve({ id: "0010x00001Di8z7AAB" });
+    });
+
+    mockContext.org.dataApi.query.callsFake(() => {
+      return Promise.resolve(accounts);
+    });
+
+    // Invoke function
+    const results = await execute({ data: payload }, mockContext, mockLogger);
+
+    // Validate
+    expect(mockContext.org.dataApi.create.callCount).to.be.eql(1);
+    expect(mockContext.org.dataApi.query.callCount).to.be.eql(1);
+    expect(results).to.be.not.undefined;
+    expect(results.totalSize).to.be.eql(accounts.totalSize);
+  });
+
+  it("Invoke salesforcesdkjs Function without an Account Name", async () => {
+    const payload = {};
+
+    try {
+      // Invoke function with an empty payload
+      await execute({ data: payload }, mockContext, mockLogger);
+    } catch (err) {
+      expect(err).to.be.not.null;
+      expect(err.message).to.match(/provide account name/);
+      return;
+    }
+
+    expect(false, "function must throw").to.be.ok;
+  });
+
+  it("Invoke salesforcesdkjs Function with an invalid payload", async () => {
+    const payload = testInvalidPayload;
+
+    // Simulate a DML error
+    mockContext.org.dataApi.create.callsFake(() => {
+      return Promise.reject(new Error("error"));
+    });
+
+    // Invoke function
+    try {
+      await execute({ data: payload }, mockContext, mockLogger);
+    } catch (err) {
+      expect(err).to.be.not.null;
+      expect(err.message).to.match(
+        /Failed to insert record. Root Cause: error/
+      );
+    }
+  });
+});
+`
+              }
+            ]
+          },
+          {
+            name: "03_Context_SalesforceSDK_Java",
+            deployment: "functions_recipes.salesforcesdkjava",
+            language: "Java",
+            files: [
+              {
+                name: "SalesforceSDKFunction.java",
+                body: `package com.salesforce.functions.recipes;
 
 import com.salesforce.functions.jvm.sdk.Context;
 import com.salesforce.functions.jvm.sdk.InvocationEvent;
@@ -739,7 +1192,6 @@ import com.salesforce.functions.jvm.sdk.SalesforceFunction;
 import com.salesforce.functions.jvm.sdk.data.DataApi;
 import com.salesforce.functions.jvm.sdk.data.Record;
 import com.salesforce.functions.jvm.sdk.data.RecordModificationResult;
-import com.salesforce.functions.jvm.sdk.data.RecordWithSubQueryResults;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -791,7 +1243,7 @@ public class SalesforceSDKFunction implements SalesforceFunction<FunctionInput, 
     // Query Accounts using the SalesforceSDK DataApi to verify that our new Account was created.
     String queryString =
         String.format("SELECT Id, Name FROM Account WHERE Id = '%s'", createResult.getId());
-    List<RecordWithSubQueryResults> records = dataApi.query(queryString).getRecords();
+    List<Record> records = dataApi.query(queryString).getRecords();
 
     LOGGER.info("Function successfully queried {} account records!", records.size());
 
@@ -806,11 +1258,10 @@ public class SalesforceSDKFunction implements SalesforceFunction<FunctionInput, 
   }
 }
 `
-                },
-                {
-                  name: "Account.java",
-                  label: "Salesforce SDK",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "Account.java",
+                body: `package com.salesforce.functions.recipes;
 
 public class Account {
   private final String id;
@@ -830,11 +1281,10 @@ public class Account {
   }
 }
 `
-                },
-                {
-                  name: "FunctionInput.java",
-                  label: "Salesforce SDK",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "FunctionInput.java",
+                body: `package com.salesforce.functions.recipes;
 
 public class FunctionInput {
   private String name;
@@ -845,8 +1295,8 @@ public class FunctionInput {
 
   public FunctionInput() {}
 
-  public FunctionInput(
-      String name, String accountNumber, String industry, String type, String website) {
+  public FunctionInput(String name, String accountNumber, String industry, String type,
+      String website) {
     this.name = name;
     this.accountNumber = accountNumber;
     this.industry = industry;
@@ -873,13 +1323,18 @@ public class FunctionInput {
   public String getWebsite() {
     return this.website;
   }
+
+  @Override
+  public String toString() {
+    return "FunctionInput [name=" + this.name + ", accountNumber=" + this.accountNumber
+        + ", industry=" + this.industry + ", type=" + this.type + ", website=" + this.website + "]";
+  }
 }
 `
-                },
-                {
-                  name: "FunctionOutput.java",
-                  label: "Salesforce SDK",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "FunctionOutput.java",
+                body: `package com.salesforce.functions.recipes;
 
 import java.util.List;
 
@@ -895,36 +1350,284 @@ public class FunctionOutput {
   }
 }
 `
-                }
-              ]
-            }
-          ]
-        },
-        {
-          name: "03_Context_UnitOfWork",
-          label: "UnitOfWork",
-          subtitle: "Functions Recipes",
-          description:
-            "Receives a payload containing Account, Contact, and Case details and uses the Unit of Work pattern to assign the corresponding values to to its Record while maintaining the relationships. It then commits the unit of work and returns the Record Id's for each object.",
-          inputs: [
-            { label: "First Name", name: "firstName", type: "text" },
-            { label: "Last Name", name: "lastName", type: "text" },
-            { label: "Account Name", name: "accountName", type: "text" },
-            { label: "Website", name: "website", type: "text" },
-            { label: "Subject", name: "subject", type: "text" },
-            { label: "Description", name: "description", type: "text" }
-          ],
-          functions: [
-            {
-              name: "03_Context_UnitOfWork_JS",
-              label: "Context - UnitOfWork - JavaScript",
-              deployment: "functions_recipes.unitofworkjs",
-              language: "JavaScript",
-              files: [
-                {
-                  name: "index.js",
-                  label: "UnitOfWork",
-                  body: `/**
+              },
+              {
+                name: "FunctionTest.java",
+                body: `package com.salesforce.functions.recipes;
+
+import static com.spotify.hamcrest.pojo.IsPojo.pojo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
+import static org.hamcrest.core.StringContains.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import com.salesforce.functions.jvm.sdk.Context;
+import com.salesforce.functions.jvm.sdk.InvocationEvent;
+import com.salesforce.functions.jvm.sdk.Org;
+import com.salesforce.functions.jvm.sdk.data.Record;
+import com.salesforce.functions.jvm.sdk.data.RecordModificationResult;
+import com.salesforce.functions.jvm.sdk.data.RecordQueryResult;
+import com.salesforce.functions.jvm.sdk.data.error.DataApiError;
+import com.salesforce.functions.jvm.sdk.data.error.DataApiException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+public class FunctionTest {
+
+  @Test
+  public void testValid() throws Exception {
+    SalesforceSDKFunction function = new SalesforceSDKFunction();
+    FunctionInput input = createValidInput();
+    FunctionOutput functionOutput =
+        function.apply(createEventMock(input), createValidContextMock(input));
+
+    assertThat(
+        functionOutput.getAccounts(),
+        hasItems(
+            pojo(Account.class)
+                .withProperty("id", equalTo("5003000000D8cuIQAA"))
+                .withProperty("name", containsString("MyAccount"))));
+  }
+
+  @Test
+  public void testInvalid() throws Exception {
+    SalesforceSDKFunction function = new SalesforceSDKFunction();
+    FunctionInput functionInput = createInvalidInput();
+
+    // Assert a specific DataApiExeption containing an input validation error
+    DataApiException ex =
+        assertThrows(
+            DataApiException.class,
+            () -> {
+              function.apply(createEventMock(functionInput), createInvalidContext(functionInput));
+            });
+
+    assertThat(ex.getDataApiErrors(), contains(hasProperty("errorCode", is("STRING_TOO_LONG"))));
+    assertEquals("One or more API errors occurred", ex.getMessage());
+  }
+
+  @Test
+  public void testEmpty() throws Exception {
+    SalesforceSDKFunction function = new SalesforceSDKFunction();
+    FunctionInput functionInput = createEmptyInput();
+
+    // Assert a generic Exception
+    assertThrows(
+        Exception.class,
+        () -> {
+          function.apply(createEventMock(functionInput), createEmptyContext(functionInput));
+        });
+  }
+
+  private Context createValidContextMock(FunctionInput input) {
+    Context mockContext = mock(Context.class);
+
+    when(mockContext.getOrg())
+        .then(
+            i1 -> {
+              Org mockOrg = mock(Org.class, Mockito.RETURNS_DEEP_STUBS);
+
+              Record accountRecord = mock(Record.class);
+              RecordModificationResult createResult = mock(RecordModificationResult.class);
+              String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+              String accountNameWithTimestamp = String.format("%s-%s", input.getName(), timeStamp);
+
+              when(mockOrg
+                      .getDataApi()
+                      .newRecordBuilder("Account")
+                      .withField("Name", accountNameWithTimestamp)
+                      .withField("AccountNumber", input.getAccountNumber())
+                      .withField("Industry", input.getIndustry())
+                      .withField("Type", input.getType())
+                      .withField("Website", input.getWebsite())
+                      .build())
+                  .thenReturn(accountRecord);
+
+              when(mockOrg.getDataApi().create(accountRecord)).thenReturn(createResult);
+              when(createResult.getId()).thenReturn("5003000000D8cuIQAA");
+
+              String queryString =
+                  String.format(
+                      "SELECT Id, Name FROM Account WHERE Id = '%s'", createResult.getId());
+              when(mockOrg.getDataApi().query(queryString))
+                  .then(
+                      i2 -> {
+                        RecordQueryResult mockResult = mock(RecordQueryResult.class);
+
+                        Record firstRecord = mock(Record.class);
+                        when(firstRecord.getStringField("Id"))
+                            .thenReturn(Optional.of("5003000000D8cuIQAA"));
+                        when(firstRecord.getStringField("Name"))
+                            .thenReturn(Optional.of(accountNameWithTimestamp));
+
+                        when(mockResult.getRecords()).thenReturn(Arrays.asList(firstRecord));
+
+                        return mockResult;
+                      });
+
+              return Optional.of(mockOrg);
+            });
+
+    return mockContext;
+  }
+
+  /**
+   * Create a mock for Context with an invalid input
+   *
+   * @param input
+   * @return Context
+   */
+  private Context createInvalidContext(FunctionInput input) {
+    Context mockContext = mock(Context.class);
+
+    when(mockContext.getOrg())
+        .then(
+            i1 -> {
+              Org mockOrg = mock(Org.class, Mockito.RETURNS_DEEP_STUBS);
+
+              Record accountRecord = mock(Record.class);
+              String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+              String accountNameWithTimestamp = String.format("%s-%s", input.getName(), timeStamp);
+
+              when(mockOrg
+                      .getDataApi()
+                      .newRecordBuilder("Account")
+                      .withField("Name", accountNameWithTimestamp)
+                      .withField("AccountNumber", input.getAccountNumber())
+                      .withField("Industry", input.getIndustry())
+                      .withField("Type", input.getType())
+                      .withField("Website", input.getWebsite())
+                      .build())
+                  .thenReturn(accountRecord);
+
+              // Create a custom DataApiError for input validation
+              List<DataApiError> errors = new ArrayList<>();
+              DataApiError validationError =
+                  new DataApiError() {
+
+                    @Override
+                    public String getMessage() {
+                      return "Last Name: data value too large: This is a very long string that"
+                          + " isn't valid in this line, please reduce it. (max length=80)";
+                    }
+
+                    @Override
+                    public String getErrorCode() {
+                      return "STRING_TOO_LONG";
+                    }
+
+                    @Override
+                    public List<String> getFields() {
+                      return List.of("AccountNumber");
+                    }
+                  };
+              errors.add(validationError);
+              when(mockOrg.getDataApi().create(accountRecord))
+                  .thenThrow(new DataApiException("One or more API errors occurred", errors));
+
+              return Optional.of(mockOrg);
+            });
+
+    return mockContext;
+  }
+
+  /**
+   * Create a mock for Context with an empty input
+   *
+   * @param input
+   * @return Context
+   */
+  private Context createEmptyContext(FunctionInput input) {
+    return mock(Context.class);
+  }
+
+  /**
+   * Creates a valid Input Object
+   *
+   * @return FunctionInput
+   */
+  private FunctionInput createValidInput() {
+    return new FunctionInput("MyAccount", "123456789", "Technology", "prospect", "salesforce.com");
+  }
+
+  /**
+   * Creates an empty Input Object
+   *
+   * @return FunctionInput
+   */
+  private FunctionInput createEmptyInput() {
+    return new FunctionInput();
+  }
+
+  /**
+   * Creates an invalid Input Object
+   *
+   * @return FunctionInput
+   */
+  private FunctionInput createInvalidInput() {
+    return new FunctionInput(
+        "MyAccount",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "Technology",
+        "prospect",
+        "salesforce.com");
+  }
+
+  /**
+   * Creates a mock for InvocationEvent
+   *
+   * @param input FunctionInput
+   * @return InvocationEvent<FunctionInput>
+   */
+  @SuppressWarnings("unchecked")
+  private InvocationEvent<FunctionInput> createEventMock(FunctionInput input) {
+    InvocationEvent<FunctionInput> mockEvent = mock(InvocationEvent.class);
+    when(mockEvent.getData()).thenReturn(input);
+    return mockEvent;
+  }
+}
+`
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "03_Context_UnitOfWork",
+        label: "UnitOfWork",
+        subtitle: "Context",
+        description:
+          "Receives a payload containing Account, Contact, and Case details and uses the Unit of Work pattern to assign the corresponding values to to its Record while maintaining the relationships. It then commits the unit of work and returns the Record Id's for each object.",
+        inputs: [
+          { label: "First Name", name: "firstName", type: "text" },
+          { label: "Last Name", name: "lastName", type: "text" },
+          { label: "Account Name", name: "accountName", type: "text" },
+          { label: "Website", name: "website", type: "text" },
+          { label: "Subject", name: "subject", type: "text" },
+          { label: "Description", name: "description", type: "text" }
+        ],
+        functions: [
+          {
+            name: "03_Context_UnitOfWork_JS",
+            deployment: "functions_recipes.unitofworkjs",
+            language: "JavaScript",
+            files: [
+              {
+                name: "index.js",
+                body: `/**
  * Receives a payload containing Account, Contact, and Case details and uses the
  * Unit of Work pattern to assign the corresponding values to to its Record
  * while maintaining the relationships. It then commits the unit of work and
@@ -1029,19 +1732,112 @@ function validateField(field, value) {
   if (!value) throw new Error(\`Please provide \${field}\`);
 }
 `
-                }
-              ]
-            },
-            {
-              name: "03_Context_UnitOfWork_Java",
-              label: "UnitOfWork - Java",
-              deployment: "functions_recipes.unitofworkjava",
-              language: "Java",
-              files: [
-                {
-                  name: "UnitOfWorkFunction.java",
-                  label: "UnitOfWork",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "index.test.js",
+                body: `import { expect } from "chai";
+import { createSandbox } from "sinon";
+import { readFileSync } from "fs";
+import execute from "../index.js";
+
+const testPayload = JSON.parse(
+  readFileSync(new URL("../data/sample-payload.json", import.meta.url))
+);
+
+/**
+ * unitofworkjs Function unit tests.
+ */
+describe("Unit Tests", () => {
+  let sandbox;
+  let mockContext;
+  let mockLogger;
+  let mockResponse;
+  let mockUnitOfWork;
+
+  const resultIds = {
+    accountId: "0012F000ACTFN",
+    contactId: "0012F000CTCFN",
+    serviceCaseId: "0012F000CSELFN",
+    folowupCaseId: "0012F000CSALFN"
+  };
+
+  beforeEach(() => {
+    mockContext = {
+      org: {
+        dataApi: { newUnitOfWork: () => {}, commitUnitOfWork: () => {} },
+        user: { id: "0052F000009KLZS" }
+      },
+      logger: { info: () => {}, error: () => {} }
+    };
+    mockUnitOfWork = {
+      registerCreate: () => {}
+    };
+    mockResponse = {
+      get: () => {}
+    };
+    mockLogger = mockContext.logger;
+
+    sandbox = createSandbox();
+    sandbox.stub(mockContext.org.dataApi, "newUnitOfWork");
+    sandbox.stub(mockContext.org.dataApi, "commitUnitOfWork");
+    sandbox.stub(mockUnitOfWork, "registerCreate");
+    sandbox.stub(mockResponse, "get");
+    sandbox.stub(mockLogger, "info");
+    sandbox.stub(mockLogger, "error");
+    mockContext.org.dataApi.newUnitOfWork.callsFake(() => {
+      return mockUnitOfWork;
+    });
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
+  it("Invoke unitofworkjs Function successfully", async () => {
+    mockUnitOfWork.registerCreate.callsFake(() => {
+      return "referenceId";
+    });
+    mockResponse.get.onCall(0).returns({ id: "0012F000ACTFN" });
+    mockResponse.get.onCall(1).returns({ id: "0012F000CTCFN" });
+    mockResponse.get.onCall(2).returns({ id: "0012F000CSELFN" });
+    mockResponse.get.onCall(3).returns({ id: "0012F000CSALFN" });
+
+    // set the mock promise response for work.commit()
+    mockContext.org.dataApi.commitUnitOfWork.callsFake(() => {
+      return Promise.resolve(mockResponse);
+    });
+
+    // Invoke functions
+    const results = await execute(
+      { data: testPayload },
+      mockContext,
+      mockLogger
+    );
+
+    // Validate
+    expect(mockContext.org.dataApi.commitUnitOfWork.callCount).to.be.eql(1);
+    expect(results).to.be.not.undefined;
+    expect(results).has.property("accountId");
+    expect(results).has.property("contactId");
+    expect(results).has.property("cases");
+    expect(results.accountId).to.be.eql(resultIds.accountId);
+    expect(results.contactId).to.be.eql(resultIds.contactId);
+    expect(results.cases.serviceCaseId).to.be.eql(resultIds.serviceCaseId);
+    expect(results.cases.followupCaseId).to.be.eql(resultIds.folowupCaseId);
+  });
+});
+`
+              }
+            ]
+          },
+          {
+            name: "03_Context_UnitOfWork_Java",
+            deployment: "functions_recipes.unitofworkjava",
+            language: "Java",
+            files: [
+              {
+                name: "UnitOfWorkFunction.java",
+                body: `package com.salesforce.functions.recipes;
 
 import com.salesforce.functions.jvm.sdk.Context;
 import com.salesforce.functions.jvm.sdk.InvocationEvent;
@@ -1135,11 +1931,10 @@ public class UnitOfWorkFunction implements SalesforceFunction<FunctionInput, Fun
   }
 }
 `
-                },
-                {
-                  name: "FunctionInput.java",
-                  label: "Salesforce SDK",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "FunctionInput.java",
+                body: `package com.salesforce.functions.recipes;
 
 public class FunctionInput {
   private String accountName;
@@ -1150,8 +1945,8 @@ public class FunctionInput {
 
   public FunctionInput() {}
 
-  public FunctionInput(
-      String accountName, String firstName, String lastName, String subject, String description) {
+  public FunctionInput(String accountName, String firstName, String lastName, String subject,
+      String description) {
     this.accountName = accountName;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -1178,13 +1973,19 @@ public class FunctionInput {
   public String getDescription() {
     return this.description;
   }
+
+  @Override
+  public String toString() {
+    return "FunctionInput [accountName=" + this.accountName + ", firstName=" + this.firstName
+        + ", lastName=" + this.lastName + ", subject=" + this.subject + ", description="
+        + this.description + "]";
+  }
 }
 `
-                },
-                {
-                  name: "FunctionOutput.java",
-                  label: "UnitOfWork",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "FunctionOutput.java",
+                body: `package com.salesforce.functions.recipes;
 
 public class FunctionOutput {
   private final String accountId;
@@ -1210,11 +2011,10 @@ public class FunctionOutput {
   }
 }
 `
-                },
-                {
-                  name: "Cases.java",
-                  label: "UnitOfWork",
-                  body: `package com.salesforce.functions.recipes;
+              },
+              {
+                name: "Cases.java",
+                body: `package com.salesforce.functions.recipes;
 
 public class Cases {
   private final String serviceCaseId;
@@ -1234,35 +2034,462 @@ public class Cases {
   }
 }
 `
-                }
-              ]
-            }
-          ]
-        },
-        {
-          name: "04_Logger",
-          label: "Logger",
-          subtitle: "Functions Recipes",
-          description:
-            "Generates an amount of log messages every number of seconds.",
-          instructions:
-            "Run: <code>sf env log tail -e compute-env-alias</code> to retrieve logs after invoking the function.",
-          inputs: [
-            { label: "Amount", name: "amount", type: "number" },
-            { label: "Timeout", name: "timeout", type: "number" }
-          ],
-          functions: [
-            {
-              name: "04_Logger_JS",
-              label: "Logger - JavaScript",
-              deployment: "functions_recipes.loggerjs",
-              language: "JavaScript",
+              },
+              {
+                name: "FunctionTest.java",
+                body: `package com.salesforce.functions.recipes;
 
-              files: [
-                {
-                  name: "index.js",
-                  label: "Logger",
-                  body: `/**
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import com.salesforce.functions.jvm.sdk.Context;
+import com.salesforce.functions.jvm.sdk.InvocationEvent;
+import com.salesforce.functions.jvm.sdk.Org;
+import com.salesforce.functions.jvm.sdk.data.Record;
+import com.salesforce.functions.jvm.sdk.data.RecordModificationResult;
+import com.salesforce.functions.jvm.sdk.data.ReferenceId;
+import com.salesforce.functions.jvm.sdk.data.UnitOfWork;
+import com.salesforce.functions.jvm.sdk.data.builder.UnitOfWorkBuilder;
+import com.salesforce.functions.jvm.sdk.data.error.DataApiError;
+import com.salesforce.functions.jvm.sdk.data.error.DataApiException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+public class FunctionTest {
+
+  @Test
+  public void testSuccess() throws Exception {
+    UnitOfWorkFunction function = new UnitOfWorkFunction();
+
+    FunctionInput functionInput = createValidInput();
+    FunctionOutput functionOutput =
+        function.apply(createEventMock(functionInput), createValidContextMock(functionInput));
+
+    assertEquals("0019A00000J28zaQAB", functionOutput.getAccountId());
+    assertEquals("0039A00000DkhvnQAB", functionOutput.getContactId());
+    assertEquals("5009A000002GYCrQAO", functionOutput.getCases().getServiceCaseId());
+    assertEquals("5009A000002GXCrQBO", functionOutput.getCases().getFollowupCaseId());
+  }
+
+  @Test
+  public void testEmpty() throws Exception {
+    UnitOfWorkFunction function = new UnitOfWorkFunction();
+    FunctionInput functionInput = createEmptyInput();
+
+    // Assert a generic DataApiException
+    assertThrows(
+        DataApiException.class,
+        () -> {
+          function.apply(createEventMock(functionInput), createEmptyContext(functionInput));
+        });
+  }
+
+  @Test
+  public void testInvalid() throws Exception {
+    UnitOfWorkFunction function = new UnitOfWorkFunction();
+    FunctionInput functionInput = createInvalidInput();
+
+    // Assert a specific DataApiExeption containing an input validation error
+    DataApiException ex =
+        assertThrows(
+            DataApiException.class,
+            () -> {
+              function.apply(createEventMock(functionInput), createInvalidContext(functionInput));
+            });
+
+    assertThat(ex.getDataApiErrors(), contains(hasProperty("errorCode", is("STRING_TOO_LONG"))));
+    assertEquals("One or more API errors occurred", ex.getMessage());
+  }
+
+  /**
+   * Create a mock for Context using a valid input object
+   *
+   * @param input
+   * @return Context
+   */
+  private Context createValidContextMock(FunctionInput input) {
+    Context mockContext = mock(Context.class);
+
+    when(mockContext.getOrg())
+        .then(
+            i1 -> {
+              Org mockOrg = mock(Org.class, Mockito.RETURNS_DEEP_STUBS);
+
+              UnitOfWorkBuilder unitOfWorkBuilder = mock(UnitOfWorkBuilder.class);
+              UnitOfWork unitOfWork = mock(UnitOfWork.class);
+
+              when(mockOrg.getDataApi().newUnitOfWorkBuilder()).thenReturn(unitOfWorkBuilder);
+
+              ReferenceId accountRefId = mock(ReferenceId.class);
+              ReferenceId contactRefId = mock(ReferenceId.class);
+              ReferenceId serviceCaseRefId = mock(ReferenceId.class);
+              ReferenceId followupCaseRefId = mock(ReferenceId.class);
+
+              Record accountRecord = mock(Record.class);
+              Record contactRecord = mock(Record.class);
+              Record serviceCaseRecord = mock(Record.class);
+              Record followupCaseRecord = mock(Record.class);
+
+              when(mockOrg
+                      .getDataApi()
+                      .newRecordBuilder("Account")
+                      .withField("Name", input.getAccountName())
+                      .build())
+                  .thenReturn(accountRecord);
+
+              when(mockOrg
+                      .getDataApi()
+                      .newRecordBuilder("Contact")
+                      .withField("FirstName", input.getFirstName())
+                      .withField("LastName", input.getLastName())
+                      .withField("AccountId", accountRefId)
+                      .build())
+                  .thenReturn(contactRecord);
+
+              when(mockOrg
+                      .getDataApi()
+                      .newRecordBuilder("Case")
+                      .withField("Subject", input.getSubject())
+                      .withField("Description", input.getDescription())
+                      .withField("Origin", "Web")
+                      .withField("Status", "New")
+                      .withField("AccountId", accountRefId)
+                      .withField("ContactId", contactRefId)
+                      .build())
+                  .thenReturn(serviceCaseRecord);
+
+              when(mockOrg
+                      .getDataApi()
+                      .newRecordBuilder("Case")
+                      .withField("ParentId", serviceCaseRefId)
+                      .withField("Subject", "Follow Up")
+                      .withField("Description", "Follow up with Customer")
+                      .withField("Origin", "Web")
+                      .withField("Status", "New")
+                      .withField("AccountId", accountRefId)
+                      .withField("ContactId", contactRefId)
+                      .build())
+                  .thenReturn(followupCaseRecord);
+
+              when(unitOfWorkBuilder.registerCreate(accountRecord)).thenReturn(accountRefId);
+              when(unitOfWorkBuilder.registerCreate(contactRecord)).thenReturn(contactRefId);
+              when(unitOfWorkBuilder.registerCreate(serviceCaseRecord))
+                  .thenReturn(serviceCaseRefId);
+              when(unitOfWorkBuilder.registerCreate(followupCaseRecord))
+                  .thenReturn(followupCaseRefId);
+              when(unitOfWorkBuilder.build()).thenReturn(unitOfWork);
+
+              when(mockOrg.getDataApi().commitUnitOfWork(unitOfWork))
+                  .then(
+                      i3 -> {
+                        RecordModificationResult accountResult =
+                            mock(RecordModificationResult.class);
+                        when(accountResult.getId()).thenReturn("0019A00000J28zaQAB");
+
+                        RecordModificationResult contactResult =
+                            mock(RecordModificationResult.class);
+                        when(contactResult.getId()).thenReturn("0039A00000DkhvnQAB");
+
+                        RecordModificationResult serviceCaseResult =
+                            mock(RecordModificationResult.class);
+                        when(serviceCaseResult.getId()).thenReturn("5009A000002GYCrQAO");
+
+                        RecordModificationResult followupCaseResult =
+                            mock(RecordModificationResult.class);
+                        when(followupCaseResult.getId()).thenReturn("5009A000002GXCrQBO");
+
+                        Map<ReferenceId, RecordModificationResult> result = new HashMap<>();
+                        result.put(accountRefId, accountResult);
+                        result.put(contactRefId, contactResult);
+                        result.put(serviceCaseRefId, serviceCaseResult);
+                        result.put(followupCaseRefId, followupCaseResult);
+                        return result;
+                      });
+
+              return Optional.of(mockOrg);
+            });
+
+    return mockContext;
+  }
+
+  /**
+   * Create a mock for Context with an invalid input
+   *
+   * @param input
+   * @return Context
+   */
+  private Context createInvalidContext(FunctionInput input) {
+    Context mockContext = mock(Context.class);
+
+    when(mockContext.getOrg())
+        .then(
+            i1 -> {
+              Org mockOrg = mock(Org.class, Mockito.RETURNS_DEEP_STUBS);
+
+              UnitOfWorkBuilder unitOfWorkBuilder = mock(UnitOfWorkBuilder.class);
+              UnitOfWork unitOfWork = mock(UnitOfWork.class);
+
+              when(mockOrg.getDataApi().newUnitOfWorkBuilder()).thenReturn(unitOfWorkBuilder);
+
+              ReferenceId accountRefId = mock(ReferenceId.class);
+              ReferenceId contactRefId = mock(ReferenceId.class);
+              ReferenceId serviceCaseRefId = mock(ReferenceId.class);
+              ReferenceId followupCaseRefId = mock(ReferenceId.class);
+
+              Record accountRecord = mock(Record.class);
+              Record contactRecord = mock(Record.class);
+              Record serviceCaseRecord = mock(Record.class);
+              Record followupCaseRecord = mock(Record.class);
+
+              when(mockOrg
+                      .getDataApi()
+                      .newRecordBuilder("Account")
+                      .withField("Name", input.getAccountName())
+                      .build())
+                  .thenReturn(accountRecord);
+
+              when(mockOrg
+                      .getDataApi()
+                      .newRecordBuilder("Contact")
+                      .withField("FirstName", input.getFirstName())
+                      .withField("LastName", input.getLastName())
+                      .build())
+                  .thenReturn(contactRecord);
+
+              when(mockOrg
+                      .getDataApi()
+                      .newRecordBuilder("Case")
+                      .withField("Subject", input.getSubject())
+                      .withField("Description", input.getDescription())
+                      .withField("Origin", "Web")
+                      .withField("Status", "New")
+                      .withField("AccountId", accountRefId)
+                      .withField("ContactId", contactRefId)
+                      .build())
+                  .thenReturn(serviceCaseRecord);
+
+              when(mockOrg
+                      .getDataApi()
+                      .newRecordBuilder("Case")
+                      .withField("ParentId", serviceCaseRefId)
+                      .withField("Subject", "Follow Up")
+                      .withField("Description", "Follow up with Customer")
+                      .withField("Origin", "Web")
+                      .withField("Status", "New")
+                      .withField("AccountId", accountRefId)
+                      .withField("ContactId", contactRefId)
+                      .build())
+                  .thenReturn(followupCaseRecord);
+
+              when(unitOfWorkBuilder.registerCreate(accountRecord)).thenReturn(accountRefId);
+              when(unitOfWorkBuilder.registerCreate(contactRecord)).thenReturn(contactRefId);
+              when(unitOfWorkBuilder.registerCreate(serviceCaseRecord))
+                  .thenReturn(serviceCaseRefId);
+              when(unitOfWorkBuilder.registerCreate(followupCaseRecord))
+                  .thenReturn(followupCaseRefId);
+              when(unitOfWorkBuilder.build()).thenReturn(unitOfWork);
+
+              // Create a custom DataApiError for input validation
+              List<DataApiError> errors = new ArrayList<>();
+              DataApiError validationError =
+                  new DataApiError() {
+
+                    @Override
+                    public String getMessage() {
+                      return "Last Name: data value too large: This is a very long string that"
+                          + " isn't valid in this line, please reduce it. (max length=80)";
+                    }
+
+                    @Override
+                    public String getErrorCode() {
+                      return "STRING_TOO_LONG";
+                    }
+
+                    @Override
+                    public List<String> getFields() {
+                      return List.of("LastName");
+                    }
+                  };
+              errors.add(validationError);
+              when(mockOrg.getDataApi().commitUnitOfWork(unitOfWork))
+                  .thenThrow(new DataApiException("One or more API errors occurred", errors));
+
+              return Optional.of(mockOrg);
+            });
+
+    return mockContext;
+  }
+
+  /**
+   * Create a mock for Context with an empty input object
+   *
+   * @param input
+   * @return Context
+   */
+  private Context createEmptyContext(FunctionInput input) {
+    Context mockContext = mock(Context.class);
+
+    when(mockContext.getOrg())
+        .then(
+            i1 -> {
+              Org mockOrg = mock(Org.class, Mockito.RETURNS_DEEP_STUBS);
+
+              UnitOfWorkBuilder unitOfWorkBuilder = mock(UnitOfWorkBuilder.class);
+              UnitOfWork unitOfWork = mock(UnitOfWork.class);
+
+              when(mockOrg.getDataApi().newUnitOfWorkBuilder()).thenReturn(unitOfWorkBuilder);
+
+              ReferenceId accountRefId = mock(ReferenceId.class);
+              ReferenceId contactRefId = mock(ReferenceId.class);
+              ReferenceId serviceCaseRefId = mock(ReferenceId.class);
+              ReferenceId followupCaseRefId = mock(ReferenceId.class);
+
+              Record accountRecord = mock(Record.class);
+              Record contactRecord = mock(Record.class);
+              Record serviceCaseRecord = mock(Record.class);
+              Record followupCaseRecord = mock(Record.class);
+
+              when(mockOrg
+                      .getDataApi()
+                      .newRecordBuilder("Account")
+                      .withField("Name", input.getAccountName())
+                      .build())
+                  .thenReturn(accountRecord);
+
+              when(mockOrg
+                      .getDataApi()
+                      .newRecordBuilder("Contact")
+                      .withField("FirstName", input.getFirstName())
+                      .withField("LastName", input.getLastName())
+                      .build())
+                  .thenReturn(contactRecord);
+
+              when(mockOrg
+                      .getDataApi()
+                      .newRecordBuilder("Case")
+                      .withField("Subject", input.getSubject())
+                      .withField("Description", input.getDescription())
+                      .withField("Origin", "Web")
+                      .withField("Status", "New")
+                      .withField("AccountId", accountRefId)
+                      .withField("ContactId", contactRefId)
+                      .build())
+                  .thenReturn(serviceCaseRecord);
+
+              when(mockOrg
+                      .getDataApi()
+                      .newRecordBuilder("Case")
+                      .withField("ParentId", serviceCaseRefId)
+                      .withField("Subject", "Follow Up")
+                      .withField("Description", "Follow up with Customer")
+                      .withField("Origin", "Web")
+                      .withField("Status", "New")
+                      .withField("AccountId", accountRefId)
+                      .withField("ContactId", contactRefId)
+                      .build())
+                  .thenReturn(followupCaseRecord);
+
+              when(unitOfWorkBuilder.registerCreate(accountRecord)).thenReturn(accountRefId);
+              when(unitOfWorkBuilder.registerCreate(contactRecord)).thenReturn(contactRefId);
+              when(unitOfWorkBuilder.registerCreate(serviceCaseRecord))
+                  .thenReturn(serviceCaseRefId);
+              when(unitOfWorkBuilder.registerCreate(followupCaseRecord))
+                  .thenReturn(followupCaseRefId);
+              when(unitOfWorkBuilder.build()).thenReturn(unitOfWork);
+
+              when(mockOrg.getDataApi().commitUnitOfWork(unitOfWork))
+                  .thenThrow(DataApiException.class);
+
+              return Optional.of(mockOrg);
+            });
+
+    return mockContext;
+  }
+
+  /**
+   * Creates a valid Input Object
+   *
+   * @return FunctionInput
+   */
+  private FunctionInput createValidInput() {
+    return new FunctionInput("a", "b", "c", "d", "e");
+  }
+
+  /**
+   * Creates an invalid Input Object
+   *
+   * @return FunctionInput
+   */
+  private FunctionInput createInvalidInput() {
+    return new FunctionInput(
+        "a",
+        "data value too large: This is a very long string that isn't valid in this line, please"
+            + " reduce it",
+        "c",
+        "d",
+        "e");
+  }
+
+  /**
+   * Creates an empty Input Object
+   *
+   * @return FunctionInput
+   */
+  private FunctionInput createEmptyInput() {
+    return new FunctionInput();
+  }
+
+  /**
+   * Creates a mock for InvocationEvent
+   *
+   * @param input FunctionInput
+   * @return InvocationEvent<FunctionInput>
+   */
+  @SuppressWarnings("unchecked")
+  private InvocationEvent<FunctionInput> createEventMock(FunctionInput input) {
+    InvocationEvent<FunctionInput> mockEvent = mock(InvocationEvent.class);
+    when(mockEvent.getData()).thenReturn(input);
+    return mockEvent;
+  }
+}
+`
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "04_Logger",
+        label: "Logger",
+        subtitle: "Logging",
+        description:
+          "Generates an amount of log messages every number of seconds.",
+        instructions:
+          "Run: <code>sf env log tail -e compute-env-alias</code> to retrieve logs after invoking the function.",
+        inputs: [
+          { label: "Amount", name: "amount", type: "number" },
+          { label: "Timeout", name: "timeout", type: "number" }
+        ],
+        functions: [
+          {
+            name: "04_Logger_JS",
+            deployment: "functions_recipes.loggerjs",
+            language: "JavaScript",
+            files: [
+              {
+                name: "index.js",
+                body: `/**
  * Generates an amount of log messages every number of seconds.
  *
  * The exported method is the entry point for your code when the function is invoked.
@@ -1300,31 +2527,96 @@ export default async function (event, context, logger) {
   };
 }
 `
-                }
-              ]
-            }
-          ]
-        },
-        {
-          name: "05_Environment_JS",
-          label: "Environment",
-          subtitle: "Functions Recipes",
-          description:
-            "Returns the derivate password hash using pbkdf2 getting the salt from the Environment.",
-          instructions:
-            'Run: <code>sf env var set PASSWORD_SALT="a random passphrase" -e compute-env-alias</code> to set the necessary configuration value.',
-          inputs: [{ label: "Password", name: "password", type: "text" }],
-          functions: [
-            {
-              name: "05_Environment_JS",
-              label: "Environment",
-              deployment: "functions_recipes.environmentjs",
-              language: "JavaScript",
-              files: [
-                {
-                  name: "index.js",
-                  label: "Environment",
-                  body: `import crypto from "node:crypto";
+              },
+              {
+                name: "index.test.js",
+                body: `import { expect } from "chai";
+import { useFakeTimers, createSandbox } from "sinon";
+import execute from "../index.js";
+
+/**
+ * loggerjs unit tests.
+ */
+describe("Unit Tests", () => {
+  let sandbox;
+  let mockContext;
+  let mockLogger;
+
+  beforeEach(() => {
+    mockContext = {
+      logger: { info: () => {} }
+    };
+
+    mockLogger = mockContext.logger;
+    sandbox = createSandbox();
+
+    sandbox.stub(mockLogger, "info");
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
+  it("Invoke loggerjs Function with default parameters", async () => {
+    const clock = useFakeTimers();
+    const results = await execute({ data: {} }, mockContext, mockLogger);
+
+    // Advance the clock a full second
+    clock.tick(60000);
+
+    // Default amount is 5, 6 including the initial log message
+    expect(mockLogger.info.callCount).to.be.eql(6);
+    expect(results).to.be.not.undefined;
+    expect(results).has.property("status");
+    expect(results.status).match(/Generating 5 log messages/);
+
+    clock.restore();
+  });
+
+  it("Invoke loggerjs Function with specific amount", async () => {
+    const clock = useFakeTimers();
+    const results = await execute(
+      { data: { amount: 10 } },
+      mockContext,
+      mockLogger
+    );
+
+    // Advance the clock a full second
+    clock.tick(60000);
+
+    // Amount 10, 11 including the initial log message
+    expect(mockLogger.info.callCount).to.be.eql(11);
+    expect(results).to.be.not.undefined;
+    expect(results).has.property("status");
+    expect(results.status).match(/Generating 10 log messages/);
+
+    clock.restore();
+  });
+});
+`
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "05_Environment_JS",
+        label: "Environment",
+        subtitle: "Environment Variables",
+        description:
+          "Returns the derivate password hash using pbkdf2 getting the salt from the Environment.",
+        instructions:
+          'Run: <code>sf env var set PASSWORD_SALT="a random passphrase" -e compute-env-alias</code> to set the necessary configuration value.',
+        inputs: [{ label: "Password", name: "password", type: "text" }],
+        functions: [
+          {
+            name: "05_Environment_JS",
+            deployment: "functions_recipes.environmentjs",
+            language: "JavaScript",
+            files: [
+              {
+                name: "index.js",
+                body: `import crypto from "node:crypto";
 import { promisify } from "node:util";
 
 // Turn pbkdf2 function from callback based to Promises
@@ -1369,12 +2661,1391 @@ export default async function (event, context, logger) {
   return results.toString("hex");
 }
 `
-                }
-              ]
-            }
-          ]
-        }
-      ];
+              },
+              {
+                name: "index.test.js",
+                body: `import { expect } from "chai";
+import { createSandbox } from "sinon";
+import execute from "../index.js";
+
+/**
+ * environmentjs Function unit tests.
+ */
+describe("Unit Tests", () => {
+  let sandbox;
+  let mockContext;
+  let mockLogger;
+
+  beforeEach(() => {
+    mockContext = {
+      logger: { info: () => {} }
+    };
+
+    mockLogger = mockContext.logger;
+    sandbox = createSandbox();
+
+    sandbox.stub(mockLogger, "info");
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
+  it("Invoke SecretsFunction without password", async () => {
+    try {
+      // Invoke function without a password
+      await execute({ data: {} }, mockContext, mockLogger);
+    } catch (err) {
+      expect(err).to.be.not.null;
+      expect(err.message).to.match(/provide a password/);
+      return;
     }
-  };
-})();
+
+    expect(false, "function must throw").to.be.ok;
+  });
+
+  it("Invoke SecretsFunction without secrets", async () => {
+    try {
+      // Invoke function without secrets
+      await execute({ data: { password: "test" } }, mockContext, mockLogger);
+    } catch (err) {
+      expect(err).to.be.not.null;
+      expect(err.message).to.match(/setup PASSWORD_SALT as Environment/);
+      return;
+    }
+
+    expect(false, "function must throw").to.be.ok;
+  });
+
+  it("Invoke SecretsFunction successfully", async () => {
+    // Return Secrets
+    // Setup Environment
+    process.env.PASSWORD_SALT = "make this a random passphrase";
+
+    // Invoke function
+    const results = await execute(
+      { data: { password: "test" } },
+      mockContext,
+      mockLogger
+    );
+
+    // Validate
+    expect(results).to.be.not.undefined;
+    expect(results).to.be.equal(
+      "65caefdd6c5ca8d667ee4ec37b5df42cdac0803dc4e9b963be4c4d18d06cbcd5"
+    );
+  });
+});
+`
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "06_Data_Postgres",
+        label: "Heroku Postgres",
+        subtitle: "Heroku Data",
+        description:
+          "Connects to a PostgreSQL instance, stores the invocation ID, and returns a list of previous invocations.",
+        instructions:
+          "Make sure you have attached the Heroku Postgres database to your compute environment.",
+        inputs: [{ label: "Limit", name: "limit", type: "number" }],
+        functions: [
+          {
+            name: "06_Data_Postgres_JS",
+            deployment: "functions_recipes.postgresjs",
+            language: "JavaScript",
+            files: [
+              {
+                name: "index.js",
+                body: `import "dotenv/config";
+import { pgConnect } from "./lib/db.js";
+
+/**
+ * Connects to a PostgreSQL instance and perform two operations:
+ * 1. Insert a new row into the "invocations" table with an invocation ID
+ * 2. Query the "invocations" table for all the invocation IDs
+ *
+ * The exported method is the entry point for your code when the function is invoked.
+ *
+ * Following parameters are pre-configured and provided to your function on execution:
+ * @param event: represents the data associated with the occurrence of an event, and
+ *                 supporting metadata about the source of that occurrence.
+ * @param context: represents the connection to Functions and your Salesforce org.
+ * @param logger: logging handler used to capture application logs and trace specifically
+ *                 to a given execution of a function.
+ */
+export default async function (event, context, logger) {
+  logger.info(
+    \`Invoking postgresjs with payload \${JSON.stringify(event.data || {})}\`
+  );
+
+  // Get the number of invocations to return
+  const limit = event.data.limit ?? 5;
+
+  let client;
+  try {
+    // Connect to PostgreSQL instance
+    client = await pgConnect({
+      url: process.env.DATABASE_URL
+    });
+
+    // Insert a new invocation id into the database
+    await client.query(\`INSERT INTO invocations (id) VALUES ($1)\`, [
+      context.id
+    ]);
+
+    // Return all the invocation ids from the database
+    const { rows: results } = await client.query(
+      \`SELECT id, created_at FROM invocations ORDER BY created_at DESC LIMIT $1\`,
+      [limit]
+    );
+
+    return results;
+  } catch (error) {
+    logger.error(\`An error ocurred: \${error.message}\`);
+    throw error;
+  } finally {
+    // Close the database connection if the client exists
+    if (client) await client.end();
+  }
+}
+`
+              },
+              {
+                name: "db.js",
+                body: `import pg from "pg";
+const { Client } = pg;
+
+/**
+ * Represents the options to create a PostgreSQL client.
+ * @typedef {Object} ClientOptions
+ * @property {string} url - The URL of the PostgreSQL instance
+ */
+
+/**
+ * Connects to the PostgreSQL instance.
+ * @param {ClientOptions} input The options to create a PostgreSQL client
+ * @returns {Client} A connected PostgreSQL client
+ */
+export async function pgConnect({ url }) {
+  if (!url) {
+    throw new Error(
+      "database url is not set, please set up the DATABASE_URL environment variable"
+    );
+  }
+
+  // Connect to PostgreSQL
+  const client = new Client({
+    connectionString: url,
+    ssl: {
+      rejectUnauthorized: false
+    }
+  });
+
+  await client.connect();
+
+  // Create a invocations table if it doesn't exist
+  // Note: It is recommended to create this table outside the function execution
+  // using a provision script or a migration tool. This is just for demo purposes.
+  await client.query(\`
+    CREATE TABLE IF NOT EXISTS invocations (
+        id VARCHAR(255) PRIMARY KEY,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    )
+  \`);
+
+  return client;
+}
+`
+              },
+              {
+                name: "index.test.js",
+                body: `import chai from "chai";
+import chaiAsPromised from "chai-as-promised";
+import { createSandbox } from "sinon";
+import quibble from "quibble";
+
+chai.use(chaiAsPromised);
+const expect = chai.expect;
+
+/**
+ * postgresjs unit tests.
+ */
+describe("Unit Tests", () => {
+  const DATABASE_URL = "postgres://postgres:postgres@localhost:5432/postgres";
+  let execute;
+  let sandbox;
+  let mockDb;
+  let mockClient;
+  let mockContext;
+  let mockLogger;
+  let results;
+
+  beforeEach(async () => {
+    process.env.DATABASE_URL = DATABASE_URL;
+
+    mockContext = {
+      id: "c4f3c4f3-c4f3-c4f3-c4f3-c0ff33c0ff33"
+    };
+
+    mockDb = {
+      pgConnect: () => {}
+    };
+
+    mockClient = {
+      query: () => {},
+      end: () => {}
+    };
+
+    mockLogger = {
+      info: () => {},
+      error: () => {}
+    };
+
+    sandbox = createSandbox();
+
+    sandbox.stub(mockLogger, "info");
+    sandbox.stub(mockLogger, "error");
+    sandbox.stub(mockDb, "pgConnect");
+    sandbox.stub(mockClient, "query");
+    sandbox.stub(mockClient, "end");
+
+    results = {
+      rows: [
+        {
+          id: mockContext.id,
+          created_at: "2022-11-24T05:00:00.000Z"
+        },
+        {
+          id: "cd076488-1600-4fe2-99ba-36f872a3f185",
+          created_at: "2022-11-24T05:10:00.000Z"
+        },
+        {
+          id: "7e2b97ba-8950-4e83-90c9-441b04b30737",
+          created_at: "2022-11-24T05:20:00.000Z"
+        }
+      ]
+    };
+
+    // Mock the pgConnect function with specific input parameters
+    mockDb.pgConnect.withArgs({ url: DATABASE_URL }).resolves(mockClient);
+    // Mock the pgConnect function without input parameters
+    mockDb.pgConnect.rejects(
+      new Error(
+        "database url is not set, please set up the DATABASE_URL environment variable"
+      )
+    );
+
+    mockClient.query.onCall(0).callsFake(() => {
+      return Promise.resolve();
+    });
+
+    mockClient.query.onCall(1).callsFake(() => {
+      return Promise.resolve(results);
+    });
+
+    mockClient.end.callsFake(() => {
+      return Promise.resolve();
+    });
+
+    // Mock the db.js library
+    await quibble.esm("../lib/db.js", mockDb);
+    execute = (await import("../index.js")).default;
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+    quibble.reset();
+  });
+
+  it("Invoke postgresjs without DATABASE_URL", async () => {
+    delete process.env.DATABASE_URL;
+    await expect(
+      execute({ data: {} }, mockContext, mockLogger)
+    ).to.be.rejectedWith(
+      /database url is not set, please set up the DATABASE_URL environment variable/
+    );
+  });
+
+  it("Invoke postgresjs with DATABASE_URL", async () => {
+    const invocations = await execute({ data: {} }, mockContext, mockLogger);
+
+    expect(mockClient.query.callCount, "Execute 2 queries").to.be.eql(2);
+    expect(mockClient.end.callCount, "Close the connection").to.be.eql(1);
+    expect(mockLogger.info.callCount, "Log the payload").to.be.eql(1);
+    expect(invocations, "Return invocations").to.be.not.undefined;
+    expect(invocations, "Return the expected invocations").to.be.eql(
+      results.rows
+    );
+  });
+});
+`
+              }
+            ]
+          },
+          {
+            name: "06_Data_Postgres_Java",
+            deployment: "functions_recipes.postgresjava",
+            language: "Java",
+            files: [
+              {
+                name: "PostgresJavaFunction.java",
+                body: `package com.salesforce.functions.recipes;
+
+import com.salesforce.functions.jvm.sdk.Context;
+import com.salesforce.functions.jvm.sdk.InvocationEvent;
+import com.salesforce.functions.jvm.sdk.SalesforceFunction;
+import com.salesforce.functions.recipes.db.InvocationsManager;
+import com.salesforce.functions.recipes.utils.Environment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Connects to a PostgreSQL instance and perform two operations:
+ * 1. Insert a new row into the "invocations" table with an invocation ID
+ * 2. Query the "invocations" table for all the invocation IDs
+ */
+public class PostgresJavaFunction implements SalesforceFunction<FunctionInput, Invocations> {
+  private static final Logger LOGGER = LoggerFactory.getLogger(PostgresJavaFunction.class);
+
+  @Override
+  public Invocations apply(InvocationEvent<FunctionInput> event, Context context) throws Exception {
+
+    LOGGER.info("Invoked with input: {}", event.getData());
+
+    try (InvocationsManager invocationsManager =
+        new InvocationsManager(Environment.getDatabaseUrl())) {
+
+      Integer limit = event.getData().getLimit();
+
+      // Insert a new row into the "invocations" table with an invocation ID
+      invocationsManager.addInvocation(context.getId());
+
+      // Query the "invocations" table for all the invocation IDs
+      Invocations invocations = invocationsManager.getInvocations(limit);
+
+      LOGGER.info("Retrieved {} invocations from the database",
+          invocations.getInvocations().size());
+
+      return invocations;
+    } catch (Exception e) {
+      LOGGER.error("Error while connecting to the database", e);
+      throw e;
+    }
+  }
+}
+`
+              },
+              {
+                name: "FunctionInput.java",
+                body: `package com.salesforce.functions.recipes;
+
+public class FunctionInput {
+  private Integer limit = 5;
+
+  public Integer getLimit() {
+    return limit;
+  }
+
+  public void setLimit(Integer limit) {
+    this.limit = limit;
+  }
+
+  @Override
+  public String toString() {
+    return "FunctionInput [limit=" + limit + "]";
+  }
+}
+`
+              },
+              {
+                name: "Invocations.java",
+                body: `package com.salesforce.functions.recipes;
+
+import java.util.List;
+
+public class Invocations {
+    private List<Invocation> invocations;
+
+    public Invocations(List<Invocation> invocations) {
+        this.invocations = invocations;
+    }
+
+    public List<Invocation> getInvocations() {
+        return invocations;
+    }
+}
+`
+              },
+              {
+                name: "Invocation.java",
+                body: `package com.salesforce.functions.recipes;
+
+import java.sql.Timestamp;
+
+public class Invocation {
+
+  private String id;
+  private Timestamp createdAt;
+
+  public Invocation(String id, Timestamp date) {
+    this.id = id;
+    this.createdAt = date;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public Timestamp getCreatedAt() {
+    return createdAt;
+  }
+}
+`
+              },
+              {
+                name: "InvocationsManager.java",
+                body: `package com.salesforce.functions.recipes.db;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import com.salesforce.functions.recipes.Invocation;
+import com.salesforce.functions.recipes.Invocations;
+
+/**
+ * This class manages the invocations stored in a PostgreSQL database.
+ */
+public class InvocationsManager implements AutoCloseable {
+  // Database queries
+  private final String CREATE_INVOCATIONS_TABLE =
+      "CREATE TABLE IF NOT EXISTS invocations (id VARCHAR(255) PRIMARY KEY, created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP)";
+  private final String INSERT_INVOCATION = "INSERT INTO invocations (id) VALUES (?)";
+  private final String SELECT_INVOCATIONS =
+      "SELECT id, created_at FROM invocations ORDER BY created_at DESC LIMIT ?";
+
+  private final String url;
+  private Connection connection;
+
+  public InvocationsManager(String url) throws SQLException {
+    this.url = url;
+    this.connection = getConnection();
+  }
+
+  /**
+   * Add an invocation to the database.
+   *
+   * @param id
+   * @throws SQLException
+   */
+  public void addInvocation(String id) throws SQLException {
+    try (PreparedStatement stmt = connection.prepareStatement(INSERT_INVOCATION);) {
+      stmt.setString(1, id);
+      stmt.executeUpdate();
+    }
+  }
+
+  /**
+   * Get the last invocations from the database.
+   *
+   * @param limit The maximum number of invocations to return.
+   * @return Invocations
+   * @throws SQLException
+   */
+  public Invocations getInvocations(int limit) throws SQLException {
+    try (PreparedStatement stmt = connection.prepareStatement(SELECT_INVOCATIONS);) {
+      stmt.setInt(1, limit);
+      List<Invocation> invocations = new ArrayList<>();
+
+      try (ResultSet rs = stmt.executeQuery()) {
+        while (rs.next()) {
+          Invocation inv = new Invocation(rs.getString("id"), rs.getTimestamp("created_at"));
+          invocations.add(inv);
+        }
+      }
+      return new Invocations(invocations);
+    }
+  }
+
+  /**
+   * Get a connection to the database.
+   *
+   * @return Connection
+   * @throws SQLException
+   */
+  protected Connection getConnection() throws SQLException {
+    // If there is already a connection reuse it
+    if (connection != null && !connection.isClosed()) {
+      return connection;
+    }
+
+    try {
+      Class.forName("org.postgresql.Driver");
+      URI dbUri = new URI(this.url);
+
+      // Extract username and password from DATABASE_URL
+      String username = dbUri.getUserInfo().split(":")[0];
+      String password = dbUri.getUserInfo().split(":")[1];
+
+      // Construct a valid JDBC URL
+      String dbUrl =
+          "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
+
+      // Connect to PostgreSQL instance
+      connection = DriverManager.getConnection(dbUrl, username, password);
+
+      // Create a invocations table if it doesn't exist
+      // Note: It is recommended to create this table outside the function execution
+      // using a provision script or a migration tool. This is just for demo purposes.
+      connection.createStatement().execute(CREATE_INVOCATIONS_TABLE);
+
+      return connection;
+    } catch (URISyntaxException | ClassNotFoundException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public void close() throws Exception {
+    if (connection != null && !connection.isClosed()) {
+      connection.close();
+    }
+  }
+}
+`
+              },
+              {
+                name: "Environment.java",
+                body: `package com.salesforce.functions.recipes.utils;
+
+/**
+ * This class contains the environment variables used by the Function.
+ */
+public class Environment {
+
+  /**
+   * The URL of the PostgreSQL instance.
+   * @return String
+   */
+  public static String getDatabaseUrl() {
+    String databaseUrl = System.getenv("DATABASE_URL");
+    if (databaseUrl == null) {
+      throw new IllegalStateException("DATABASE_URL environment variable is not set");
+    }
+    return databaseUrl;
+  }
+}
+`
+              },
+              {
+                name: "FunctionTest.java",
+                body: `package com.salesforce.functions.recipes;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.junit.Test;
+import org.mockito.MockedConstruction;
+import org.mockito.MockedStatic;
+import com.salesforce.functions.jvm.sdk.Context;
+import com.salesforce.functions.jvm.sdk.InvocationEvent;
+import com.salesforce.functions.recipes.db.InvocationsManager;
+import com.salesforce.functions.recipes.utils.Environment;
+
+public class FunctionTest {
+
+  private final String INVOCATION_ID = "c4f3c4f3-c4f3-c4f3-c4f3-c0ff33c0ff33";
+  private final List<Invocation> INVOCATIONS = new ArrayList<Invocation>(
+      Arrays.asList(new Invocation(INVOCATION_ID, Timestamp.valueOf("2022-11-24 12:30:00")),
+          new Invocation("7e2b97ba-8950-4e83-90c9-441b04b30737",
+              Timestamp.valueOf("2022-11-25 11:11:00"))));
+
+  @Test
+  public void testSuccess() throws Exception {
+    PostgresJavaFunction function = new PostgresJavaFunction();
+    FunctionInput input = new FunctionInput();
+    input.setLimit(2);
+
+    // Create a mock of the InvocationsManager
+    try (MockedConstruction<InvocationsManager> mocked =
+        mockConstruction(InvocationsManager.class, (mock, context) -> {
+          context.arguments().forEach(arg -> {
+            if (arg instanceof String) {
+              mockStatic(Environment.class).when(Environment::getDatabaseUrl)
+                  .thenReturn("postgres://localhost:5432");
+            }
+          });
+
+          verify(mock, times(1)).addInvocation(INVOCATION_ID);
+          verify(mock, times(1)).getInvocations(input.getLimit());
+          when(mock.getInvocations(2)).thenReturn(new Invocations(INVOCATIONS));
+          Invocations invocations = function.apply(createEventMock(input), createContextMock());
+          assertEquals(invocations.getInvocations().size(), 2);
+          assertEquals(invocations.getInvocations().get(0).getId(), INVOCATION_ID);
+          assertEquals(invocations.getInvocations(), INVOCATIONS);
+        });) {
+    }
+  }
+
+  @Test
+  public void testNoUrl() {
+    PostgresJavaFunction function = new PostgresJavaFunction();
+
+    // Create a mock of the InvocationsManager
+    try (MockedConstruction<InvocationsManager> mocked =
+        mockConstruction(InvocationsManager.class, (mock, context) -> {
+          context.arguments().forEach(arg -> {
+            if (arg instanceof String) {
+              // It should throw an exception if the URL is not set
+              mockStatic(Environment.class).when(Environment::getDatabaseUrl)
+                  .thenThrow(IllegalStateException.class);
+            }
+          });
+          // It should fail when the Environment class returns an empty URL
+          assertThrows(IllegalStateException.class, () -> {
+            function.apply(createEventMock(new FunctionInput()), createContextMock());
+          });
+        })) {}
+  }
+
+  @Test
+  public void testEnvironmentSuccess() {
+    try (MockedStatic<Environment> mockEnvironment = mockStatic(Environment.class)) {
+      mockEnvironment.when(Environment::getDatabaseUrl)
+          .thenReturn("jdbc:postgresql://localhost:5432/postgres");
+      assertEquals(Environment.getDatabaseUrl(), "jdbc:postgresql://localhost:5432/postgres");
+    }
+  }
+
+  @Test
+  public void testEnvironmentFail() {
+    // It should fail when the Environment class throws an exception
+    try (MockedStatic<Environment> mockEnvironment = mockStatic(Environment.class)) {
+      mockEnvironment.when(Environment::getDatabaseUrl).thenThrow(IllegalStateException.class);
+      assertThrows(IllegalStateException.class, () -> {
+        Environment.getDatabaseUrl();
+      });
+    }
+  }
+
+  /**
+   * Creates a mock for Context
+   *
+   * @return Context
+   */
+  private Context createContextMock() {
+    Context mockContext = mock(Context.class);
+    when(mockContext.getId()).thenReturn(INVOCATION_ID);
+    return mockContext;
+  }
+
+  /**
+   * Creates a mock for InvocationEvent
+   *
+   * @param input FunctionInput
+   * @return InvocationEvent<FunctionInput>
+   */
+  @SuppressWarnings("unchecked")
+  private InvocationEvent<FunctionInput> createEventMock(FunctionInput input) {
+    InvocationEvent<FunctionInput> mockEvent = mock(InvocationEvent.class);
+    when(mockEvent.getData()).thenReturn(input);
+    return mockEvent;
+  }
+}
+`
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "06_Data_Redis",
+        label: "Heroku Data for Redis",
+        subtitle: "Heroku Data",
+        description:
+          "Connects to a Redis instance, stores the invocation ID, and returns a list of previous invocations.",
+        instructions:
+          "Make sure you have attached the Heroku Data for Redis instance to your compute environment.",
+        inputs: [{ label: "Limit", name: "limit", type: "number" }],
+        functions: [
+          {
+            name: "06_Data_Redis_JS",
+            deployment: "functions_recipes.redisjs",
+            language: "JavaScript",
+            files: [
+              {
+                name: "index.js",
+                body: `import "dotenv/config";
+import { redisConnect } from "./lib/db.js";
+
+/**
+ * Connects to a Redis instance and perform the following operations:
+ * 1. Stores the last invocation ID in Redis
+ * 2. Stores the last invocation time in Redis
+ * 3. Adds the invocation ID to a list in Redis
+ * 4. Returns the list of invocation IDs from Redis
+ *
+ * The exported method is the entry point for your code when the function is invoked.
+ *
+ * Following parameters are pre-configured and provided to your function on execution:
+ * @param event: represents the data associated with the occurrence of an event, and
+ *                 supporting metadata about the source of that occurrence.
+ * @param context: represents the connection to Functions and your Salesforce org.
+ * @param logger: logging handler used to capture application logs and trace specifically
+ *                 to a given execution of a function.
+ */
+
+// Expiration time for Redis keys
+const FIVE_MINUTES = 5 * 60;
+
+export default async function (event, context, logger) {
+  logger.info(
+    \`Invoking redisjs with payload \${JSON.stringify(event.data || {})}\`
+  );
+
+  // Get the number of invocations to return
+  const limit = event.data.limit ?? 5;
+
+  let client;
+  try {
+    // Connect to Redis instance
+    client = await redisConnect({
+      url: process.env.REDIS_URL
+    });
+
+    // Set the last invocation id into the database with expiration set to 5 minutes
+    const lastInvocationId = context.id;
+    await client.set("lastInvocationId", lastInvocationId, "EX", FIVE_MINUTES);
+
+    // Set the last invocation time into the database with expiration set to 5 minutes
+    const lastInvocationTime = new Date().toISOString();
+    await client.set(
+      "lastInvocationTime",
+      lastInvocationTime,
+      "EX",
+      FIVE_MINUTES
+    );
+
+    // Add the invocation id to a list in the database
+    await client.lPush("invocations", context.id);
+
+    // If no expiration is set, set the expiration to 5 minutes
+    const ttl = await client.ttl("invocations");
+    if (ttl < 0) {
+      await client.expire("invocations", FIVE_MINUTES);
+    }
+
+    // Get the list of invocations
+    const invocations = await client.lRange("invocations", 0, limit - 1);
+
+    // Return the results
+    const results = {
+      invocations,
+      lastInvocationId,
+      lastInvocationTime
+    };
+    return results;
+  } catch (error) {
+    logger.error(\`An error ocurred: \${error.message}\`);
+    throw error;
+  } finally {
+    // Close the database connection if the client exists
+    if (client) await client.quit();
+  }
+}
+`
+              },
+              {
+                name: "db.js",
+                body: `import { createClient } from "redis";
+
+/**
+ * Represents the options to create a Redis client.
+ * @typedef {Object} ClientOptions
+ * @property {string} url - The URL of the Redis instance
+ */
+
+/**
+ * Connects to a Redis instance.
+ * @param {ClientOptions} input The options to create a Redis client
+ * @returns {RedisClientType} A connected Redis client
+ */
+export async function redisConnect({ url }) {
+  if (!url) {
+    throw new Error(
+      \`database url is not set, please set up the REDIS_URL environment variable\`
+    );
+  }
+
+  // Connect to Redis
+  const redisClient = createClient({
+    url,
+    socket: {
+      tls: true,
+      rejectUnauthorized: false
+    }
+  });
+  await redisClient.connect();
+  return redisClient;
+}
+`
+              },
+              {
+                name: "index.test.js",
+                body: `import chai from "chai";
+import sinon from "sinon";
+import chaiAsPromised from "chai-as-promised";
+import { createSandbox } from "sinon";
+import quibble from "quibble";
+
+chai.use(chaiAsPromised);
+const expect = chai.expect;
+
+/**
+ * redisjs unit tests.
+ */
+
+describe("Unit Tests", () => {
+  const REDIS_URL = "redis://localhost:6379";
+  let clock;
+  let execute;
+  let sandbox;
+  let mockDb;
+  let mockClient;
+  let mockContext;
+  let mockLogger;
+  let results;
+
+  beforeEach(async () => {
+    process.env.REDIS_URL = REDIS_URL;
+
+    mockContext = {
+      id: "c4f3c4f3-c4f3-c4f3-c4f3-c0ff33c0ff33"
+    };
+
+    mockDb = {
+      redisConnect: () => {}
+    };
+
+    mockClient = {
+      set: () => {},
+      lPush: () => {},
+      lRange: () => {},
+      ttl: () => {},
+      expire: () => {},
+      quit: () => {}
+    };
+
+    mockLogger = {
+      info: () => {},
+      error: () => {}
+    };
+
+    sandbox = createSandbox();
+
+    sandbox.stub(mockLogger, "info");
+    sandbox.stub(mockLogger, "error");
+    sandbox.stub(mockDb, "redisConnect");
+    sandbox.stub(mockClient, "set");
+    sandbox.stub(mockClient, "lPush");
+    sandbox.stub(mockClient, "lRange");
+    sandbox.stub(mockClient, "ttl");
+    sandbox.stub(mockClient, "expire");
+    sandbox.stub(mockClient, "quit");
+
+    results = {
+      invocations: [
+        mockContext.id,
+        "cd076488-1600-4fe2-99ba-36f872a3f185",
+        "7e2b97ba-8950-4e83-90c9-441b04b30737"
+      ],
+      lastInvocationId: mockContext.id,
+      lastInvocationTime: "2022-11-24T05:00:00.000Z"
+    };
+
+    // Mock the pgConnect function with specific input parameters
+    mockDb.redisConnect.withArgs({ url: REDIS_URL }).resolves(mockClient);
+    // Mock the pgConnect function without input parameters
+    mockDb.redisConnect.rejects(
+      new Error(
+        "database url is not set, please set up the REDIS_URL environment variable"
+      )
+    );
+
+    mockClient.set.onCall(0).callsFake(() => {
+      return Promise.resolve();
+    });
+
+    mockClient.set.onCall(1).callsFake(() => {
+      return Promise.resolve();
+    });
+
+    mockClient.lPush.callsFake(() => {
+      return Promise.resolve();
+    });
+
+    mockClient.lRange.callsFake(() => {
+      return Promise.resolve(results.invocations);
+    });
+
+    mockClient.ttl.callsFake(() => {
+      return Promise.resolve(-1);
+    });
+
+    mockClient.expire.callsFake(() => {
+      return Promise.resolve();
+    });
+
+    mockClient.quit.callsFake(() => {
+      return Promise.resolve();
+    });
+
+    clock = sinon.useFakeTimers({
+      now: new Date(2022, 10, 24, 0, 0),
+      shouldAdvanceTime: true,
+      toFake: ["Date"]
+    });
+
+    // Mock the db.js library
+    await quibble.esm("../lib/db.js", mockDb);
+    execute = (await import("../index.js")).default;
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+    quibble.reset();
+    clock.restore();
+  });
+
+  it("Invoke redisjs without REDIS_URL", async () => {
+    delete process.env.REDIS_URL;
+    await expect(
+      execute({ data: {} }, mockContext, mockLogger)
+    ).to.be.rejectedWith(
+      /database url is not set, please set up the REDIS_URL environment variable/
+    );
+  });
+
+  it("Invoke redisjs with REDIS_URL", async () => {
+    const result = await execute({ data: {} }, mockContext, mockLogger);
+
+    expect(mockClient.set.callCount, "Execute 2 SET").to.be.eql(2);
+    expect(mockClient.lPush.callCount, "Execute 1 LPUSH").to.be.eql(1);
+    expect(mockClient.lRange.callCount, "Execute 1 LRANGE").to.be.eql(1);
+    expect(mockClient.ttl.callCount, "Execute 1 TTL").to.be.eql(1);
+    expect(mockClient.expire.callCount, "Execute 1 EXPIRE").to.be.eql(1);
+    expect(mockClient.quit.callCount, "Close the connection").to.be.eql(1);
+    expect(mockLogger.info.callCount, "Log the payload").to.be.eql(1);
+    expect(result, "Return invocations").to.be.not.undefined;
+    expect(result, "Return the expected invocations").to.be.eql(results);
+    expect(
+      result.lastInvocationId,
+      "Return the expected lastInvocationId"
+    ).to.be.eql(mockContext.id);
+  });
+});
+`
+              }
+            ]
+          },
+          {
+            name: "06_Data_Redis_Java",
+            deployment: "functions_recipes.redisjava",
+            language: "Java",
+            files: [
+              {
+                name: "RedisJavaFunction.java",
+                body: `package com.salesforce.functions.recipes;
+
+import com.salesforce.functions.jvm.sdk.Context;
+import com.salesforce.functions.jvm.sdk.InvocationEvent;
+import com.salesforce.functions.jvm.sdk.SalesforceFunction;
+import com.salesforce.functions.recipes.db.InvocationsManager;
+import com.salesforce.functions.recipes.utils.Environment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+/**
+ * Connects to a Redis instance and perform the following operations:
+ * 1. Stores the last invocation ID in Redis
+ * 2. Stores the last invocation time in Redis
+ * 3. Adds the invocation ID to a list in Redis
+ * 4. Returns the list of invocation IDs from Redis
+ */
+public class RedisJavaFunction implements SalesforceFunction<FunctionInput, Invocations> {
+  private static final Logger LOGGER = LoggerFactory.getLogger(RedisJavaFunction.class);
+
+  @Override
+  public Invocations apply(InvocationEvent<FunctionInput> event, Context context) throws Exception {
+
+    LOGGER.info("Invoked with input: {}", event.getData());
+
+    try (InvocationsManager invocationsManager = new InvocationsManager(Environment.getDatabaseUrl())) {
+      Integer limit = event.getData().getLimit();
+
+      // Insert a new invocation to the "invocations" list
+      // Also set the last invocation ID and last invocation time
+      invocationsManager.addInvocation(context.getId());
+
+      // Query the "invocations" list for all the invocation IDs
+      Invocations invocations = invocationsManager.getInvocations(limit);
+      LOGGER.info("Retrieved {} invocations from the database", invocations.getInvocations().size());
+      return invocations;
+    } catch (Exception e) {
+      LOGGER.error("Error while connecting to the database", e);
+      throw e;
+    }
+  }
+}
+`
+              },
+              {
+                name: "FunctionInput.java",
+                body: `package com.salesforce.functions.recipes;
+
+public class FunctionInput {
+  private Integer limit = 5;
+
+  public Integer getLimit() {
+    return limit;
+  }
+
+  public void setLimit(Integer limit) {
+    this.limit = limit;
+  }
+
+  @Override
+  public String toString() {
+    return "FunctionInput [limit=" + limit + "]";
+  }
+}
+`
+              },
+              {
+                name: "Invocations.java",
+                body: `package com.salesforce.functions.recipes;
+
+import java.util.List;
+
+public class Invocations {
+    private String lastInvocationId;
+    private String lastInvocationTime;
+    private List<String> invocations;
+
+    public void setLastInvocationId(String lastInvocationId) {
+        this.lastInvocationId = lastInvocationId;
+    }
+
+    public void setLastInvocationTime(String lastInvocationTime) {
+        this.lastInvocationTime = lastInvocationTime;
+    }
+
+    public void setInvocations(List<String> invocations) {
+        this.invocations = invocations;
+    }
+
+    public String getLastInvocationId() {
+        return this.lastInvocationId;
+    }
+
+    public String getLastInvocationTime() {
+        return this.lastInvocationTime;
+    }
+
+    public List<String> getInvocations() {
+        return this.invocations;
+    }
+}
+`
+              },
+              {
+                name: "InvocationsManager.java",
+                body: `package com.salesforce.functions.recipes.db;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import com.salesforce.functions.recipes.Invocations;
+import java.net.URI;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.params.SetParams;
+
+/**
+ * This class manages the invocations stored in a Redis database.
+ */
+public class InvocationsManager implements AutoCloseable {
+  private final static long FIVE_MINUTES = 5 * 60;
+  private final String url;
+  private Jedis connection;
+
+  public InvocationsManager(String url) {
+    this.url = url;
+    this.connection = getConnection();
+  }
+
+  /**
+   * Add an invocation to the database.
+   *
+   * @param id The invocation ID.
+   */
+  public void addInvocation(String id) {
+    connection.set("lastInvocationId", id, new SetParams().ex(FIVE_MINUTES));
+    LocalDateTime now = LocalDateTime.now();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    String formattedDateTime = now.format(formatter);
+    connection.set("lastInvocationTime", formattedDateTime, new SetParams().ex(FIVE_MINUTES));
+
+    connection.lpush("invocations", id);
+
+    long ttl = connection.ttl("invocations");
+    if (ttl < 0) {
+      connection.expire("invocations", FIVE_MINUTES);
+
+    }
+  }
+
+  /**
+   * Get the last invocations from the database.
+   *
+   * @param limit The maximum number of invocations to return.
+   * @return Invocations
+   */
+  public Invocations getInvocations(Integer limit) {
+    List<String> ids = connection.lrange("invocations", 0, limit - 1);
+    Invocations invocations = new Invocations();
+    invocations.setInvocations(ids);
+
+    String lastInvocationId = connection.get("lastInvocationId");
+    String lastInvocationTime = connection.get("lastInvocationTime");
+
+    invocations.setLastInvocationId(lastInvocationId);
+    invocations.setLastInvocationTime(lastInvocationTime);
+    return invocations;
+  }
+
+  /**
+   * Get a connection to the Redis database.
+   *
+   * @return Jedis
+   */
+  protected Jedis getConnection() {
+    if (connection != null && connection.isConnected()) {
+      return connection;
+    }
+
+    try {
+      TrustManager bogusTrustManager = new X509TrustManager() {
+        public X509Certificate[] getAcceptedIssuers() {
+          return null;
+        }
+
+        public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+
+        public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+      };
+
+      SSLContext sslContext = SSLContext.getInstance("SSL");
+      sslContext.init(null, new TrustManager[] {bogusTrustManager},
+          new java.security.SecureRandom());
+
+      HostnameVerifier bogusHostnameVerifier = (hostname, session) -> true;
+
+      connection = new Jedis(URI.create(this.url), sslContext.getSocketFactory(),
+          sslContext.getDefaultSSLParameters(), bogusHostnameVerifier);
+      return connection;
+    } catch (NoSuchAlgorithmException | KeyManagementException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public void close() {
+    if (connection != null && connection.isConnected()) {
+      connection.close();
+    }
+  }
+}
+`
+              },
+              {
+                name: "Environment.java",
+                body: `package com.salesforce.functions.recipes.utils;
+
+/**
+ * This class contains the environment variables used by the Function.
+ */
+public class Environment {
+
+  /**
+   * The URL of the Redis instance.
+   * @return String
+   */
+  public static String getDatabaseUrl() {
+    String databaseUrl = System.getenv("REDIS_URL");
+    if (databaseUrl == null) {
+      throw new IllegalStateException("REDIS_URL environment variable is not set");
+    }
+    return databaseUrl;
+  }
+}`
+              },
+              {
+                name: "FunctionTest.java",
+                body: `package com.salesforce.functions.recipes;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.junit.Test;
+import org.mockito.MockedConstruction;
+import org.mockito.MockedStatic;
+import com.salesforce.functions.jvm.sdk.Context;
+import com.salesforce.functions.jvm.sdk.InvocationEvent;
+import com.salesforce.functions.recipes.db.InvocationsManager;
+import com.salesforce.functions.recipes.utils.Environment;
+
+public class FunctionTest {
+
+  private final String INVOCATION_ID = "c4f3c4f3-c4f3-c4f3-c4f3-c0ff33c0ff33";
+  private final List<String> INVOCATIONS =
+      new ArrayList<String>(Arrays.asList(INVOCATION_ID, "7e2b97ba-8950-4e83-90c9-441b04b30737"));
+
+  @Test
+  public void testSuccess() throws Exception {
+    RedisJavaFunction function = new RedisJavaFunction();
+    FunctionInput input = new FunctionInput();
+    input.setLimit(2);
+
+    // Create a mock of the InvocationsManager
+    try (MockedConstruction<InvocationsManager> mocked =
+        mockConstruction(InvocationsManager.class, (mock, context) -> {
+          context.arguments().forEach(arg -> {
+            if (arg instanceof String) {
+              mockStatic(Environment.class).when(Environment::getDatabaseUrl)
+                  .thenReturn("redis://localhost:6379");
+            }
+          });
+
+          verify(mock, times(1)).addInvocation(INVOCATION_ID);
+          verify(mock, times(1)).getInvocations(input.getLimit());
+
+          // Setup getInvocations Mock
+          Invocations invocations = new Invocations();
+          invocations.setInvocations(INVOCATIONS);
+          invocations.setLastInvocationId(INVOCATION_ID);
+          invocations.setLastInvocationTime("2022-11-24 00:00:00");
+          when(mock.getInvocations(2)).thenReturn(invocations);
+
+          // Invoke Function
+          Invocations result = function.apply(createEventMock(input), createContextMock());
+          assertEquals(result.getInvocations().size(), 2);
+          assertEquals(result.getInvocations().get(0), INVOCATION_ID);
+          assertEquals(result.getInvocations(), INVOCATIONS);
+        });) {
+    }
+  }
+
+  @Test
+  public void testNoUrl() {
+    RedisJavaFunction function = new RedisJavaFunction();
+
+    // Create a mock of the InvocationsManager
+    try (MockedConstruction<InvocationsManager> mocked =
+        mockConstruction(InvocationsManager.class, (mock, context) -> {
+          context.arguments().forEach(arg -> {
+            if (arg instanceof String) {
+              // It should throw an exception if the URL is not set
+              mockStatic(Environment.class).when(Environment::getDatabaseUrl)
+                  .thenThrow(IllegalStateException.class);
+            }
+          });
+          // It should fail when the Environment class returns an empty URL
+          assertThrows(IllegalStateException.class, () -> {
+            function.apply(createEventMock(new FunctionInput()), createContextMock());
+          });
+        })) {
+    }
+  }
+
+  @Test
+  public void testEnvironmentSuccess() throws Exception {
+    try (MockedStatic<Environment> mockEnvironment = mockStatic(Environment.class)) {
+      mockEnvironment.when(Environment::getDatabaseUrl).thenReturn("redis://localhost:6379");
+      assertEquals(Environment.getDatabaseUrl(), "redis://localhost:6379");
+    }
+  }
+
+  @Test
+  public void testEnvironmentFail() {
+    // It should fail when the Environment class returns an empty URL
+    assertThrows(IllegalStateException.class, () -> {
+      Environment.getDatabaseUrl();
+    });
+  }
+
+  /**
+   * Creates a mock for Context
+   *
+   * @return Context
+   */
+  private Context createContextMock() {
+    Context mockContext = mock(Context.class);
+    when(mockContext.getId()).thenReturn(INVOCATION_ID);
+    return mockContext;
+  }
+
+  /**
+   * Creates a mock for InvocationEvent
+   *
+   * @param input FunctionInput
+   * @return InvocationEvent<FunctionInput>
+   */
+  @SuppressWarnings("unchecked")
+  private InvocationEvent<FunctionInput> createEventMock(FunctionInput input) {
+    InvocationEvent<FunctionInput> mockEvent = mock(InvocationEvent.class);
+    when(mockEvent.getData()).thenReturn(input);
+    return mockEvent;
+  }
+}
+`
+              }
+            ]
+          }
+        ]
+      }
+    ];
+  }
+};

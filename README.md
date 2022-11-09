@@ -29,7 +29,7 @@ For more information about how to configure your organization for Salesforce Fun
 1. If you haven't already done so, authorize with your org and provide it with an alias (**fnrecipesorg** in the command below):
 
    ```sh
-   sfdx auth:web:login -d -a fnrecipesorg
+   sf login org -d -v -a fnrecipesorg
    ```
 
 1. Clone the functions-recipes repository:
@@ -42,7 +42,7 @@ For more information about how to configure your organization for Salesforce Fun
 1. Create a scratch org and provide it with an alias (**functions_recipes** in the command below):
 
    ```sh
-   sfdx force:org:create -s -f config/project-scratch-def.json -a functions_recipes
+   sf env create scratch -f config/project-scratch-def.json -a functions_recipes -d
    ```
 
 ## Salesforce Functions Deployment
@@ -70,7 +70,7 @@ For more information about how to deploy Functions to a Compute Environment and 
 1. Push source app to the scratch org:
 
    ```sh
-   sfdx force:source:push -f
+   sf deploy metadata --ignore-conflicts
    ```
 
 1. Assign the **FunctionsRecipes** and **Functions** permission sets to the default user:
@@ -82,13 +82,13 @@ For more information about how to deploy Functions to a Compute Environment and 
 1. Open the **Functions Recipes** App
 
    ```sh
-   sfdx force:org:open -p "/lightning/n/Functions"
+   sf env open -p "/lightning/n/Functions"
    ```
 
 1. Activate the **Functions Recipes** Theme (Optional)
 
    ```sh
-   sfdx force:org:open -p "/lightning/setup/ThemingAndBranding/home"
+   sf env open -p "/lightning/setup/ThemingAndBranding/home"
    ```
 
 ## Functions Recipes App
@@ -123,3 +123,8 @@ For Local Development you can use any DevHub enabled org, just make sure to crea
    - [Logger (Node.js)](functions/04_Logger_JS)
 1. Environment Variables
    - [Environment (Node.js)](functions/05_Environment_JS)
+1. Heroku Data
+   - [PostgreSQL (Node.js)](functions/06_Data_Postgres_JS/)
+   - [PostgreSQL (Java)](functions/06_Data_Postgres_Java/)
+   - [Redis (Node.js)](functions/06_Data_Redis_JS/)
+   - [Redis (Java)](functions/06_Data_Redis_Java/)

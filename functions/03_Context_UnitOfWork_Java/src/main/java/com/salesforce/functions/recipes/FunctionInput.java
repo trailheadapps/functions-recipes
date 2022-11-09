@@ -9,8 +9,8 @@ public class FunctionInput {
 
   public FunctionInput() {}
 
-  public FunctionInput(
-      String accountName, String firstName, String lastName, String subject, String description) {
+  public FunctionInput(String accountName, String firstName, String lastName, String subject,
+      String description) {
     this.accountName = accountName;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -36,5 +36,12 @@ public class FunctionInput {
 
   public String getDescription() {
     return this.description;
+  }
+
+  @Override
+  public String toString() {
+    return "FunctionInput [accountName=" + this.accountName + ", firstName=" + this.firstName
+        + ", lastName=" + this.lastName + ", subject=" + this.subject + ", description="
+        + this.description + "]";
   }
 }

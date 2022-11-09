@@ -1,0 +1,9 @@
+[_]
+schema-version = "0.2"
+
+[com.salesforce]
+schema-version = "0.1"
+id = "redisjava"
+description = "Connects to a Redis instance, stores the invocation ID, and returns a list of previous invocations."
+type = "function"
+salesforce-api-version = "55.0"

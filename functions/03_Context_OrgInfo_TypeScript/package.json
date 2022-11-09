@@ -14,7 +14,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "lint": "eslint . --ext .ts --config .eslintrc",
+    "lint": "eslint . --ext .ts",
     "test": "mocha",
     "watch": "tsc -w"
   },
