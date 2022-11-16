@@ -6,18 +6,13 @@
 .sf/
 .sfdx/
 .localdevserver/
-
-# VSCode
-.vscode
+deploy-options.json
 
 # LWC VSCode autocomplete
-**/lwc/jsconfig.json
+jsconfig.json
 
 # LWC Jest coverage reports
 coverage/
-
-# SOQL Query Results
-**/scripts/soql/query-results
 
 # Logs
 logs
@@ -41,9 +36,13 @@ ehthumbs.db
 [Dd]esktop.ini
 $RECYCLE.BIN/
 
+# VS Code project settings
+.vscode/*
+!.vscode/extensions.json
+
+# Local environment variables
+.env
+
 # Java
 **/target
 **/.classpath
-
-# Environment
-.env
