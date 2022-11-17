@@ -36,7 +36,11 @@ private class GenericFunctionInvokerTest {
       Assert.fail('Exception expected');
     } catch (Exception e) {
       // THEN
-      System.assert(e instanceof CalloutException, 'Expected CalloutException');
+      Assert.isInstanceOfType(
+        e,
+        CalloutException.class,
+        'Expected CalloutException'
+      );
       Assert.areEqual(
         mock.error,
         e.getMessage(),
