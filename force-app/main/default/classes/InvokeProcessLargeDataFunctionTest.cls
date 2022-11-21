@@ -1,5 +1,5 @@
 @isTest
-private class GenericFunctionInvokerTest {
+private class InvokeProcessLargeDataFunctionTest {
   @isTest
   static void returnsResponseOnSuccessfulInvocation() {
     // GIVEN
@@ -8,17 +8,15 @@ private class GenericFunctionInvokerTest {
 
     // WHEN
     Test.startTest();
-    String response = GenericFunctionInvoker.invoke(
-      'functions_recipes.processlargedatajs',
-      '{ "recordId" : "111"}'
-    );
+    String payload = '{"latitude": "33", "longitude": "-11"}';
+    String response = InvokeProcessLargeDataFunction.invoke(payload);
     Test.stopTest();
 
     // THEN
     Assert.areEqual(mock.response, response, 'response should be equal');
   }
 
-  @isTest
+  @IsTest
   static void throwsExceptionOnErrorInvocation() {
     // GIVEN
     FunctionsInvokeMockInner mock = new FunctionsInvokeMockInner();
@@ -28,10 +26,10 @@ private class GenericFunctionInvokerTest {
     // WHEN
     try {
       Test.startTest();
-      GenericFunctionInvoker.invoke(
-        'functions_recipes.processlargedatajs',
-        '{ "recordId" : "111"}'
-      );
+      String payload = '{"latitude": "33", "longitude": "-11"}';
+
+      InvokeProcessLargeDataFunction.invoke(payload);
+
       Test.stopTest();
       Assert.fail('Exception expected');
     } catch (Exception e) {

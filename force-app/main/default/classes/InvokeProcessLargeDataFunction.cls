@@ -1,4 +1,4 @@
-public inherited sharing class InvokeProcessLargeDataFunction {
+public with sharing class InvokeProcessLargeDataFunction {
   @AuraEnabled
   public static String invoke(String payload) {
     // Instantiate the function

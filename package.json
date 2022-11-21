@@ -54,7 +54,7 @@
     ],
     "**/lwc/**/*.js": [
       "eslint",
-      "sfdx-lwc-jest --skipApiVersionCheck -- --bail --findRelatedTests"
+      "sfdx-lwc-jest --skipApiVersionCheck -- --bail --findRelatedTests --passWithNoTests"
     ]
   },
   "volta": {
