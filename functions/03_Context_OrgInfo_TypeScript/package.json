@@ -19,14 +19,14 @@
     "watch": "tsc -w"
   },
   "devDependencies": {
-    "@types/chai": "^4.3.3",
+    "@types/chai": "^4.3.4",
     "@types/chai-as-promised": "^7.1.5",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.11.10",
     "@types/sinon": "^10.0.13",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
-    "chai": "^4.3.4",
+    "chai": "^4.3.7",
     "eslint": "^8.28.0",
     "mocha": "^10.0.0",
     "sf-fx-sdk-nodejs": "^3.1.0",
