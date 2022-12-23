@@ -9,9 +9,6 @@
   "repository": {
     "type": "git"
   },
-  "engines": {
-    "node": "^16.0"
-  },
   "scripts": {
     "lint": "eslint . --ext .js",
     "test": "mocha"
@@ -21,5 +18,11 @@
     "eslint": "^8.28.0",
     "mocha": "^10.0.0",
     "sinon": "^14.0.1"
+  },
+  "engines": {
+    "node": "^16.18"
+  },
+  "volta": {
+    "extends": "../../../package.json"
   }
 }

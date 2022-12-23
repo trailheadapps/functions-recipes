@@ -10,9 +10,6 @@
   "repository": {
     "type": "git"
   },
-  "engines": {
-    "node": "^16.9"
-  },
   "scripts": {
     "lint": "eslint . --ext .js",
     "test": "mocha --loader=quibble"
@@ -28,5 +25,11 @@
   "dependencies": {
     "dotenv": "^16.0.3",
     "pg": "^8.8.0"
+  },
+  "engines": {
+    "node": "^16.9"
+  },
+  "volta": {
+    "extends": "../../../package.json"
   }
 }
