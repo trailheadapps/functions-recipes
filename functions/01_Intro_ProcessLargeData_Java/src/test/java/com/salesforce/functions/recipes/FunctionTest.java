@@ -17,6 +17,7 @@ public class FunctionTest {
     int length = eventMock.getData().getLength();
     FunctionOutput functionOutput = function.apply(eventMock, createContextMock());
     assertEquals(functionOutput.getSchools().size(), length);
+    assertEquals(0.235389, functionOutput.getSchools().get(0).getDistance(), 0.000001);
   }
 
   @Test
