@@ -38,6 +38,7 @@ describe("Unit Tests", () => {
     expect(results).to.be.not.undefined;
     expect(results.schools).to.be.an("array");
     expect(results.schools.length).to.be.eql(payload.length);
+    expect(results.schools[0].distance).to.be.closeTo(0.235389, 0.000001);
   });
 
   it("Invoke ProcessLargeData with missing coordinates", async () => {
