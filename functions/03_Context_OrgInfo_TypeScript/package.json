@@ -27,7 +27,7 @@
     "@typescript-eslint/eslint-plugin": "^5.57.0",
     "@typescript-eslint/parser": "^5.54.0",
     "chai": "^4.3.7",
-    "eslint": "^8.35.0",
+    "eslint": "^8.37.0",
     "mocha": "^10.2.0",
     "sf-fx-sdk-nodejs": "^3.1.0",
     "sinon": "^14.0.1",
