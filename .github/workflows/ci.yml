@@ -23,7 +23,7 @@ jobs:
 
       # Install npm dependencies for Prettier and Jest
       - name: "Install npm dependencies"
-        run: npm ci && npm run ci:postinstall
+        run: HUSKY=0 npm ci && npm run ci:postinstall
 
       # Prettier formatting
       - name: "Code formatting verification with Prettier"

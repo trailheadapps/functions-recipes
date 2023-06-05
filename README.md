@@ -76,7 +76,7 @@ For more information about how to deploy Functions to a Compute Environment and 
 1. Assign the **FunctionsRecipes** and **Functions** permission sets to the default user:
 
    ```sh
-   sfdx force:user:permset:assign -n FunctionsRecipes,Functions
+   sf org assign permset -n FunctionsRecipes,Functions
    ```
 
 1. Open the **Functions Recipes** App

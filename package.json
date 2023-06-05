@@ -23,7 +23,7 @@
     "prettier:verify": "prettier --check \"**/*.{cls,cmp,component,css,html,js,ts,json,md,page,trigger,xml,yaml,yml}\"",
     "postinstall": "lerna exec -- npm install && lerna link && husky install",
     "precommit": "lint-staged && node scripts/generateFunctionDetails.js",
-    "ci:postinstall": "lerna exec -- npm ci && lerna link"
+    "ci:postinstall": "HUSKY=0 lerna exec -- npm ci && lerna link"
   },
   "devDependencies": {
     "@lwc/eslint-plugin-lwc": "^1.1.1",
