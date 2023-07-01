@@ -22,7 +22,7 @@
     "chai-as-promised": "^7.1.1",
     "eslint": "^8.26.0",
     "mocha": "^10.1.0",
-    "quibble": "^0.6.14",
+    "quibble": "^0.7.0",
     "sinon": "^14.0.1"
   },
   "dependencies": {
