@@ -153,6 +153,7 @@ describe("Unit Tests", () => {
     expect(results).to.be.not.undefined;
     expect(results.schools).to.be.an("array");
     expect(results.schools.length).to.be.eql(payload.length);
+    expect(results.schools[0].distance).to.be.closeTo(0.235389, 0.000001);
   });
 
   it("Invoke ProcessLargeData with missing coordinates", async () => {
@@ -263,6 +264,7 @@ public class ProcessLargeDataFunction implements SalesforceFunction<FunctionInpu
       }
       dist = Math.acos(dist);
       dist = (dist * 180) / Math.PI;
+      dist = dist * 60 * 1.1515;
       return dist;
     }
   }
@@ -508,6 +510,7 @@ public class FunctionTest {
     int length = eventMock.getData().getLength();
     FunctionOutput functionOutput = function.apply(eventMock, createContextMock());
     assertEquals(functionOutput.getSchools().size(), length);
+    assertEquals(0.235389, functionOutput.getSchools().get(0).getDistance(), 0.000001);
   }
 
   @Test
