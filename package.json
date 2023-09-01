@@ -46,7 +46,7 @@
     "prettier-plugin-apex": "^1.10.0",
     "quibble": "^0.7.0",
     "rimraf": "^3.0.2",
-    "typescript": "^4.5.3"
+    "typescript": "^5.2.2"
   },
   "lint-staged": {
     "**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,ts,xml,yaml,yml}": [
