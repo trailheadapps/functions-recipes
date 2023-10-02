@@ -23,7 +23,7 @@
     "eslint": "^8.26.0",
     "mocha": "^10.1.0",
     "quibble": "^0.7.0",
-    "sinon": "^14.0.1"
+    "sinon": "^16.0.0"
   },
   "dependencies": {
     "dotenv": "^16.0.3",
