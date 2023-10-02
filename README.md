@@ -1,5 +1,8 @@
 # Functions Recipes
 
+> **Warning**
+> As per the [Salesforce Functions Retirement announcement](https://devcenter.heroku.com/articles/salesforce-functions-retirement), this repository is now archived.
+
 [![CI Workflow](https://github.com/trailheadapps/functions-recipes/workflows/CI/badge.svg)](https://github.com/trailheadapps/functions-recipes/actions?query=workflow%3ACI) [![codecov](https://codecov.io/gh/trailheadapps/functions-recipes/branch/main/graph/badge.svg)](https://codecov.io/gh/trailheadapps/functions-recipes) [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 
 ![Functions Icon](images/functions_icon.png)
